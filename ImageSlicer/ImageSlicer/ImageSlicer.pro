@@ -27,7 +27,12 @@ SOURCES += \
         main.cpp \
     Modules/MainUI/MainWindow.cpp \
     Utils/UIDUtil.cpp \
-    Config/EventType.cpp
+    Config/EventType.cpp \
+    Modules/MainUI/Modules/SlicePanle/SlicePanle.cpp \
+    Component/UI/CPictureBox.cpp \
+    Component/UI/CImageWidget.cpp \
+    Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.cpp \
+    Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -35,7 +40,14 @@ HEADERS += \
     Modules/ModulesInit.h \
     Config/EventType.h \
     Utils/UtilsInit.h \
-    Utils/UIDUtil.h
+    Utils/UIDUtil.h \
+    Modules/MainUI/Modules/SlicePanle/SlicePanle.h \
+    Component/UI/CPictureBox.h \
+    Component/UI/CImageWidget.h \
+    Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.h \
+    Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.h
 
 FORMS += \
-    Modules/MainUI/MainWindow.ui
+    Modules/MainUI/MainWindow.ui \
+    Modules/MainUI/Modules/SlicePanle/SlicePanle.ui \
+    Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.ui

@@ -1,0 +1,3 @@
+https://github.com/qtproject/qt-solutions/
+
+1.qtpropertybrowser
