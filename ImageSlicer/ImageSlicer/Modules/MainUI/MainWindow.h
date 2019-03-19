@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 class CSlicePanel;
+class CSliceEdit;
 
 namespace Ui {
 class CMainWindow;
@@ -17,8 +18,15 @@ public:
     ~CMainWindow();
 public:
     void addNewSlicePanel(const QString &title);
+
+private slots:
+    void openSliceEditWnd();
+
+
 private:
     Ui::CMainWindow *ui;
+
+    CSliceEdit *m_sliceEditWnd;
 
     static const QString s_tempTabName;
 };

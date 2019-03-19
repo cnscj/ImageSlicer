@@ -32,7 +32,8 @@ SOURCES += \
     Component/UI/CPictureBox.cpp \
     Component/UI/CImageWidget.cpp \
     Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.cpp \
-    Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.cpp
+    Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.cpp \
+    Modules/SliceEdit/SliceEdit.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -45,9 +46,11 @@ HEADERS += \
     Component/UI/CPictureBox.h \
     Component/UI/CImageWidget.h \
     Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.h \
-    Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.h
+    Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.h \
+    Modules/SliceEdit/SliceEdit.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \
     Modules/MainUI/Modules/SlicePanle/SlicePanle.ui \
-    Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.ui
+    Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.ui \
+    Modules/SliceEdit/SliceEdit.ui
