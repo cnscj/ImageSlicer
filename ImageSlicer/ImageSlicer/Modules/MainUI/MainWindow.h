@@ -1,7 +1,12 @@
 #ifndef CMAINWINDOW_H
 #define CMAINWINDOW_H
 
+
 #include <QMainWindow>
+#include "Config/EnumType.h"
+#include "Config/GlobalVar.h"
+class QDragEnterEvent;
+class QDropEvent;
 class CSlicePanel;
 class CSliceEdit;
 
@@ -19,6 +24,13 @@ public:
 public:
     void addNewSlicePanel(const QString &title);
 
+protected:
+    void dragEnterEvent(QDragEnterEvent *event);//拖动进入事件
+    void dropEvent(QDropEvent *event);
+private:
+    bool isCanDragEnterFile(const QString &filePath);
+    EnumType::EDropFileType getFileType(const QString &filePath);
+
 private slots:
     void openSliceEditWnd();
 
@@ -27,8 +39,6 @@ private:
     Ui::CMainWindow *ui;
 
     CSliceEdit *m_sliceEditWnd;
-
-    static const QString s_tempTabName;
 };
 
 #endif // CMAINWINDOW_H

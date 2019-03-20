@@ -33,7 +33,10 @@ SOURCES += \
     Component/UI/CImageWidget.cpp \
     Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.cpp \
     Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.cpp \
-    Modules/SliceEdit/SliceEdit.cpp
+    Modules/SliceEdit/SliceEdit.cpp \
+    Config/GlobalVar.cpp \
+    ConfigReader/Language.cpp \
+    Config/EnumType.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -47,7 +50,10 @@ HEADERS += \
     Component/UI/CImageWidget.h \
     Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.h \
     Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.h \
-    Modules/SliceEdit/SliceEdit.h
+    Modules/SliceEdit/SliceEdit.h \
+    Config/GlobalVar.h \
+    ConfigReader/Language.h \
+    Config/EnumType.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \
