@@ -28,15 +28,16 @@ SOURCES += \
     Modules/MainUI/MainWindow.cpp \
     Utils/UIDUtil.cpp \
     Config/EventType.cpp \
-    Modules/MainUI/Modules/SlicePanle/SlicePanle.cpp \
     Component/UI/CPictureBox.cpp \
     Component/UI/CImageWidget.cpp \
-    Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.cpp \
-    Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.cpp \
     Modules/SliceEdit/SliceEdit.cpp \
     Config/GlobalVar.cpp \
     ConfigReader/Language.cpp \
-    Config/EnumType.cpp
+    Config/EnumType.cpp \
+    Config/GlobalStruct.cpp \
+    Modules/MainUI/Modules/SlicePanel/SlicePanel.cpp \
+    Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.cpp \
+    Modules/AboutWnd/AboutWnd.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -45,18 +46,21 @@ HEADERS += \
     Config/EventType.h \
     Utils/UtilsInit.h \
     Utils/UIDUtil.h \
-    Modules/MainUI/Modules/SlicePanle/SlicePanle.h \
     Component/UI/CPictureBox.h \
     Component/UI/CImageWidget.h \
-    Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.h \
-    Modules/MainUI/Modules/SlicePanle/Models/SSliceItem.h \
     Modules/SliceEdit/SliceEdit.h \
     Config/GlobalVar.h \
     ConfigReader/Language.h \
-    Config/EnumType.h
+    Config/EnumType.h \
+    Config/GlobalStruct.h \
+    Modules/MainUI/Modules/SlicePanel/SlicePanel.h \
+    Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.h \
+    Modules/AboutWnd/AboutWnd.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \
-    Modules/MainUI/Modules/SlicePanle/SlicePanle.ui \
-    Modules/MainUI/Modules/SlicePanle/Component/SlicingItem.ui \
-    Modules/SliceEdit/SliceEdit.ui
+    Modules/SliceEdit/SliceEdit.ui \
+    Modules/MainUI/Modules/SlicePanel/SlicePanel.ui \
+    Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.ui \
+    Modules/AboutWnd/AboutWnd.ui
+

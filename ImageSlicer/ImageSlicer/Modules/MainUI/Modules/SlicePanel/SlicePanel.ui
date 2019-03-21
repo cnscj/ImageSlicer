@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CSlicePanle</class>
- <widget class="QWidget" name="CSlicePanle">
+ <class>CSlicePanel</class>
+ <widget class="QWidget" name="CSlicePanel">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -21,7 +21,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QWidget" name="imageWidget" native="true">
+       <widget class="CPictureBox" name="imageWidget" native="true">
         <widget class="QWidget" name="sliceWidget" native="true">
          <property name="geometry">
           <rect>
@@ -62,6 +62,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CPictureBox</class>
+   <extends>QWidget</extends>
+   <header>Component/UI/CPictureBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

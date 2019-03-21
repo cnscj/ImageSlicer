@@ -9,6 +9,13 @@ struct EnumType
         Image,
         Project
     };
+
+    enum class ESlicePanelType
+    {
+        Unknow,
+        Image,
+        Project
+    };
 };
 
 #endif // ENUMTYPE_H

@@ -26,3 +26,9 @@ CSliceEdit::~CSliceEdit()
 {
     delete ui;
 }
+
+void CSliceEdit::showWithParams(GlobalStruct::SSliceEditParams &params)
+{
+    qDebug("窗口参数:%s",params.filePath.toStdString().c_str());
+    QWidget::show();
+}

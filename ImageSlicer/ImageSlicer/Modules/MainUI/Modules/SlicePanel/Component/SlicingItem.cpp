@@ -12,3 +12,5 @@ CSlicingItem::~CSlicingItem()
 {
     delete ui;
 }
+
+

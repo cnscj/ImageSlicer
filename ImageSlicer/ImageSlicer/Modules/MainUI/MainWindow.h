@@ -5,10 +5,14 @@
 #include <QMainWindow>
 #include "Config/EnumType.h"
 #include "Config/GlobalVar.h"
+#include "Config/GlobalStruct.h"
+
 class QDragEnterEvent;
 class QDropEvent;
 class CSlicePanel;
 class CSliceEdit;
+
+struct SSlicePanelParams;
 
 namespace Ui {
 class CMainWindow;
@@ -22,7 +26,7 @@ public:
     explicit CMainWindow(QWidget *parent = nullptr);
     ~CMainWindow();
 public:
-    void addNewSlicePanel(const QString &title);
+    void addNewSlicePanel(const GlobalStruct::SSlicePanelParams &params);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);//拖动进入事件
@@ -34,6 +38,9 @@ private:
 private slots:
     void openSliceEditWnd();
 
+    void closeSlicePanel(int index);
+
+    void openAboutWnd();
 
 private:
     Ui::CMainWindow *ui;

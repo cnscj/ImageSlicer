@@ -3,8 +3,9 @@
 #include <QDropEvent>
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "Modules/SlicePanle/SlicePanle.h"
+#include "Modules/SlicePanel/SlicePanel.h"
 #include "Modules/SliceEdit/SliceEdit.h"
+#include "Modules/AboutWnd/AboutWnd.h"
 
 CMainWindow::CMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -17,7 +18,11 @@ CMainWindow::CMainWindow(QWidget *parent) :
     m_sliceEditWnd = new CSliceEdit();
     m_sliceEditWnd->hide();
 
+    ui->actionEditSlice->setEnabled(false);
+
     connect(ui->actionEditSlice,SIGNAL(triggered()),this,SLOT(openSliceEditWnd()));
+    connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(openAboutWnd()));
+    connect(ui->mainTabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(closeSlicePanel(int)));
 }
 
 CMainWindow::~CMainWindow()
@@ -26,12 +31,19 @@ CMainWindow::~CMainWindow()
 }
 
 
-void CMainWindow::addNewSlicePanel(const QString &title)
+void CMainWindow::addNewSlicePanel(const GlobalStruct::SSlicePanelParams &params)
 {
     auto tabWidget = ui->mainTabWidget;
-    auto widget = new CSlicePanle(tabWidget);
+    auto widget = new CSlicePanel(tabWidget);
 
-    tabWidget->insertTab(0,widget,title);
+    bool ret = widget->loadImageFromFile(params.filePath);
+    if (ret)
+    {
+        ui->actionEditSlice->setEnabled(true);
+    }
+    int index = tabWidget->insertTab(tabWidget->count(),widget,params.title);
+    tabWidget->setCurrentIndex(index);
+
 }
 
 void CMainWindow::dragEnterEvent(QDragEnterEvent* event)
@@ -52,14 +64,18 @@ void CMainWindow::dropEvent(QDropEvent* event)
 {
     //窗口部件放下一个对象时,调用该函数
     const QMimeData *qm=event->mimeData();//获取MIMEData
-    QImage image(qm->urls()[0].toLocalFile());
-    qDebug("文件拽入:%s",qm->urls()[0].toLocalFile().toStdString().c_str());
+    QString filePath = qm->urls()[0].toLocalFile();
+    qDebug("文件拽入:%s",filePath.toStdString().c_str());
 
     EnumType::EDropFileType fileType = getFileType(qm->urls()[0].toLocalFile());
     if (fileType == EnumType::EDropFileType::Image)
     {
-        //TODO:新建一个新的窗口
-        addNewSlicePanel(GlobalVar::MAIN_WND_ADD_NEW_TB_DEFAULT_TITLE);
+        GlobalStruct::SSlicePanelParams params;
+        params.title = GlobalVar::MAIN_WND_ADD_NEW_TB_DEFAULT_TITLE;
+        params.filePath = filePath;
+        params.panelType = EnumType::ESlicePanelType::Image;
+
+        addNewSlicePanel(params);
     }
     else if (fileType == EnumType::EDropFileType::Project)
     {
@@ -84,5 +100,28 @@ EnumType::EDropFileType CMainWindow::getFileType(const QString &filePath)
 
 void CMainWindow::openSliceEditWnd()
 {
-    m_sliceEditWnd->show();
+    GlobalStruct::SSliceEditParams params;
+    auto slicePanel = (CSlicePanel *)ui->mainTabWidget->currentWidget();
+    //填充结构体
+    params.filePath = slicePanel->getCurImgPath();
+    m_sliceEditWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
+    m_sliceEditWnd->showWithParams(params);
+}
+
+
+void CMainWindow::closeSlicePanel(int index)
+{
+    ui->mainTabWidget->removeTab(index);
+    if (ui->mainTabWidget->count() <= 0)
+    {
+        ui->actionEditSlice->setEnabled(false);
+    }
+}
+
+void CMainWindow::openAboutWnd()
+{
+    //打开模态窗口
+    CAboutWnd aboutWnd;
+    aboutWnd.setModal(true);
+    aboutWnd.exec();
 }

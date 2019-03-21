@@ -2,6 +2,7 @@
 #define SLICEEDIT_H
 
 #include <QWidget>
+#include "Config/GlobalStruct.h"
 
 namespace Ui {
 class CSliceEdit;
@@ -14,6 +15,8 @@ class CSliceEdit : public QWidget
 public:
     explicit CSliceEdit(QWidget *parent = 0);
     ~CSliceEdit();
+public:
+    void showWithParams(GlobalStruct::SSliceEditParams &params);
 
 private:
     Ui::CSliceEdit *ui;
