@@ -21,16 +21,24 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="CPictureBox" name="imageWidget" native="true">
-        <widget class="QWidget" name="sliceWidget" native="true">
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>523</width>
-           <height>550</height>
+           <width>500</width>
+           <height>538</height>
           </rect>
          </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="CPictureBox" name="imageWidget" native="true"/>
+          </item>
+         </layout>
         </widget>
        </widget>
       </item>
@@ -55,6 +63,11 @@
         <property name="title">
          <string>切片属性</string>
         </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
+          <widget class="QtTreePropertyBrowser" name="propsWidget" native="true"/>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -67,6 +80,12 @@
    <class>CPictureBox</class>
    <extends>QWidget</extends>
    <header>Component/UI/CPictureBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtTreePropertyBrowser</class>
+   <extends>QWidget</extends>
+   <header location="global">QtTreePropertyBrowser.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

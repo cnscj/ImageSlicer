@@ -1,4 +1,4 @@
-#include "ImageSlicer.h"
+#include "Modules/MainUI/MainWindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

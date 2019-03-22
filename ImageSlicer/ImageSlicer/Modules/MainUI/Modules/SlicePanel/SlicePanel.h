@@ -2,6 +2,7 @@
 #define SLICEPANLE_H
 
 #include <QWidget>
+#include "Component/UI/CPictureBox.h"
 
 namespace Ui {
 class CSlicePanel;
@@ -16,6 +17,9 @@ public:
     ~CSlicePanel();
 public:
     const QString &getCurImgPath();
+
+    void setPicBoxMode(CPictureBox::EZoomMode);
+
 public slots:
     bool loadImageFromFile(const QString &filePath);
 

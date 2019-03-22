@@ -3,6 +3,7 @@
 #include <QDropEvent>
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "ImageSlicer.h"
 #include "Modules/SlicePanel/SlicePanel.h"
 #include "Modules/SliceEdit/SliceEdit.h"
 #include "Modules/AboutWnd/AboutWnd.h"
@@ -35,6 +36,7 @@ void CMainWindow::addNewSlicePanel(const GlobalStruct::SSlicePanelParams &params
 {
     auto tabWidget = ui->mainTabWidget;
     auto widget = new CSlicePanel(tabWidget);
+    widget->setPicBoxMode(CPictureBox::EZoomMode::FixSizeCentred);//居中显示
 
     bool ret = widget->loadImageFromFile(params.filePath);
     if (ret)
@@ -85,17 +87,15 @@ void CMainWindow::dropEvent(QDropEvent* event)
 
 bool CMainWindow::isCanDragEnterFile(const QString &filePath)
 {
-   return (
-            !filePath.right(3).compare("jpg",Qt::CaseInsensitive)
-            || !filePath.right(3).compare("png",Qt::CaseInsensitive)
-            || !filePath.right(3).compare("bmp",Qt::CaseInsensitive)
-            || !filePath.right(4).compare("jpeg",Qt::CaseInsensitive)
-          );
+  return FileUtil::isImageFile(filePath);
 
 }
 EnumType::EDropFileType CMainWindow::getFileType(const QString &filePath)
 {
-    return EnumType::EDropFileType::Image;
+    if (FileUtil::isImageFile(filePath))
+    {
+        return EnumType::EDropFileType::Image;
+    }
 }
 
 void CMainWindow::openSliceEditWnd()

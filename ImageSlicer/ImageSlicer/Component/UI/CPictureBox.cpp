@@ -10,7 +10,7 @@ CPictureBox::CPictureBox(QWidget *parent) : QWidget(parent)
     m_pixmap = QPixmap(IMAGE_SIZE);
     m_pixmap.fill();
     m_scale = 1.0;
-    m_mode = FIXED_SIZE;
+    m_mode = FixedSize;
     m_brush = QBrush(Qt::white);
 }
 
@@ -20,10 +20,10 @@ void CPictureBox::setBackground(QBrush brush)
     update();
 }
 
-void CPictureBox::setMode(PB_MODE mode)
+void CPictureBox::setMode(EZoomMode mode)
 {
     m_mode = mode;
-    if(m_mode == AUTO_SIZE)
+    if(m_mode == AutoSize)
     {
         setFixedSize(m_pixmap.size() * m_scale);
     }
@@ -43,7 +43,7 @@ bool CPictureBox::setImage(QImage &image, double scale)
     }
     m_pixmap = QPixmap::fromImage(image);
     m_scale = qBound(0.01, scale, 100.0);
-    if(m_mode == AUTO_SIZE)
+    if(m_mode == AutoSize)
     {
         setFixedSize(m_pixmap.size() * m_scale);
     }
@@ -64,12 +64,12 @@ void CPictureBox::paintEvent(QPaintEvent * event)
     int offset_x, offset_y;
     switch (m_mode)
     {
-    case FIXED_SIZE:
-    case AUTO_SIZE:
+    case FixedSize:
+    case AutoSize:
         painter.scale(m_scale, m_scale);
         painter.drawPixmap(0, 0, m_pixmap);
         break;
-    case FIX_SIZE_CENTRED:
+    case FixSizeCentred:
         window_width = width();
         window_height = height();
         image_width = m_pixmap.width();
@@ -80,7 +80,7 @@ void CPictureBox::paintEvent(QPaintEvent * event)
         painter.scale(m_scale, m_scale);
         painter.drawPixmap(0, 0, m_pixmap);
         break;
-    case AUTO_ZOOM:
+    case AutoZoom:
         window_width = width();
         window_height = height();
         image_width = m_pixmap.width();

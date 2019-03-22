@@ -31,3 +31,8 @@ const QString &CSlicePanel::getCurImgPath()
 {
     return m_imageFilePath;
 }
+
+void CSlicePanel::setPicBoxMode(CPictureBox::EZoomMode mode)
+{
+    ui->imageWidget->setMode(mode);
+}

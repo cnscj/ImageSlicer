@@ -32,17 +32,17 @@ SOURCES += \
     Component/UI/CImageWidget.cpp \
     Modules/SliceEdit/SliceEdit.cpp \
     Config/GlobalVar.cpp \
-    ConfigReader/Language.cpp \
     Config/EnumType.cpp \
     Config/GlobalStruct.cpp \
     Modules/MainUI/Modules/SlicePanel/SlicePanel.cpp \
     Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.cpp \
-    Modules/AboutWnd/AboutWnd.cpp
+    Modules/AboutWnd/AboutWnd.cpp \
+    Utils/FileUtil.cpp \
+    Services/Dispatcher.cpp
 
 HEADERS += \
     ImageSlicer.h \
     Modules/MainUI/MainWindow.h \
-    Modules/ModulesInit.h \
     Config/EventType.h \
     Utils/UtilsInit.h \
     Utils/UIDUtil.h \
@@ -50,12 +50,15 @@ HEADERS += \
     Component/UI/CImageWidget.h \
     Modules/SliceEdit/SliceEdit.h \
     Config/GlobalVar.h \
-    ConfigReader/Language.h \
     Config/EnumType.h \
     Config/GlobalStruct.h \
     Modules/MainUI/Modules/SlicePanel/SlicePanel.h \
     Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.h \
-    Modules/AboutWnd/AboutWnd.h
+    Modules/AboutWnd/AboutWnd.h \
+    Utils/FileUtil.h \
+    Config/ConfigInit.h \
+    Services/Dispatcher.h \
+    Services/ServicesInit.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \
@@ -64,3 +67,5 @@ FORMS += \
     Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.ui \
     Modules/AboutWnd/AboutWnd.ui
 
+
+include("../qtpropertybrowser/src/qtpropertybrowser.pri")
