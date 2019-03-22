@@ -11,7 +11,7 @@ public:
     bool enable;
 
 public:
-    bool operator < (const CSliceGridData &data);
+    bool operator <(const CSliceGridData &);
 
 public:
     CSliceGridData();

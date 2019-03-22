@@ -1,2 +1,5 @@
 /ImageSlicer/build-ImageSlicer-Desktop_Qt_5_12_1_MSVC2017_32bit-Debug
 /ImageSlicer/ImageSlicer/ImageSlicer.pro.user
+/ImageSlicer/build-qtpropertybrowser-Desktop_Qt_5_12_1_MSVC2017_32bit-Debug
+/ImageSlicer/qtpropertybrowser/lib
+/ImageSlicer/qtpropertybrowser/qtpropertybrowser.pro.user
