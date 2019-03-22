@@ -6,6 +6,8 @@ CAboutWnd::CAboutWnd(QWidget *parent) :
     ui(new Ui::CAboutWnd)
 {
     ui->setupUi(this);
+
+    this->setFixedSize(this->width (),this->height ());
 }
 
 CAboutWnd::~CAboutWnd()

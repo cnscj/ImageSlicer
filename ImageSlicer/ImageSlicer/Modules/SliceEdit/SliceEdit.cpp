@@ -8,6 +8,7 @@ CSliceEdit::CSliceEdit(QWidget *parent) :
     ui->setupUi(this);
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowMaximizeButtonHint);
+    this->setFixedSize(this->width (),this->height ());
 
     connect(ui->col_grid_rb,SIGNAL(toggled(bool)),ui->col_grid_le,SLOT(setEnabled(bool)));
     connect(ui->col_pixel_rb,SIGNAL(toggled(bool)),ui->col_pixel_le,SLOT(setEnabled(bool)));

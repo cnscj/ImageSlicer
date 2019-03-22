@@ -12,6 +12,9 @@ class QDropEvent;
 class CSlicePanel;
 class CSliceEdit;
 
+class CExportWnd;
+class CImportWnd;
+
 struct SSlicePanelParams;
 
 namespace Ui {
@@ -36,16 +39,19 @@ private:
     EnumType::EDropFileType getFileType(const QString &filePath);
 
 private slots:
-    void openSliceEditWnd();
 
     void closeSlicePanel(int index);
-
+    void openSliceEditWnd();
+    void openExportWnd();
+    void openImportWnd();
     void openAboutWnd();
 
 private:
     Ui::CMainWindow *ui;
 
     CSliceEdit *m_sliceEditWnd;
+    CExportWnd *m_exportWnd;
+    CImportWnd *m_importWnd;
 };
 
 #endif // CMAINWINDOW_H

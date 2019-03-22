@@ -34,11 +34,14 @@ SOURCES += \
     Config/GlobalVar.cpp \
     Config/EnumType.cpp \
     Config/GlobalStruct.cpp \
-    Modules/MainUI/Modules/SlicePanel/SlicePanel.cpp \
-    Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.cpp \
     Modules/AboutWnd/AboutWnd.cpp \
     Utils/FileUtil.cpp \
-    Services/Dispatcher.cpp
+    Services/Dispatcher.cpp \
+    Modules/Export/ExportWnd.cpp \
+    Modules/Import/ImportWnd.cpp \
+    Modules/SlicePanel/SlicePanel.cpp \
+    Modules/SlicePanel/Models/CSliceGridData.cpp \
+    Modules/SlicePanel/Models/CSlicePanelData.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -52,20 +55,24 @@ HEADERS += \
     Config/GlobalVar.h \
     Config/EnumType.h \
     Config/GlobalStruct.h \
-    Modules/MainUI/Modules/SlicePanel/SlicePanel.h \
-    Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.h \
     Modules/AboutWnd/AboutWnd.h \
     Utils/FileUtil.h \
     Config/ConfigInit.h \
     Services/Dispatcher.h \
-    Services/ServicesInit.h
+    Services/ServicesInit.h \
+    Modules/Export/ExportWnd.h \
+    Modules/Import/ImportWnd.h \
+    Modules/SlicePanel/SlicePanel.h \
+    Modules/SlicePanel/Models/CSliceGridData.h \
+    Modules/SlicePanel/Models/CSlicePanelData.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \
     Modules/SliceEdit/SliceEdit.ui \
-    Modules/MainUI/Modules/SlicePanel/SlicePanel.ui \
-    Modules/MainUI/Modules/SlicePanel/Component/SlicingItem.ui \
-    Modules/AboutWnd/AboutWnd.ui
+    Modules/AboutWnd/AboutWnd.ui \
+    Modules/Export/ExportWnd.ui \
+    Modules/Import/ImportWnd.ui \
+    Modules/SlicePanel/SlicePanel.ui
 
 
 include("../qtpropertybrowser/src/qtpropertybrowser.pri")

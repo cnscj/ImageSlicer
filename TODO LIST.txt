@@ -1,0 +1,3 @@
+TODO LIST:
+1:[]图片区域的滚动条没有出现
+2:[]数据全部写在Models中,用QDataStream来实现序列化

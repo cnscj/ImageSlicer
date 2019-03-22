@@ -6,6 +6,8 @@
 #include "ImageSlicer.h"
 #include "Modules/SlicePanel/SlicePanel.h"
 #include "Modules/SliceEdit/SliceEdit.h"
+#include "Modules/Export/ExportWnd.h"
+#include "Modules/Import/ImportWnd.h"
 #include "Modules/AboutWnd/AboutWnd.h"
 
 CMainWindow::CMainWindow(QWidget *parent) :
@@ -14,14 +16,22 @@ CMainWindow::CMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setAcceptDrops(true);//设置窗口启用拖动
-
     m_sliceEditWnd = new CSliceEdit();
-    m_sliceEditWnd->hide();
+    m_sliceEditWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
 
+    m_exportWnd = new CExportWnd();
+    m_exportWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
+
+    m_importWnd = new CImportWnd();
+    m_importWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
+
+    ///////
+    this->setAcceptDrops(true);//设置窗口启用拖动
     ui->actionEditSlice->setEnabled(false);
 
     connect(ui->actionEditSlice,SIGNAL(triggered()),this,SLOT(openSliceEditWnd()));
+    connect(ui->actionExport,SIGNAL(triggered()),this,SLOT(openExportWnd()));
+    connect(ui->actionImport,SIGNAL(triggered()),this,SLOT(openImportWnd()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(openAboutWnd()));
     connect(ui->mainTabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(closeSlicePanel(int)));
 }
@@ -104,7 +114,6 @@ void CMainWindow::openSliceEditWnd()
     auto slicePanel = (CSlicePanel *)ui->mainTabWidget->currentWidget();
     //填充结构体
     params.filePath = slicePanel->getCurImgPath();
-    m_sliceEditWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
     m_sliceEditWnd->showWithParams(params);
 }
 
@@ -117,6 +126,19 @@ void CMainWindow::closeSlicePanel(int index)
         ui->actionEditSlice->setEnabled(false);
     }
 }
+
+void CMainWindow::openExportWnd()
+{
+
+    m_exportWnd->show();
+
+}
+
+void CMainWindow::openImportWnd()
+{
+    m_importWnd->show();
+}
+
 
 void CMainWindow::openAboutWnd()
 {
