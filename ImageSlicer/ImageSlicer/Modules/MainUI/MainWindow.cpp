@@ -10,6 +10,8 @@
 #include "Modules/Import/ImportWnd.h"
 #include "Modules/AboutWnd/AboutWnd.h"
 
+#include "Modules/SlicePanel/Models/CSliceGridData.h"
+
 CMainWindow::CMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CMainWindow)
