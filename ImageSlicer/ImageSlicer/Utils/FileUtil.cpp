@@ -1,5 +1,6 @@
 #include "FileUtil.h"
 #include <QString>
+#include <QFileInfo>
 
 bool FileUtil::isImageFile(const QString &filePath)
 {
@@ -10,3 +11,4 @@ bool FileUtil::isImageFile(const QString &filePath)
              || !filePath.right(4).compare("jpeg",Qt::CaseInsensitive)
            );
 }
+

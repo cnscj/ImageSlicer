@@ -23,13 +23,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
+# 版本信息资源文件
+RC_FILE += ./version.rc
+
+# 源文件
 SOURCES += \
         main.cpp \
     Modules/MainUI/MainWindow.cpp \
     Utils/UIDUtil.cpp \
     Config/EventType.cpp \
     Component/UI/CPictureBox.cpp \
-    Component/UI/CImageWidget.cpp \
     Modules/SliceEdit/SliceEdit.cpp \
     Config/GlobalVar.cpp \
     Config/EnumType.cpp \
@@ -41,7 +44,9 @@ SOURCES += \
     Modules/Import/ImportWnd.cpp \
     Modules/SlicePanel/SlicePanel.cpp \
     Modules/SlicePanel/Models/CSliceGridData.cpp \
-    Modules/SlicePanel/Models/CSlicePanelData.cpp
+    Modules/SlicePanel/Models/CSlicePanelData.cpp \
+    Component/UI/CGridArea.cpp \
+    Utils/StringUtil.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -50,7 +55,6 @@ HEADERS += \
     Utils/UtilsInit.h \
     Utils/UIDUtil.h \
     Component/UI/CPictureBox.h \
-    Component/UI/CImageWidget.h \
     Modules/SliceEdit/SliceEdit.h \
     Config/GlobalVar.h \
     Config/EnumType.h \
@@ -64,7 +68,9 @@ HEADERS += \
     Modules/Import/ImportWnd.h \
     Modules/SlicePanel/SlicePanel.h \
     Modules/SlicePanel/Models/CSliceGridData.h \
-    Modules/SlicePanel/Models/CSlicePanelData.h
+    Modules/SlicePanel/Models/CSlicePanelData.h \
+    Component/UI/CGridArea.h \
+    Utils/StringUtil.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \
@@ -74,5 +80,5 @@ FORMS += \
     Modules/Import/ImportWnd.ui \
     Modules/SlicePanel/SlicePanel.ui
 
-
+# 第三方工程
 include("../qtpropertybrowser/src/qtpropertybrowser.pri")

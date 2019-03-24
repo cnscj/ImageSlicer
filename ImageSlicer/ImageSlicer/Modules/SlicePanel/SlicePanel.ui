@@ -30,13 +30,37 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>500</width>
-           <height>538</height>
+           <width>521</width>
+           <height>548</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
-           <widget class="CPictureBox" name="imageWidget" native="true"/>
+           <widget class="CPictureBox" name="imageWidget" native="true">
+            <layout class="QGridLayout" name="gridLayout_7">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetDefaultConstraint</enum>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="CGridArea" name="gridArea" native="true"/>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -47,6 +71,18 @@
    </item>
    <item row="0" column="1">
     <widget class="QGroupBox" name="groupBox_2">
+     <property name="minimumSize">
+      <size>
+       <width>233</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>333</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="title">
       <string>属性</string>
      </property>
@@ -56,6 +92,15 @@
         <property name="title">
          <string>图片属性</string>
         </property>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="QListWidget" name="imageAttrList">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item row="1" column="0">
@@ -86,6 +131,12 @@
    <class>QtTreePropertyBrowser</class>
    <extends>QWidget</extends>
    <header location="global">QtTreePropertyBrowser.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CGridArea</class>
+   <extends>QWidget</extends>
+   <header>Component/UI/CGridArea.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

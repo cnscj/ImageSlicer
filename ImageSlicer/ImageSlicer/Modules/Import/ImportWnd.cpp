@@ -15,3 +15,8 @@ CImportWnd::~CImportWnd()
 {
     delete ui;
 }
+
+void CImportWnd::showWithParams()
+{
+    QWidget::show();
+}

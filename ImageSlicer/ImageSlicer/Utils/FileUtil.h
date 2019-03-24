@@ -8,6 +8,7 @@ class FileUtil
 
 public:
     static bool isImageFile(const QString &filePath);
+
 private:
     FileUtil();
 };

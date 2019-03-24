@@ -15,6 +15,9 @@ public:
     explicit CImportWnd(QWidget *parent = 0);
     ~CImportWnd();
 
+public:
+    void showWithParams();
+
 private:
     Ui::CImportWnd *ui;
 };

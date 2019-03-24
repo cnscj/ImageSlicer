@@ -15,3 +15,8 @@ CExportWnd::~CExportWnd()
 {
     delete ui;
 }
+
+void CExportWnd::showWithParams()
+{
+    QWidget::show();
+}

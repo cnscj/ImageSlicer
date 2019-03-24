@@ -3,5 +3,6 @@
 
 #include "UIDUtil.h"
 #include "FileUtil.h"
+#include "StringUtil.h"
 
 #endif // UTILSINIT_H

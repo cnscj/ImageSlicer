@@ -14,7 +14,8 @@ class CExportWnd : public QWidget
 public:
     explicit CExportWnd(QWidget *parent = 0);
     ~CExportWnd();
-
+public:
+    void showWithParams();
 private:
     Ui::CExportWnd *ui;
 };

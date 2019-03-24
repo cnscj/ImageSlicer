@@ -6,6 +6,7 @@ struct EnumType
     //拖拽文件的类型
     enum class EDropFileType
     {
+        Unknow,
         Image,
         Project
     };

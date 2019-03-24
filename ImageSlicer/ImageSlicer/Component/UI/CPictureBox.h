@@ -10,16 +10,28 @@ class CPictureBox : public QWidget
 {
     Q_OBJECT
 public:
-    enum EZoomMode {FixedSize, FixSizeCentred, AutoZoom, AutoSize};
+    enum EZoomMode {FixedSize, AutoZoom, AutoSize};
+
     explicit CPictureBox(QWidget *parent = nullptr);
+    ~CPictureBox();
 public:
     void setMode(EZoomMode mode);
-    ~CPictureBox();
+    const EZoomMode &getMode() const;
+
+    void setScale(double scale);
+    double getScale() const;
+
+    void setAnchorPoint(const QPointF &pt);
+    const QPointF &getAnchorPoint() const;
+
+
 private:
     QPixmap m_pixmap;
     double m_scale;
-    EZoomMode m_mode;
     QBrush m_brush;
+
+    EZoomMode m_mode;
+    QPointF m_anchorPoint;
 protected:
     void paintEvent(QPaintEvent * event);
 

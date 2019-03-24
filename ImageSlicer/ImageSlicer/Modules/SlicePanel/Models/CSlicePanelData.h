@@ -3,7 +3,7 @@
 #include <QLinkedList>
 #include "CSliceGridData.h"
 
-uint qHash(const CSliceGridData *&pData, uint seed = 0)
+uint qHash(const CSliceGridData *&pData)
 {
     return pData->getUID();
 }
