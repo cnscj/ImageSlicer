@@ -19,6 +19,8 @@ class CSlicePanel : public QWidget
 public:
     explicit CSlicePanel(QWidget *parent = nullptr);
     ~CSlicePanel();
+protected:
+    enum class EActionMode{WantScale,MultipleSelect,RegionSelect};
 public:
     const QString &getCurImgPath();
 
@@ -35,7 +37,7 @@ private:
     Ui::CSlicePanel *ui;
 
     QString m_imageFilePath;
-    QMap<QString,bool>  m_flagsMap;
+    QMap<EActionMode,bool>  m_flagsMap;
 };
 
 #endif // SLICEPANLE_H

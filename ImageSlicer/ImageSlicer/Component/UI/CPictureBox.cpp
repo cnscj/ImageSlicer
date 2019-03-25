@@ -39,6 +39,7 @@ const CPictureBox::EZoomMode &CPictureBox::getMode() const
 void CPictureBox::setScale(double scale)
 {
     m_scale = scale;
+    update();
 }
 double CPictureBox::getScale() const
 {
@@ -48,6 +49,7 @@ double CPictureBox::getScale() const
 void CPictureBox::setAnchorPoint(const QPointF &pt)
 {
     m_anchorPoint = pt;
+    update();
 }
 const QPointF &CPictureBox::getAnchorPoint() const
 {
@@ -104,6 +106,7 @@ void CPictureBox::paintEvent(QPaintEvent * event)
         painter.drawPixmap(0, 0, m_pixmap);
         break;
     case AutoSize:
+        this->setFixedSize(m_pixmap.size() * m_scale);
         painter.scale(m_scale, m_scale);
         painter.drawPixmap(0, 0, m_pixmap);
         break;

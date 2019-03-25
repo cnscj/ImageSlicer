@@ -46,7 +46,8 @@ SOURCES += \
     Modules/SlicePanel/Models/CSliceGridData.cpp \
     Modules/SlicePanel/Models/CSlicePanelData.cpp \
     Component/UI/CGridArea.cpp \
-    Utils/StringUtil.cpp
+    Utils/StringUtil.cpp \
+    Modules/SlicePanel/Component/CScrollArea.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -70,7 +71,8 @@ HEADERS += \
     Modules/SlicePanel/Models/CSliceGridData.h \
     Modules/SlicePanel/Models/CSlicePanelData.h \
     Component/UI/CGridArea.h \
-    Utils/StringUtil.h
+    Utils/StringUtil.h \
+    Modules/SlicePanel/Component/CScrollArea.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \

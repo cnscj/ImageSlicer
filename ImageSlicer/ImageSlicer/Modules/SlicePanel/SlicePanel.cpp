@@ -3,6 +3,10 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 
+static const double MAX_SCALE_VALUE = 15.0;  //最大缩放值
+static const double MIN_SCALE_VALUE = 0.05;  //最小缩放值
+static const double STEP_SCALE_VALUE = 1.15; //每次缩放值
+
 CSlicePanel::CSlicePanel(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CSlicePanel)
@@ -46,42 +50,46 @@ void CSlicePanel::keyPressEvent(QKeyEvent *e)
     //是否按住Alt键或Option键
     if (e->key() == Qt::Key_Option || e->key() == Qt::Key_Alt)
     {
-       m_flagsMap["isWantToScale"] = true;
+       m_flagsMap[EActionMode::WantScale] = true;
+       ui->scrollArea->setWheelScrollEnable(false);
     }
 }
 void CSlicePanel::keyReleaseEvent(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Option || e->key() == Qt::Key_Alt)
     {
-       m_flagsMap["isWantToScale"] = false;
+       m_flagsMap[EActionMode::WantScale] = false;
+       ui->scrollArea->setWheelScrollEnable(true);
     }
 }
 
 void CSlicePanel::wheelEvent(QWheelEvent *e)
 {
     //如果按住了择标记为可缩放
-    if ( m_flagsMap["isWantToScale"] )
+    if ( m_flagsMap[EActionMode::WantScale] )
     {
         int numDegress = e->delta();
         double finalScale = ui->imageWidget->getScale();
         if (numDegress > 0)
         {
-            finalScale = ((finalScale >= 15.0) ? (15.0) : (finalScale * 1.15));
+            finalScale = ((finalScale >= MAX_SCALE_VALUE) ? (MAX_SCALE_VALUE) : (finalScale * STEP_SCALE_VALUE));
         }
         else
         {
-           finalScale = ((finalScale <= 0.05) ? (0.05) : (finalScale / 1.15));
+           finalScale = ((finalScale <= MIN_SCALE_VALUE) ? (MIN_SCALE_VALUE) : (finalScale / STEP_SCALE_VALUE));
         }
         qDebug("%f",finalScale);
         ui->imageWidget->setScale(finalScale);
-
-        //TODO:沒有及时重绘,锚点位置不对图片并没有居中,窗体大小也没有及时改变
-
+        ui->gridArea->setScale(finalScale);
     }
 }
 
 void CSlicePanel::mousePressEvent(QMouseEvent *e)
 {
     Q_UNUSED(e);
-    ui->imageWidget->setScale(1.0);
+    if (e->buttons() & Qt::MiddleButton)
+    {
+        ui->imageWidget->setScale(1.0);
+        ui->gridArea->setScale(1.0);
+    }
 }

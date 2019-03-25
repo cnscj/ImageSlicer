@@ -1,6 +1,8 @@
 #include "SliceEdit.h"
 #include "ui_SliceEdit.h"
 
+//TODO:最大切片数,像素不应该超过图片尺寸
+
 CSliceEdit::CSliceEdit(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CSliceEdit)
