@@ -31,9 +31,7 @@ bool CSlicePanel::loadImageFromFile(const QString &filePath)
         ui->imageWidget->setImage(temImg);
         m_imageFilePath = filePath;
 
-        ui->gridArea->sliceGrids(3,3);
-
-
+        ui->gridArea->sliceGrids(6,6);
     }
 
     return ret;

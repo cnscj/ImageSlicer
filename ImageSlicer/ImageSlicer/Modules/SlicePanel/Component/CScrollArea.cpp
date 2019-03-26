@@ -19,7 +19,7 @@ bool CScrollArea::isWheelScrollEnabled()
     return m_isWheelEnable;
 }
 
-void CScrollArea::wheelEvent(QWheelEvent * e)
+void CScrollArea::wheelEvent(QWheelEvent *e)
 {
     if (m_isWheelEnable)
     {
