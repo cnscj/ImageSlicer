@@ -3,9 +3,9 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 
-static const double MAX_SCALE_VALUE = 15.0;  //最大缩放值
-static const double MIN_SCALE_VALUE = 0.05;  //最小缩放值
-static const double STEP_SCALE_VALUE = 1.15; //每次缩放值
+static const double MAX_SCALE_VALUE = 16.0;  //最大缩放值
+static const double MIN_SCALE_VALUE = 0.125;  //最小缩放值
+static const double STEP_SCALE_VALUE = 1.125; //每次缩放值
 
 CSlicePanel::CSlicePanel(QWidget *parent) :
     QWidget(parent),
@@ -30,6 +30,10 @@ bool CSlicePanel::loadImageFromFile(const QString &filePath)
     {
         ui->imageWidget->setImage(temImg);
         m_imageFilePath = filePath;
+
+        ui->gridArea->sliceGrids(3,3);
+
+
     }
 
     return ret;
@@ -78,9 +82,7 @@ void CSlicePanel::wheelEvent(QWheelEvent *e)
         {
            finalScale = ((finalScale <= MIN_SCALE_VALUE) ? (MIN_SCALE_VALUE) : (finalScale / STEP_SCALE_VALUE));
         }
-        qDebug("%f",finalScale);
         ui->imageWidget->setScale(finalScale);
-        ui->gridArea->setScale(finalScale);
     }
 }
 
@@ -90,6 +92,5 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
     if (e->buttons() & Qt::MiddleButton)
     {
         ui->imageWidget->setScale(1.0);
-        ui->gridArea->setScale(1.0);
     }
 }
