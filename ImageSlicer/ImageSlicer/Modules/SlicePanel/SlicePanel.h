@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QMap>
 #include "Component/UI/CPictureBox.h"
+#include "Modules/SlicePanel/Component/ImgAttrListItem.h"
 
 class QKeyEvent;
 class QWheelEvent;
@@ -17,6 +18,12 @@ class CSlicePanel : public QWidget
 {
     Q_OBJECT
 public:
+    struct SNewTabParams
+    {
+        QString title;
+        QString filePath;
+    };
+public:
     explicit CSlicePanel(QWidget *parent = nullptr);
     ~CSlicePanel();
 protected:
@@ -25,14 +32,23 @@ public:
     const QString &getCurImgPath();
 
     void setPicBoxMode(CPictureBox::EZoomMode);
-
+signals:
+    void imgDataUpdate();
 public slots:
     bool loadImageFromFile(const QString &filePath);
+
+private slots:
+    void updateImgAttrList();
 protected:
     virtual void keyPressEvent(QKeyEvent *e);
     virtual void keyReleaseEvent(QKeyEvent *e);
     virtual void wheelEvent(QWheelEvent * e);           //滚轮事件
     virtual void mousePressEvent(QMouseEvent *e);       //单击
+
+private:
+    void clearAttrList();
+    void setAttrListProvider(const QLinkedList<CImgAttrListItemData> &);
+
 private:
     Ui::CSlicePanel *ui;
 

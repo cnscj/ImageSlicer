@@ -56,6 +56,9 @@ signals:
     void clicked(CGridItem *);
 public slots:
     void changeSize(const QPointF &);
+public:
+
+
 protected:
     void paintEvent(QPaintEvent * e);
     void mousePressEvent(QMouseEvent *e);

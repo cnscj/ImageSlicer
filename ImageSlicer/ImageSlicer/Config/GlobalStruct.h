@@ -7,17 +7,8 @@
 
 struct GlobalStruct
 {
-    struct SSlicePanelParams
-    {
-        QString title;
-        QString filePath;
-        EnumType::ESlicePanelType panelType;
-    };
 
-    struct SSliceEditParams
-    {
-        QString filePath;
-    };
+
 };
 
 #endif // GLOBALSTRUCT_H

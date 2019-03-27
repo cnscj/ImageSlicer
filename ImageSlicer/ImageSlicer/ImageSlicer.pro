@@ -47,7 +47,9 @@ SOURCES += \
     Modules/SlicePanel/Models/CSlicePanelData.cpp \
     Component/UI/CGridArea.cpp \
     Utils/StringUtil.cpp \
-    Modules/SlicePanel/Component/CScrollArea.cpp
+    Modules/SlicePanel/Component/CScrollArea.cpp \
+    Modules/SlicePanel/Component/CSliceItem.cpp \
+    Modules/SlicePanel/Component/ImgAttrListItem.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -72,7 +74,9 @@ HEADERS += \
     Modules/SlicePanel/Models/CSlicePanelData.h \
     Component/UI/CGridArea.h \
     Utils/StringUtil.h \
-    Modules/SlicePanel/Component/CScrollArea.h
+    Modules/SlicePanel/Component/CScrollArea.h \
+    Modules/SlicePanel/Component/CSliceItem.h \
+    Modules/SlicePanel/Component/ImgAttrListItem.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \
@@ -80,7 +84,8 @@ FORMS += \
     Modules/AboutWnd/AboutWnd.ui \
     Modules/Export/ExportWnd.ui \
     Modules/Import/ImportWnd.ui \
-    Modules/SlicePanel/SlicePanel.ui
+    Modules/SlicePanel/SlicePanel.ui \
+    Modules/SlicePanel/Component/ImgAttrListItem.ui
 
 # 第三方工程
 include("../qtpropertybrowser/src/qtpropertybrowser.pri")

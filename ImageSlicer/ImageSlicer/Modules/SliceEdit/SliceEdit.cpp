@@ -22,7 +22,9 @@ CSliceEdit::CSliceEdit(QWidget *parent) :
     connect(ui->row_grid_rb,SIGNAL(toggled(bool)),ui->row_grid_le,SLOT(setFocus()));
     connect(ui->row_pixel_rb,SIGNAL(toggled(bool)),ui->row_pixel_le,SLOT(setFocus()));
 
+    connect(ui->ok_pb,SIGNAL(released()),this,SLOT(sliceHandle()));
     connect(ui->cancel_pb,SIGNAL(released()),this,SLOT(hide()));
+
 }
 
 CSliceEdit::~CSliceEdit()
@@ -30,8 +32,17 @@ CSliceEdit::~CSliceEdit()
     delete ui;
 }
 
-void CSliceEdit::showWithParams(GlobalStruct::SSliceEditParams &params)
+void CSliceEdit::showWithParams(SShowParams &params)
 {
     qDebug("窗口参数:%s",params.filePath.toStdString().c_str());
+    m_showParams = params;
     QWidget::show();
+}
+
+void CSliceEdit::sliceHandle()
+{
+    SSliceCallbackParams params;
+    params.test = "TEST";
+    emit sliceCallback(params);
+    hide();
 }

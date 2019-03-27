@@ -14,6 +14,8 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
     ui->setupUi(this);
 
     ui->imageAttrList->setStyleSheet("background-color:transparent");
+
+    connect(this,SIGNAL(imgDataUpdate()),this,SLOT(updateImgAttrList()));
 }
 
 CSlicePanel::~CSlicePanel()
@@ -32,6 +34,8 @@ bool CSlicePanel::loadImageFromFile(const QString &filePath)
         m_imageFilePath = filePath;
 
         ui->gridArea->sliceGrids(6,6);
+
+        emit imgDataUpdate();
     }
 
     return ret;
@@ -91,4 +95,45 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
     {
         ui->imageWidget->setScale(1.0);
     }
+}
+void CSlicePanel::clearAttrList()
+{
+    int counter = ui->imageAttrList->count();
+    for(int index = 0; index<counter; index++)
+    {
+        QListWidgetItem *item = ui->imageAttrList->takeItem(0);
+        delete item;
+    }
+}
+
+void CSlicePanel::setAttrListProvider(const QLinkedList<CImgAttrListItemData> &data)
+{
+    clearAttrList();
+
+    int i = 0;
+    foreach (auto it, data)
+    {
+        CImgAttrListItem *widget = new CImgAttrListItem();
+        widget->setState(it,i);
+
+        QListWidgetItem *item = new QListWidgetItem(ui->imageAttrList);
+        ui->imageAttrList->addItem(item);
+        item->setSizeHint(QSize(widget->size()));
+        ui->imageAttrList->setItemWidget(item,widget);
+
+        i++;
+    }
+}
+
+void CSlicePanel::updateImgAttrList()
+{
+    //TODO:
+    QLinkedList<CImgAttrListItemData> data;
+    data << CImgAttrListItemData("纹理尺寸",QString("(%1,%2)").arg(0).arg(0),"");
+    data << CImgAttrListItemData("切片尺寸",QString("(%1,%2)").arg(0).arg(0),"");
+    data << CImgAttrListItemData("切片总数",QString("%1").arg(0),"");
+    data << CImgAttrListItemData("缩放尺寸",QString("(%2,%3)").arg(120).arg(120),"");
+    data << CImgAttrListItemData("缩放倍率",QString("%1").arg(1.2),"");
+
+    setAttrListProvider(data);
 }

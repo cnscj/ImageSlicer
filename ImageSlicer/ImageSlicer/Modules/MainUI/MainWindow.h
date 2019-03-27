@@ -3,14 +3,12 @@
 
 
 #include <QMainWindow>
-#include "Config/EnumType.h"
-#include "Config/GlobalVar.h"
-#include "Config/GlobalStruct.h"
+#include "ImageSlicer.h"
+#include "Modules/SliceEdit/SliceEdit.h"
+#include "Modules/SlicePanel/SlicePanel.h"
 
 class QDragEnterEvent;
 class QDropEvent;
-class CSlicePanel;
-class CSliceEdit;
 
 class CExportWnd;
 class CImportWnd;
@@ -29,7 +27,7 @@ public:
     explicit CMainWindow(QWidget *parent = nullptr);
     ~CMainWindow();
 public:
-    void addNewSlicePanel(const GlobalStruct::SSlicePanelParams &params);
+    void addNewSlicePanel(const CSlicePanel::SNewTabParams &params);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);//拖动进入事件
@@ -46,6 +44,7 @@ private slots:
     void openImportWnd();
     void openAboutWnd();
 
+    void sliceEditSliceCallback(const CSliceEdit::SSliceCallbackParams &params);
 private:
     Ui::CMainWindow *ui;
 

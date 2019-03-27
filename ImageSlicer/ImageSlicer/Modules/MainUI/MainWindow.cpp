@@ -34,6 +34,8 @@ CMainWindow::CMainWindow(QWidget *parent) :
     connect(ui->actionImport,SIGNAL(triggered()),this,SLOT(openImportWnd()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(openAboutWnd()));
     connect(ui->mainTabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(closeSlicePanel(int)));
+
+    connect(m_sliceEditWnd,&CSliceEdit::sliceCallback,this,&CMainWindow::sliceEditSliceCallback);
 }
 
 CMainWindow::~CMainWindow()
@@ -42,7 +44,7 @@ CMainWindow::~CMainWindow()
 }
 
 
-void CMainWindow::addNewSlicePanel(const GlobalStruct::SSlicePanelParams &params)
+void CMainWindow::addNewSlicePanel(const CSlicePanel::SNewTabParams &params)
 {
     auto tabWidget = ui->mainTabWidget;
     auto widget = new CSlicePanel(tabWidget);
@@ -83,10 +85,9 @@ void CMainWindow::dropEvent(QDropEvent* event)
     EnumType::EDropFileType fileType = getFileType(qm->urls()[0].toLocalFile());
     if (fileType == EnumType::EDropFileType::Image)
     {
-        GlobalStruct::SSlicePanelParams params;
+        CSlicePanel::SNewTabParams params;
         params.title = fieName;//GlobalVar::MAIN_WND_ADD_NEW_TB_DEFAULT_TITLE;
         params.filePath = filePath;
-        params.panelType = EnumType::ESlicePanelType::Image;
 
         addNewSlicePanel(params);
     }
@@ -112,13 +113,17 @@ EnumType::EDropFileType CMainWindow::getFileType(const QString &filePath)
 
 void CMainWindow::openSliceEditWnd()
 {
-    GlobalStruct::SSliceEditParams params;
+    CSliceEdit::SShowParams params;
     auto slicePanel = (CSlicePanel *)ui->mainTabWidget->currentWidget();
     //填充结构体
     params.filePath = slicePanel->getCurImgPath();
     m_sliceEditWnd->showWithParams(params);
 }
 
+void CMainWindow::sliceEditSliceCallback(const CSliceEdit::SSliceCallbackParams &args)
+{
+    qDebug("%s",args.test.toStdString().c_str());
+}
 
 void CMainWindow::closeSlicePanel(int index)
 {
