@@ -9,51 +9,53 @@ CGridArea::CGridArea(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0)
 
 
 
-void CGridArea::sliceGrids(const QSize &size)
+void CGridArea::sliceGrids(const QSizeF &size)
 {
-    int itemWidth = (size.width() > width() ) ? width() : size.width();
-    int itemHeight =(size.width() > height() ) ? height() : size.height();
+    float itemWidth = (size.width() > width() ) ? width() : size.width();
+    float itemHeight =(size.width() > height() ) ? height() : size.height();
 
-    int row = height() / itemHeight;
-    int col = width() / itemWidth;
-
+    float col = height() / itemHeight;
+    float row = width() / itemWidth;
+    qDebug("切割大小:(%f,%f)",itemWidth,itemHeight);
     sliceGrids(row,col);
 }
 
-void CGridArea::sliceGrids(int row,int col)
+void CGridArea::sliceGrids(float row,float col)
 {
-    clearAllGrids();
+    removeAllGrids();
 
-    row = (row > height()) ? height() : row;
-    col = (col > width()) ? width() : col;
+    row = (row > width()) ? width() : row;
+    col = (col > height()) ? height() : col;
 
-    int itemWidth = width()/col;
-    int itemHeight = height()/row;
+    qDebug("切割数:(%f,%f)",row,col);
 
-    for (int i = 0; i<row; i++)
+    int itemWidth = height()/col;
+    int itemHeight = width()/row;
+
+    for (int i = 0; i<(int)row; i++)
     {
-        for (int j = 0; j<col; j++)
+        for (int j = 0; j<(int)col; j++)
         {
             CGridItem *item = new CGridItem(this);
             CGridItemData data;
-            data.pos = QPoint(itemWidth * j,itemHeight * i);
+            data.pos = QPoint(itemWidth * i,itemHeight * j);
             data.size = QSize(itemWidth,itemHeight);
             item->setData(data);
 
             m_itesList.push_back(item);
-            item->update();
 
             connect(item,SIGNAL(clicked(CGridItem *)),this,SLOT(itemClick(CGridItem *)));
             connect(this,SIGNAL(sizeChanged(const QPointF &)),item,SLOT(changeSize(const QPointF &)));
         }
     }
+    update();
 }
 void CGridArea::mergeGrids()
 {
 
 }
 
-void CGridArea::clearAllGrids()
+void CGridArea::removeAllGrids()
 {
     for(auto it : m_itesList)
     {
@@ -61,6 +63,7 @@ void CGridArea::clearAllGrids()
         disconnect(this,SIGNAL(sizeChanged(const QPointF &)),it,SLOT(changeSize(const QPointF &)));
         it->deleteLater();
     }
+    m_itesList.clear();
 }
 const QLinkedList<CGridItem *> &CGridArea::getGirds() const
 {
@@ -107,6 +110,7 @@ void CGridItem::setData(const CGridItemData &data)
 {
     m_data = data;
     this->setGeometry(QRect(data.pos,data.size));
+    this->update();
 }
 const CGridItemData &CGridItem::getData() const
 {
@@ -118,8 +122,8 @@ void CGridItem::paintEvent(QPaintEvent *e)
     Q_UNUSED(e);
     QPainter painter(this);
     painter.setPen(QPen(Qt::blue,1,Qt::DashLine));//设置画笔形式
-    painter.setBrush(QBrush(QColor(0,0,0,0)));//设置画刷形式
-//    painter.setBrush(QBrush(Qt::red,Qt::SolidPattern));//设置画刷形式
+//    painter.setBrush(QBrush(QColor(0,0,0,0)));//设置画刷形式
+    painter.setBrush(QBrush(Qt::red,Qt::SolidPattern));//设置画刷形式
 
     QRect rt(QRect(0,0,this->width(),this->height()));
     painter.drawRect(rt);

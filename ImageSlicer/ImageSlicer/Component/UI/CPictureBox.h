@@ -24,6 +24,7 @@ public:
     void setAnchorPoint(const QPointF &pt);
     const QPointF &getAnchorPoint() const;
 
+    const QSize &getPixmapSize() const;
 private:
     QPixmap m_pixmap;
     double m_scale;

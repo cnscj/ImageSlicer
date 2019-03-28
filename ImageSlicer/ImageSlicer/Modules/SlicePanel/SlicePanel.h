@@ -29,14 +29,15 @@ public:
 protected:
     enum class EActionMode{WantScale,MultipleSelect,RegionSelect};
 public:
-    const QString &getCurImgPath();
+    const QString &getCurImgPath() const;
+    const QSize &getCurImageSize() const;
 
     void setPicBoxMode(CPictureBox::EZoomMode);
 signals:
-    void imgDataUpdate();
+    void imageDataUpdate();
 public slots:
     bool loadImageFromFile(const QString &filePath);
-
+    void sliceImageBySize(const QSizeF &size);
 private slots:
     void updateImgAttrList();
 protected:

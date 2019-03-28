@@ -10,6 +10,9 @@
 #include "Modules/Import/ImportWnd.h"
 #include "Modules/AboutWnd/AboutWnd.h"
 
+static const QString MAIN_WND_ADD_NEW_TB_DEFAULT_TITLE = "_Temp";
+
+
 CMainWindow::CMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CMainWindow)
@@ -80,13 +83,13 @@ void CMainWindow::dropEvent(QDropEvent* event)
     const QMimeData *qm=event->mimeData();//获取MIMEData
     QString filePath = qm->urls()[0].toLocalFile();
     qDebug("文件拽入:%s",filePath.toStdString().c_str());
-    QString fieName = StringUtil::getFileName(filePath);
+    QString fieName = FileUtil::getFileName(filePath);
 
     EnumType::EDropFileType fileType = getFileType(qm->urls()[0].toLocalFile());
     if (fileType == EnumType::EDropFileType::Image)
     {
         CSlicePanel::SNewTabParams params;
-        params.title = fieName;//GlobalVar::MAIN_WND_ADD_NEW_TB_DEFAULT_TITLE;
+        params.title = fieName;//MAIN_WND_ADD_NEW_TB_DEFAULT_TITLE;
         params.filePath = filePath;
 
         addNewSlicePanel(params);
@@ -117,12 +120,15 @@ void CMainWindow::openSliceEditWnd()
     auto slicePanel = (CSlicePanel *)ui->mainTabWidget->currentWidget();
     //填充结构体
     params.filePath = slicePanel->getCurImgPath();
-    m_sliceEditWnd->showWithParams(params);
+    params.imgSize = slicePanel->getCurImageSize();
+    m_sliceEditWnd->showWithParams(params); //XXX:和下面不对称
 }
 
 void CMainWindow::sliceEditSliceCallback(const CSliceEdit::SSliceCallbackParams &args)
 {
-    qDebug("%s",args.test.toStdString().c_str());
+    qDebug("回调:%f,%f",args.gridSize.width(),args.gridSize.height());
+    auto slicePanel = (CSlicePanel *)ui->mainTabWidget->currentWidget();
+    slicePanel->sliceImageBySize(args.gridSize);
 }
 
 void CMainWindow::closeSlicePanel(int index)

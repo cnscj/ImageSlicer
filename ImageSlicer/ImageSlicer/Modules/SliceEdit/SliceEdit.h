@@ -14,13 +14,13 @@ class CSliceEdit : public QWidget
 public:
     struct SSliceCallbackParams
     {
-        QString test;
-        QWidget *panel;
+        QPointF gridNum;
+        QSizeF gridSize;
     };
     struct SShowParams
     {
         QString filePath;
-        QWidget *panel;
+        QSize imgSize;
     };
 public:
     explicit CSliceEdit(QWidget *parent = 0);
@@ -29,8 +29,18 @@ public:
     void showWithParams(SShowParams &params);
 private slots:
     void sliceHandle();
+    void showResultText();
+
+    void ColGridEdited(const QString &);
+    void ColPixelEdited(const QString &);
+    void RowGridEdited(const QString &);
+    void RowPixelEdited(const QString &);
 signals:
     void sliceCallback(const SSliceCallbackParams &args);
+private:
+    QSizeF calculateSliceSize();
+
+    bool fillCallbackParams(SSliceCallbackParams &args);
 private:
     Ui::CSliceEdit *ui;
     SShowParams m_showParams;

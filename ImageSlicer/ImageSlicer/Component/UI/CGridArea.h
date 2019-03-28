@@ -25,11 +25,11 @@ public:
 public slots:
     void itemClick(CGridItem *);
 public:
-    void sliceGrids(const QSize &size);
-    void sliceGrids(int row,int col);
+    void sliceGrids(const QSizeF &size);
+    void sliceGrids(float row,float col);
     void mergeGrids();
 
-    void clearAllGrids();
+    void removeAllGrids();
 
     const QLinkedList<CGridItem *> &getGirds() const;
 signals:

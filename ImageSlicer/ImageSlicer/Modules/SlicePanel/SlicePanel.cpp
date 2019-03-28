@@ -15,7 +15,7 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
 
     ui->imageAttrList->setStyleSheet("background-color:transparent");
 
-    connect(this,SIGNAL(imgDataUpdate()),this,SLOT(updateImgAttrList()));
+    connect(this,SIGNAL(imageDataUpdate()),this,SLOT(updateImgAttrList()));
 }
 
 CSlicePanel::~CSlicePanel()
@@ -33,18 +33,28 @@ bool CSlicePanel::loadImageFromFile(const QString &filePath)
         ui->imageWidget->setImage(temImg);
         m_imageFilePath = filePath;
 
-        ui->gridArea->sliceGrids(6,6);
-
-        emit imgDataUpdate();
+        emit imageDataUpdate();
     }
 
     return ret;
 }
 
-const QString &CSlicePanel::getCurImgPath()
+void CSlicePanel::sliceImageBySize(const QSizeF &size)
+{
+    ui->gridArea->sliceGrids(size);
+    emit imageDataUpdate();
+}
+
+const QString &CSlicePanel::getCurImgPath() const
 {
     return m_imageFilePath;
 }
+
+const QSize &CSlicePanel::getCurImageSize() const
+{
+    return ui->imageWidget->getPixmapSize();
+}
+
 
 void CSlicePanel::setPicBoxMode(CPictureBox::EZoomMode mode)
 {
@@ -98,8 +108,8 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
 }
 void CSlicePanel::clearAttrList()
 {
-    int counter = ui->imageAttrList->count();
-    for(int index = 0; index<counter; index++)
+    int count = ui->imageAttrList->count();
+    for(int index = 0; index < count; index++)
     {
         QListWidgetItem *item = ui->imageAttrList->takeItem(0);
         delete item;

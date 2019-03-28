@@ -64,6 +64,11 @@ void CPictureBox::setBackground(QBrush brush)
     update();
 }
 
+const QSize &CPictureBox::getPixmapSize() const
+{
+    return m_pixmap.size();
+}
+////
 bool CPictureBox::setImage(QImage &image, double scale)
 {
     if(image.isNull())

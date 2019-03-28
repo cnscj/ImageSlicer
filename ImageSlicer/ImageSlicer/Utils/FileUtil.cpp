@@ -12,3 +12,24 @@ bool FileUtil::isImageFile(const QString &filePath)
            );
 }
 
+QString FileUtil::getFileName(const QString &fullPath,bool isExceptSuffix)
+{
+    QFileInfo info = QFileInfo(fullPath);
+    if (isExceptSuffix)
+    {
+        return info.baseName();
+    }
+    return info.fileName();
+}
+
+QString FileUtil::getFileSuffix(const QString &fullPath)
+{
+    QFileInfo info = QFileInfo(fullPath);
+    return info.suffix();
+}
+
+QString FileUtil::getFileDir(const QString &fullPath)
+{
+    QFileInfo info = QFileInfo(fullPath);
+    return info.absolutePath();
+}
