@@ -126,7 +126,7 @@ void CMainWindow::openSliceEditWnd()
 
 void CMainWindow::sliceEditSliceCallback(const CSliceEdit::SSliceCallbackParams &args)
 {
-    qDebug("回调:%f,%f",args.gridSize.width(),args.gridSize.height());
+    qDebug("回调:%d,%d",args.gridSize.width(),args.gridSize.height());
     auto slicePanel = (CSlicePanel *)ui->mainTabWidget->currentWidget();
     slicePanel->sliceImageBySize(args.gridSize);
 }

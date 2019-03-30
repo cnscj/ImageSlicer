@@ -14,7 +14,10 @@ class CGridItemData
 public:
     QPoint pos;
     QSize size;
-
+public:
+    CGridItemData();
+    CGridItemData(const QRect &);
+    CGridItemData(int x,int y,int w,int h);
 };
 
 class CGridArea : public QWidget
@@ -25,12 +28,12 @@ public:
 public slots:
     void itemClick(CGridItem *);
 public:
-    void sliceGrids(const QSizeF &size);
-    void sliceGrids(float row,float col);
+    void sliceGrids(const QSize &size);
+    void sliceGrids(const QPoint &rw);
     void mergeGrids();
 
+    CGridItem *addGridItem(const CGridItemData &data);
     void removeAllGrids();
-
     const QLinkedList<CGridItem *> &getGirds() const;
 signals:
     void sizeChanged(const QPointF &);
@@ -56,8 +59,6 @@ signals:
     void clicked(CGridItem *);
 public slots:
     void changeSize(const QPointF &);
-public:
-
 
 protected:
     void paintEvent(QPaintEvent * e);

@@ -14,8 +14,8 @@ class CSliceEdit : public QWidget
 public:
     struct SSliceCallbackParams
     {
-        QPointF gridNum;
-        QSizeF gridSize;
+        QPoint gridNum;
+        QSize gridSize;
     };
     struct SShowParams
     {

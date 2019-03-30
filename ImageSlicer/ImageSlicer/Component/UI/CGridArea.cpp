@@ -1,66 +1,84 @@
 #include "CGridArea.h"
 #include <QPainter>
 #include <QMouseEvent>
+CGridItemData::CGridItemData()
+{
+
+}
+CGridItemData::CGridItemData(const QRect &rt):pos(rt.x(),rt.y()),size(rt.width(),rt.height())
+{
+
+}
+CGridItemData::CGridItemData(int x,int y,int w,int h):pos(x,y),size(w,h)
+{
+
+}
 
 CGridArea::CGridArea(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0)
 {
 
 }
 
-
-
-void CGridArea::sliceGrids(const QSizeF &size)
+void CGridArea::sliceGrids(const QSize &size)
 {
-    float itemWidth = (size.width() > width() ) ? width() : size.width();
-    float itemHeight =(size.width() > height() ) ? height() : size.height();
-
-    float col = height() / itemHeight;
-    float row = width() / itemWidth;
-    qDebug("切割大小:(%f,%f)",itemWidth,itemHeight);
-    sliceGrids(row,col);
-}
-
-void CGridArea::sliceGrids(float row,float col)
-{
+    //TODO:切割算法:不足size的按剩余的切
     removeAllGrids();
 
-    row = (row > width()) ? width() : row;
-    col = (col > height()) ? height() : col;
+    float itemWidth = ( size.width() > width() ) ? width() : size.width();
+    float itemHeight = ( size.width() > height() ) ? height() : size.height();
 
-    qDebug("切割数:(%f,%f)",row,col);
+    qDebug("切割大小:(%d,%d)",itemWidth,itemHeight);
 
-    int itemWidth = height()/col;
-    int itemHeight = width()/row;
+    //TODO:
+}
 
-    for (int i = 0; i<(int)row; i++)
-    {
-        for (int j = 0; j<(int)col; j++)
-        {
-            CGridItem *item = new CGridItem(this);
-            CGridItemData data;
-            data.pos = QPoint(itemWidth * i,itemHeight * j);
-            data.size = QSize(itemWidth,itemHeight);
-            item->setData(data);
+void CGridArea::sliceGrids(const QPoint &rw)
+{
+    //TODO:按靠近SIze大小切,只能牺牲中间的
+    removeAllGrids();
 
-            m_itesList.push_back(item);
+    int finalRow = (rw.x() > width()) ? width() : rw.x();
+    int finalCol = (rw.y() > height()) ? height() : rw.y();
 
-            connect(item,SIGNAL(clicked(CGridItem *)),this,SLOT(itemClick(CGridItem *)));
-            connect(this,SIGNAL(sizeChanged(const QPointF &)),item,SLOT(changeSize(const QPointF &)));
-        }
-    }
-    update();
+    int itemWidth = height()/finalCol;
+    int itemHeight = width()/finalRow;
+
+
+    //TODO:
+//    for (int i = 0; i < finalRow; i++)
+//    {
+//        for (int j = 0; j < finalCol; j++)
+//        {
+//            CGridItemData itemData(i*itemWidth,j*itemHeight,itemWidth,itemHeight);
+//            addGridItem(itemData);
+//        }
+//    }
+//    update();
 }
 void CGridArea::mergeGrids()
 {
 
 }
 
+CGridItem *CGridArea::addGridItem(const CGridItemData &data)
+{
+    CGridItem *item = new CGridItem(this);
+    item->setData(data);
+
+    m_itesList.push_back(item);
+
+    connect(item,&CGridItem::clicked,this,&CGridArea::itemClick);
+    connect(this,&CGridArea::sizeChanged,item,&CGridItem::changeSize);
+
+    return item;
+}
+
 void CGridArea::removeAllGrids()
 {
     for(auto it : m_itesList)
     {
-        disconnect(it,SIGNAL(clicked(CGridItem *)),this,SLOT(itemClick(CGridItem *)));
-        disconnect(this,SIGNAL(sizeChanged(const QPointF &)),it,SLOT(changeSize(const QPointF &)));
+        disconnect(it,&CGridItem::clicked,this,&CGridArea::itemClick);
+        disconnect(this,&CGridArea::sizeChanged,it,&CGridItem::changeSize);
         it->deleteLater();
     }
     m_itesList.clear();

@@ -37,7 +37,7 @@ signals:
     void imageDataUpdate();
 public slots:
     bool loadImageFromFile(const QString &filePath);
-    void sliceImageBySize(const QSizeF &size);
+    void sliceImageBySize(const QSize &size);
 private slots:
     void updateImgAttrList();
 protected:

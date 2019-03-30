@@ -39,7 +39,7 @@ bool CSlicePanel::loadImageFromFile(const QString &filePath)
     return ret;
 }
 
-void CSlicePanel::sliceImageBySize(const QSizeF &size)
+void CSlicePanel::sliceImageBySize(const QSize &size)
 {
     ui->gridArea->sliceGrids(size);
     emit imageDataUpdate();

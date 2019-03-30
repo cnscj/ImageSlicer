@@ -32,11 +32,6 @@ CSliceEdit::CSliceEdit(QWidget *parent) :
     connect(ui->row_grid_le,&QLineEdit::textEdited,this,&CSliceEdit::RowGridEdited);
     connect(ui->row_pixel_le,&QLineEdit::textEdited,this,&CSliceEdit::RowPixelEdited);
 
-//    connect(ui->col_grid_le,SIGNAL(textEdited(QString)),this,SLOT(showResultText()));
-//    connect(ui->col_pixel_le,SIGNAL(textEdited(QString)),this,SLOT(showResultText()));
-//    connect(ui->row_grid_le,SIGNAL(textEdited(QString)),this,SLOT(showResultText()));
-//    connect(ui->row_pixel_le,SIGNAL(textEdited(QString)),this,SLOT(showResultText()));
-
     connect(ui->ok_pb,SIGNAL(released()),this,SLOT(sliceHandle()));
     connect(ui->cancel_pb,SIGNAL(released()),this,SLOT(hide()));
 
