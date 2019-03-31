@@ -39,6 +39,10 @@ CMainWindow::CMainWindow(QWidget *parent) :
     connect(ui->mainTabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(closeSlicePanel(int)));
 
     connect(m_sliceEditWnd,&CSliceEdit::sliceCallback,this,&CMainWindow::sliceEditSliceCallback);
+
+
+    ////
+
 }
 
 CMainWindow::~CMainWindow()
@@ -117,18 +121,18 @@ EnumType::EDropFileType CMainWindow::getFileType(const QString &filePath)
 void CMainWindow::openSliceEditWnd()
 {
     CSliceEdit::SShowParams params;
-    auto slicePanel = (CSlicePanel *)ui->mainTabWidget->currentWidget();
+    auto slicePanel = static_cast<CSlicePanel *>(ui->mainTabWidget->currentWidget());
     //填充结构体
-    params.filePath = slicePanel->getCurImgPath();
-    params.imgSize = slicePanel->getCurImageSize();
+    params.filePath = slicePanel->getImgOriPath();
+    params.imgSize = slicePanel->getImageOriSize();
     m_sliceEditWnd->showWithParams(params); //XXX:和下面不对称
 }
 
 void CMainWindow::sliceEditSliceCallback(const CSliceEdit::SSliceCallbackParams &args)
 {
-    qDebug("回调:%d,%d",args.gridSize.width(),args.gridSize.height());
-    auto slicePanel = (CSlicePanel *)ui->mainTabWidget->currentWidget();
-    slicePanel->sliceImageBySize(args.gridSize);
+    qDebug("回调:%f,%f",args.sliceSize.width(),args.sliceSize.height());
+    auto slicePanel = static_cast<CSlicePanel *>(ui->mainTabWidget->currentWidget());
+    slicePanel->sliceImageBySize(args.sliceSize);
 }
 
 void CMainWindow::closeSlicePanel(int index)

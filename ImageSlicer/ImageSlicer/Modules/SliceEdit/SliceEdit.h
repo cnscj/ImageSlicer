@@ -12,10 +12,13 @@ class CSliceEdit : public QWidget
 {
     Q_OBJECT
 public:
+     enum class ESliceType {Part,Size};
+
     struct SSliceCallbackParams
     {
-        QPoint gridNum;
-        QSize gridSize;
+        QPair<ESliceType ,int> horizon;
+        QPair<ESliceType ,int> vertical;
+        QSizeF sliceSize;
     };
     struct SShowParams
     {
@@ -37,10 +40,6 @@ private slots:
     void RowPixelEdited(const QString &);
 signals:
     void sliceCallback(const SSliceCallbackParams &args);
-private:
-    QSizeF calculateSliceSize();
-
-    bool fillCallbackParams(SSliceCallbackParams &args);
 private:
     Ui::CSliceEdit *ui;
     SShowParams m_showParams;

@@ -29,15 +29,15 @@ public:
 protected:
     enum class EActionMode{WantScale,MultipleSelect,RegionSelect};
 public:
-    const QString &getCurImgPath() const;
-    const QSize &getCurImageSize() const;
+    const QString &getImgOriPath() const;
+    QSize getImageOriSize() const;
 
     void setPicBoxMode(CPictureBox::EZoomMode);
 signals:
     void imageDataUpdate();
 public slots:
     bool loadImageFromFile(const QString &filePath);
-    void sliceImageBySize(const QSize &size);
+    void sliceImageBySize(const QSizeF &size);
 private slots:
     void updateImgAttrList();
 protected:
@@ -45,7 +45,6 @@ protected:
     virtual void keyReleaseEvent(QKeyEvent *e);
     virtual void wheelEvent(QWheelEvent * e);           //滚轮事件
     virtual void mousePressEvent(QMouseEvent *e);       //单击
-
 private:
     void clearAttrList();
     void setAttrListProvider(const QLinkedList<CImgAttrListItemData> &);

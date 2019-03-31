@@ -1,6 +1,21 @@
 #include "CGridArea.h"
 #include <QPainter>
 #include <QMouseEvent>
+
+#include <cmath>
+#include "Modules/SlicePanel/Component/ImgAttrListItem.h"
+
+static const int PEN_SIZE = 1;
+
+template<typename T>
+T limitValue(T src, T min, T max)
+{
+    src = (src > max) ? max : src;
+    src = (src < min) ? min : src;
+    return src;
+}
+
+//////////////////////////////////////////////////////////////////////
 CGridItemData::CGridItemData()
 {
 
@@ -19,43 +34,67 @@ CGridArea::CGridArea(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0)
 
 }
 
-void CGridArea::sliceGrids(const QSize &size)
+void CGridArea::sliceGridsBySize(const QSize &size)
 {
-    //TODO:切割算法:不足size的按剩余的切
-    removeAllGrids();
-
-    float itemWidth = ( size.width() > width() ) ? width() : size.width();
-    float itemHeight = ( size.width() > height() ) ? height() : size.height();
-
-    qDebug("切割大小:(%d,%d)",itemWidth,itemHeight);
-
-    //TODO:
+   sliceGrids(size);
 }
 
-void CGridArea::sliceGrids(const QPoint &rw)
+void CGridArea::sliceGridsByPath(const QPoint &rw)
 {
-    //TODO:按靠近SIze大小切,只能牺牲中间的
-    removeAllGrids();
+//    //四舍五入,只能牺牲中间的
+//    removeAllGrids();
 
-    int finalRow = (rw.x() > width()) ? width() : rw.x();
-    int finalCol = (rw.y() > height()) ? height() : rw.y();
+//    int finalRow = limitValue(rw.x(),1,width());
+//    int finalCol = limitValue(rw.y(),1,height());
 
-    int itemWidth = height()/finalCol;
-    int itemHeight = width()/finalRow;
+//    int middleRow = (finalRow % 2 == 1) ? (finalRow/2 + 1) : (finalRow);
+//    int middleCol = (finalCol % 2 == 1) ? (finalCol/2 + 1) : (finalCol);
 
+//    int itemHeight = static_cast<int>(::round(height()/finalCol));
+//    int itemWidth = static_cast<int>(::round(width()/finalRow));
 
-    //TODO:
-//    for (int i = 0; i < finalRow; i++)
+//    int middleHeight = itemHeight + height() - finalCol * itemHeight;
+//    int middleWidth = itemWidth + width() - finalRow * itemWidth;
+
+//    int finalWidth = itemWidth;
+//    int finalHeight = itemHeight;
+//    for (int i = 0; i < width(); i+=finalWidth)
 //    {
-//        for (int j = 0; j < finalCol; j++)
+//        finalWidth = ((i + 1) == middleRow) ? middleWidth : itemWidth;
+//        for (int j = 0; j < height(); j+=finalHeight)
 //        {
-//            CGridItemData itemData(i*itemWidth,j*itemHeight,itemWidth,itemHeight);
+//            finalHeight = ((j + 1) == middleCol) ? middleHeight : itemHeight;
+//            CGridItemData itemData(i,j,finalWidth,finalHeight);
 //            addGridItem(itemData);
 //        }
 //    }
 //    update();
+
+    sliceGrids(QSizeF(width()/rw.x(),height()/rw.y()));
 }
-void CGridArea::mergeGrids()
+
+void CGridArea::sliceGrids(const QSizeF &size)
+{
+    //TODO:
+    removeAllGrids();
+
+    int finalWidth = limitValue( static_cast<int>(size.width()),1,width());
+    int finalHeight = limitValue( static_cast<int>(size.height()),1,height());
+    for (int j = 0; j < height(); j+=finalHeight)
+    {
+//        finalHeight = (j + finalHeight > height()) ? (height() - j) : finalHeight;
+        for (int i = 0; i < width(); i+=finalWidth)
+        {
+//            finalWidth = (i + finalWidth > width()) ? (width() - i) : finalWidth;
+            CGridItemData itemData(i,j,finalWidth,finalHeight);
+            addGridItem(itemData);
+
+        }
+    }
+    update();
+}
+
+void CGridArea::mergeGrids(const QLinkedList<CGridItem *> &list)
 {
 
 }
@@ -95,7 +134,7 @@ void CGridArea::itemClick(CGridItem *item)
     qDebug("%d_%d_%d_%d",item->getData().pos.x(),item->getData().pos.y(),item->getData().size.width(),item->getData().size.height());
 }
 
-void CGridArea::paintEvent(QPaintEvent * event)
+void CGridArea::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
 }
@@ -114,14 +153,12 @@ void CGridArea::resizeEvent(QResizeEvent *event)
 }
 
 
-
-
-
 /////////////////////
 /////////////////////
+
 CGridItem::CGridItem(QWidget *parent) : QWidget(parent)
 {
-
+    show(); //为什么???
 }
 
 void CGridItem::setData(const CGridItemData &data)
@@ -129,6 +166,7 @@ void CGridItem::setData(const CGridItemData &data)
     m_data = data;
     this->setGeometry(QRect(data.pos,data.size));
     this->update();
+
 }
 const CGridItemData &CGridItem::getData() const
 {
@@ -139,20 +177,20 @@ void CGridItem::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
     QPainter painter(this);
-    painter.setPen(QPen(Qt::blue,1,Qt::DashLine));//设置画笔形式
-//    painter.setBrush(QBrush(QColor(0,0,0,0)));//设置画刷形式
-    painter.setBrush(QBrush(Qt::red,Qt::SolidPattern));//设置画刷形式
+    painter.setPen(QPen(Qt::blue,PEN_SIZE,Qt::DashLine));//设置画笔形式
+    painter.setBrush(QBrush(QColor(0,0,0,0)));//设置画刷形式
 
-    QRect rt(QRect(0,0,this->width(),this->height()));
+    QRect rt(QRect(0,0,this->width() - PEN_SIZE,this->height() - PEN_SIZE));
+
     painter.drawRect(rt);
-
 }
 
 void CGridItem::changeSize(const QPointF &rate)
 {
-    QRect rt(this->getData().pos.x() * rate.x() ,this->getData().pos.y() * rate.y(),
-          this->getData().size.width() * rate.x() , this->getData().size.height() * rate.y());
-
+    QRect rt(static_cast<int>(this->getData().pos.x() * rate.x()),
+             static_cast<int>(this->getData().pos.y() * rate.y()),
+             static_cast<int>(this->getData().size.width() * rate.x()),
+             static_cast<int>(this->getData().size.height() * rate.y()));
     this->setGeometry(rt);
     this->update();
 }
@@ -167,13 +205,4 @@ void CGridItem::mouseReleaseEvent(QMouseEvent *e)
 {
     Q_UNUSED(e);
     emit clicked(this);
-
 }
-
-
-
-
-//////////////////
-///////
-///
-///

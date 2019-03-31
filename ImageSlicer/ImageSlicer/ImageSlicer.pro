@@ -49,7 +49,8 @@ SOURCES += \
     Utils/StringUtil.cpp \
     Modules/SlicePanel/Component/CScrollArea.cpp \
     Modules/SlicePanel/Component/CSliceItem.cpp \
-    Modules/SlicePanel/Component/ImgAttrListItem.cpp
+    Modules/SlicePanel/Component/ImgAttrListItem.cpp \
+    Utils/MathUtil.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -76,7 +77,8 @@ HEADERS += \
     Utils/StringUtil.h \
     Modules/SlicePanel/Component/CScrollArea.h \
     Modules/SlicePanel/Component/CSliceItem.h \
-    Modules/SlicePanel/Component/ImgAttrListItem.h
+    Modules/SlicePanel/Component/ImgAttrListItem.h \
+    Utils/MathUtil.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \

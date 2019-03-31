@@ -39,20 +39,20 @@ bool CSlicePanel::loadImageFromFile(const QString &filePath)
     return ret;
 }
 
-void CSlicePanel::sliceImageBySize(const QSize &size)
+void CSlicePanel::sliceImageBySize(const QSizeF &size)
 {
     ui->gridArea->sliceGrids(size);
     emit imageDataUpdate();
 }
 
-const QString &CSlicePanel::getCurImgPath() const
+const QString &CSlicePanel::getImgOriPath() const
 {
     return m_imageFilePath;
 }
 
-const QSize &CSlicePanel::getCurImageSize() const
+QSize CSlicePanel::getImageOriSize() const
 {
-    return ui->imageWidget->getPixmapSize();
+    return ui->imageWidget->getOriSize();
 }
 
 
@@ -82,7 +82,7 @@ void CSlicePanel::keyReleaseEvent(QKeyEvent *e)
 void CSlicePanel::wheelEvent(QWheelEvent *e)
 {
     //如果按住了择标记为可缩放
-    if ( m_flagsMap[EActionMode::WantScale] )
+    if (m_flagsMap[EActionMode::WantScale])
     {
         int numDegress = e->delta();
         double finalScale = ui->imageWidget->getScale();
@@ -95,6 +95,7 @@ void CSlicePanel::wheelEvent(QWheelEvent *e)
            finalScale = ((finalScale <= MIN_SCALE_VALUE) ? (MIN_SCALE_VALUE) : (finalScale / STEP_SCALE_VALUE));
         }
         ui->imageWidget->setScale(finalScale);
+        emit imageDataUpdate();
     }
 }
 
@@ -104,6 +105,7 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
     if (e->buttons() & Qt::MiddleButton)
     {
         ui->imageWidget->setScale(1.0);
+        emit imageDataUpdate();
     }
 }
 void CSlicePanel::clearAttrList()
@@ -139,11 +141,16 @@ void CSlicePanel::updateImgAttrList()
 {
     //TODO:
     QLinkedList<CImgAttrListItemData> data;
-    data << CImgAttrListItemData("纹理尺寸",QString("(%1,%2)").arg(0).arg(0),"");
+
+    QSize texOriSize = ui->imageWidget->getOriSize();
+    QSize texCurSize = ui->imageWidget->getCurSize();
+    double texScale = ui->imageWidget->getScale();
+
+    data << CImgAttrListItemData("纹理尺寸",QString("(%1,%2)").arg(texOriSize.width()).arg(texOriSize.height()),"");
     data << CImgAttrListItemData("切片尺寸",QString("(%1,%2)").arg(0).arg(0),"");
-    data << CImgAttrListItemData("切片总数",QString("%1").arg(0),"");
-    data << CImgAttrListItemData("缩放尺寸",QString("(%2,%3)").arg(120).arg(120),"");
-    data << CImgAttrListItemData("缩放倍率",QString("%1").arg(1.2),"");
+    data << CImgAttrListItemData("切片总数",QString("(%1,%2)").arg(0).arg(0),"");
+    data << CImgAttrListItemData("缩放尺寸",QString("(%1,%2)").arg(texCurSize.width()).arg(texCurSize.height()),"");
+    data << CImgAttrListItemData("缩放倍率",QString("%1").arg(texScale),"");
 
     setAttrListProvider(data);
 }

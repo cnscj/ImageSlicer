@@ -9,10 +9,10 @@ CPictureBox::CPictureBox(QWidget *parent) : QWidget(parent)
 {
     m_pixmap = QPixmap(IMAGE_SIZE);
     m_pixmap.fill();
-    m_scale = 1.0f;
+    m_scale = 1.0;
     m_brush = QBrush(Qt::white);
-    m_mode = FixedSize;
-    m_anchorPoint = QPointF(0.5f,0.5f);
+    m_mode = EZoomMode::FixedSize;
+    m_anchorPoint = QPointF(0.5,0.5);
 
 }
 
@@ -20,7 +20,7 @@ CPictureBox::CPictureBox(QWidget *parent) : QWidget(parent)
 void CPictureBox::setMode(EZoomMode mode)
 {
     m_mode = mode;
-    if(m_mode == AutoSize)
+    if(m_mode == EZoomMode::AutoSize)
     {
         setFixedSize(m_pixmap.size() * m_scale);
     }
@@ -64,9 +64,14 @@ void CPictureBox::setBackground(QBrush brush)
     update();
 }
 
-const QSize &CPictureBox::getPixmapSize() const
+QSize CPictureBox::getOriSize() const
 {
     return m_pixmap.size();
+}
+
+QSize CPictureBox::getCurSize() const
+{
+    return m_pixmap.size() * m_scale;
 }
 ////
 bool CPictureBox::setImage(QImage &image, double scale)
@@ -77,7 +82,7 @@ bool CPictureBox::setImage(QImage &image, double scale)
     }
     m_pixmap = QPixmap::fromImage(image);
     m_scale = qBound(0.01, scale, 100.0);
-    if(m_mode == AutoSize)
+    if(m_mode == EZoomMode::AutoSize)
     {
         setFixedSize(m_pixmap.size() * m_scale);
     }
@@ -95,7 +100,7 @@ void CPictureBox::paintEvent(QPaintEvent * event)
     double window_width, window_height;
     double image_width, image_height;
     double r1, r2, r;
-    int offset_x, offset_y;
+    double offset_x, offset_y;
     window_width = width();
     window_height = height();
     image_width = m_pixmap.width();
@@ -103,19 +108,19 @@ void CPictureBox::paintEvent(QPaintEvent * event)
 
     switch (m_mode)
     {
-    case FixedSize:
+    case EZoomMode::FixedSize:
         offset_x = (window_width - m_scale * image_width) * m_anchorPoint.x();
         offset_y = (window_height - m_scale * image_height) * m_anchorPoint.y();
         painter.translate(offset_x, offset_y);
         painter.scale(m_scale, m_scale);
         painter.drawPixmap(0, 0, m_pixmap);
         break;
-    case AutoSize:
+    case EZoomMode::AutoSize:
         this->setFixedSize(m_pixmap.size() * m_scale);
         painter.scale(m_scale, m_scale);
         painter.drawPixmap(0, 0, m_pixmap);
         break;
-    case AutoZoom:
+    case EZoomMode::AutoZoom:
         r1 = window_width / image_width;
         r2 = window_height / image_height;
         r = qMin(r1, r2);

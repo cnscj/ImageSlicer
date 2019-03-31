@@ -22,6 +22,7 @@ CImgAttrListItem::~CImgAttrListItem()
 
 void CImgAttrListItem::setState(const CImgAttrListItemData &data, int pos)
 {
+    Q_UNUSED(pos);
     ui->attrName->setText(data.attrName);
     ui->attrValue->setText(data.attrValue);
     ui->attrUnit->setText(data.attrUnit);

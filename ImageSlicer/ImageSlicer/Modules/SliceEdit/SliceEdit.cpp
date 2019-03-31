@@ -1,6 +1,6 @@
 #include "SliceEdit.h"
 #include "ui_SliceEdit.h"
-
+#include <QIntValidator>
 //TODO:最大切片数,像素不应该超过图片尺寸
 
 CSliceEdit::CSliceEdit(QWidget *parent) :
@@ -55,7 +55,44 @@ void CSliceEdit::showWithParams(SShowParams &params)
     QWidget::show();
 }
 
-QSizeF CSliceEdit::calculateSliceSize()
+void CSliceEdit::sliceHandle()
+{
+    SSliceCallbackParams params;
+
+    QString colGridText = ui->col_grid_le->text();
+    QString colPixelText = ui->col_pixel_le->text();
+    QString rowGridText = ui->row_grid_le->text();
+    QString rowPixelText = ui->row_pixel_le->text();
+
+    double finalFrameWidth = colPixelText.toInt();
+    double finalFrameHeight = rowPixelText.toInt();
+
+    if (ui->col_grid_rb->isChecked())
+    {
+        finalFrameHeight = m_showParams.imgSize.height()/colGridText.toInt();
+        params.horizon = QPair<ESliceType,int>(ESliceType::Part,colGridText.toInt());
+    }
+    else if (ui->col_pixel_rb->isChecked())
+    {
+        params.horizon = QPair<ESliceType,int>(ESliceType::Size,colPixelText.toInt());
+    }
+
+    if (ui->row_grid_rb->isChecked())
+    {
+        finalFrameWidth = m_showParams.imgSize.width()/rowGridText.toInt();
+        params.vertical = QPair<ESliceType,int>(ESliceType::Part,rowGridText.toInt());
+    }
+    else if (ui->row_pixel_rb->isChecked())
+    {
+        params.vertical = QPair<ESliceType,int>(ESliceType::Size,rowPixelText.toInt());
+    }
+
+    params.sliceSize = QSizeF(finalFrameWidth,finalFrameHeight);
+    emit sliceCallback(params);
+    hide();
+}
+
+void CSliceEdit::showResultText()
 {
     QString colGridText = ui->col_grid_le->text();
     QString colPixelText = ui->col_pixel_le->text();
@@ -74,36 +111,7 @@ QSizeF CSliceEdit::calculateSliceSize()
         finalFrameWidth = m_showParams.imgSize.width()/rowGridText.toInt();
     }
 
-    return QSizeF(finalFrameWidth,finalFrameHeight);
-}
-
-bool CSliceEdit::fillCallbackParams(SSliceCallbackParams &params)
-{
-    QSizeF size = calculateSliceSize();
-
-    params.gridNum.setX(m_showParams.imgSize.width()/size.width());
-    params.gridNum.setY(m_showParams.imgSize.height()/size.height());
-
-    params.gridSize.setWidth(size.width());
-    params.gridSize.setHeight(size.height());
-
-    return true;
-}
-
-void CSliceEdit::sliceHandle()
-{
-    SSliceCallbackParams params;
-    fillCallbackParams(params);
-
-    emit sliceCallback(params);
-    hide();
-}
-
-void CSliceEdit::showResultText()
-{
-    QSizeF size = calculateSliceSize();
-
-    QString retText = QString("(%1,%2)").arg((int)size.width()).arg((int)size.height());
+    QString retText = QString("(%1,%2)").arg((int)finalFrameWidth).arg((int)finalFrameHeight);
 
     ui->size_lb->setText(retText);
 }

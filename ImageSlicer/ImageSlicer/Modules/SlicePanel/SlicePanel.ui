@@ -30,8 +30,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>495</width>
-           <height>538</height>
+           <width>521</width>
+           <height>548</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
@@ -109,6 +109,12 @@
           <widget class="QListWidget" name="imageAttrList">
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
            </property>
            <property name="selectionMode">
             <enum>QAbstractItemView::NoSelection</enum>

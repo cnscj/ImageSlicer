@@ -28,13 +28,18 @@ public:
 public slots:
     void itemClick(CGridItem *);
 public:
-    void sliceGrids(const QSize &size);
-    void sliceGrids(const QPoint &rw);
-    void mergeGrids();
+    void sliceGridsBySize(const QSize &size);
+    void sliceGridsByPath(const QPoint &pt);
+
+    void sliceGrids(const QSizeF &size);
+
+    void mergeGrids(const QLinkedList<CGridItem *> &list);
 
     CGridItem *addGridItem(const CGridItemData &data);
-    void removeAllGrids();
+
     const QLinkedList<CGridItem *> &getGirds() const;
+
+    void removeAllGrids();
 signals:
     void sizeChanged(const QPointF &);
 protected:
@@ -61,7 +66,7 @@ public slots:
     void changeSize(const QPointF &);
 
 protected:
-    void paintEvent(QPaintEvent * e);
+    void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
 private:

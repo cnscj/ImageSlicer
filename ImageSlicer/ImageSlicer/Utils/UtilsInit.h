@@ -4,5 +4,6 @@
 #include "UIDUtil.h"
 #include "FileUtil.h"
 #include "StringUtil.h"
+#include "MathUtil.h"
 
 #endif // UTILSINIT_H
