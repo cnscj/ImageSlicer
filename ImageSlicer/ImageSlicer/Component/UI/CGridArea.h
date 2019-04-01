@@ -31,15 +31,16 @@ public:
     void sliceGridsBySize(const QSize &size);
     void sliceGridsByPath(const QPoint &pt);
 
-    void sliceGrids(const QSizeF &size);
-
+    void sliceGrids(CGridItem *item,const QSizeF &size);
     void mergeGrids(const QLinkedList<CGridItem *> &list);
 
     CGridItem *addGridItem(const CGridItemData &data);
 
-    const QLinkedList<CGridItem *> &getGirds() const;
+    const QLinkedList<CGridItem *> *getGirds() const;
 
     void removeAllGrids();
+
+    int getSliceCount() const;
 signals:
     void sizeChanged(const QPointF &);
 protected:

@@ -39,10 +39,6 @@ CMainWindow::CMainWindow(QWidget *parent) :
     connect(ui->mainTabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(closeSlicePanel(int)));
 
     connect(m_sliceEditWnd,&CSliceEdit::sliceCallback,this,&CMainWindow::sliceEditSliceCallback);
-
-
-    ////
-
 }
 
 CMainWindow::~CMainWindow()
@@ -93,7 +89,7 @@ void CMainWindow::dropEvent(QDropEvent* event)
     if (fileType == EnumType::EDropFileType::Image)
     {
         CSlicePanel::SNewTabParams params;
-        params.title = fieName;//MAIN_WND_ADD_NEW_TB_DEFAULT_TITLE;
+        params.title = fieName;
         params.filePath = filePath;
 
         addNewSlicePanel(params);

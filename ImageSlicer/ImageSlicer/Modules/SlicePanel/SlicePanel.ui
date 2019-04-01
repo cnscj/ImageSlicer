@@ -30,8 +30,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>521</width>
-           <height>548</height>
+           <width>495</width>
+           <height>538</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
@@ -140,6 +140,11 @@
     </widget>
    </item>
   </layout>
+  <action name="actionSlice">
+   <property name="text">
+    <string>划分切片</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

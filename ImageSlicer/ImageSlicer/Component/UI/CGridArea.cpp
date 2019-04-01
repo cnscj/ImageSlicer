@@ -36,7 +36,7 @@ CGridArea::CGridArea(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0)
 
 void CGridArea::sliceGridsBySize(const QSize &size)
 {
-   sliceGrids(size);
+   sliceGrids(nullptr,size);
 }
 
 void CGridArea::sliceGridsByPath(const QPoint &rw)
@@ -70,28 +70,35 @@ void CGridArea::sliceGridsByPath(const QPoint &rw)
 //    }
 //    update();
 
-    sliceGrids(QSizeF(width()/rw.x(),height()/rw.y()));
+    sliceGrids(nullptr,QSizeF(width()/rw.x(),height()/rw.y()));
 }
 
-void CGridArea::sliceGrids(const QSizeF &size)
+void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
 {
-    //TODO:
-    removeAllGrids();
-
-    int finalWidth = limitValue( static_cast<int>(size.width()),1,width());
-    int finalHeight = limitValue( static_cast<int>(size.height()),1,height());
-    for (int j = 0; j < height(); j+=finalHeight)
+    if (item != nullptr)    //嵌套切割
     {
-//        finalHeight = (j + finalHeight > height()) ? (height() - j) : finalHeight;
-        for (int i = 0; i < width(); i+=finalWidth)
-        {
-//            finalWidth = (i + finalWidth > width()) ? (width() - i) : finalWidth;
-            CGridItemData itemData(i,j,finalWidth,finalHeight);
-            addGridItem(itemData);
 
-        }
     }
-    update();
+    else    //完全切割
+    {
+        //TODO:
+        removeAllGrids();
+
+        int finalWidth = limitValue( static_cast<int>(size.width()),1,width());
+        int finalHeight = limitValue( static_cast<int>(size.height()),1,height());
+        for (int j = 0; j < height(); j+=finalHeight)
+        {
+    //        finalHeight = (j + finalHeight > height()) ? (height() - j) : finalHeight;
+            for (int i = 0; i < width(); i+=finalWidth)
+            {
+    //            finalWidth = (i + finalWidth > width()) ? (width() - i) : finalWidth;
+                CGridItemData itemData(i,j,finalWidth,finalHeight);
+                addGridItem(itemData);
+
+            }
+        }
+        update();
+    }
 }
 
 void CGridArea::mergeGrids(const QLinkedList<CGridItem *> &list)
@@ -122,9 +129,14 @@ void CGridArea::removeAllGrids()
     }
     m_itesList.clear();
 }
-const QLinkedList<CGridItem *> &CGridArea::getGirds() const
+const QLinkedList<CGridItem *> *CGridArea::getGirds() const
 {
-    return m_itesList;
+    return &m_itesList;
+}
+
+int CGridArea::getSliceCount() const
+{
+    return getGirds()->count();
 }
 
 ///
