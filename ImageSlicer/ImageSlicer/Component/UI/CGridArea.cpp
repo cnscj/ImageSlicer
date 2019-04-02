@@ -143,7 +143,7 @@ int CGridArea::getSliceCount() const
 void CGridArea::itemClick(CGridItem *item)
 {
     //处理代码
-    qDebug("%d_%d_%d_%d",item->getData().pos.x(),item->getData().pos.y(),item->getData().size.width(),item->getData().size.height());
+    emit gridClicked(item);
 }
 
 void CGridArea::paintEvent(QPaintEvent *event)

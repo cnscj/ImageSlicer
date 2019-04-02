@@ -43,6 +43,7 @@ public:
     int getSliceCount() const;
 signals:
     void sizeChanged(const QPointF &);
+    void gridClicked(CGridItem *);
 protected:
     void paintEvent(QPaintEvent * event);
     void resizeEvent(QResizeEvent *event);

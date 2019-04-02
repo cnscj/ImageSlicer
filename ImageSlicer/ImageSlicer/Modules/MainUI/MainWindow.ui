@@ -51,7 +51,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -80,8 +80,6 @@
     </property>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
-    <addaction name="separator"/>
-    <addaction name="actionEditSlice"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -155,11 +153,6 @@
   <action name="actionExport">
    <property name="text">
     <string>导出(P)</string>
-   </property>
-  </action>
-  <action name="actionEditSlice">
-   <property name="text">
-    <string>编辑切片(T)</string>
    </property>
   </action>
   <action name="actionUndo">

@@ -5,27 +5,28 @@
 #include <QWheelEvent>
 #include <QMenu>
 #include <QtVariantPropertyManager>
-
-#include "Modules/SliceEdit/SliceEdit.h"
+#include "Component/UI/CGridArea.h"
 
 static const double MAX_SCALE_VALUE = 16.0;  //最大缩放值
 static const double MIN_SCALE_VALUE = 0.125;  //最小缩放值
 static const double STEP_SCALE_VALUE = 1.125; //每次缩放值
 
 CSlicePanel::CSlicePanel(QWidget *parent) :
-    QWidget(parent),m_sliceMenu(this),
+    QWidget(parent),
     ui(new Ui::CSlicePanel)
 {
     ui->setupUi(this);
 
+    //右键菜单
+    m_pSliceMenu = new QMenu(this);
     QList<QAction*> actionList;
     actionList << ui->actionSlice;
-    m_sliceMenu.addActions(actionList);//添加子项到主菜单
+    m_pSliceMenu->addActions(actionList);//添加子项到主菜单
+    connect(ui->actionSlice,SIGNAL(triggered()),this,SLOT(editSliceWnd()));
 
-    ui->imageAttrList->setStyleSheet("background-color:transparent");
-
-    connect(this,SIGNAL(imageDataUpdate()),this,SLOT(updateImgAttrList()));
-    connect(ui->actionSlice,SIGNAL(triggered()),this,SLOT(editeSlice()));
+    //划分切片窗口
+    m_pSliceEditWnd = new CSliceEdit();
+    m_pSliceEditWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
 
     //TODO:属性表
     ui->propsWidget->clear();
@@ -59,11 +60,19 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
         qDebug("%s",value.toString().toStdString().c_str());
     });
     /////////////////////
+    ui->imageAttrList->setStyleSheet("background-color:transparent");
+    connect(this,SIGNAL(imageDataUpdate()),this,SLOT(updateImgAttrList()));
+
+    connect(m_pSliceEditWnd,&CSliceEdit::sliceCallback,this,&CSlicePanel::editSliceCallback);
+
+    connect(ui->gridArea,&CGridArea::gridClicked,this,&CSlicePanel::sliceClicked);
 }
 
 CSlicePanel::~CSlicePanel()
 {
     delete ui;
+    delete m_pSliceMenu;
+    delete m_pSliceEditWnd;
 }
 
 
@@ -154,16 +163,14 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
 
 void CSlicePanel::contextMenuEvent(QContextMenuEvent *e)
 {
-    //TODO:菜单项应该单独写
     if (WidgetUtil::isCursorInWidget(ui->gridArea))
     {
-        m_sliceMenu.exec(QCursor::pos());
+        m_pSliceMenu->exec(QCursor::pos());
     }
     else
     {
         QWidget::contextMenuEvent(e);
     }
-
 }
 
 void CSlicePanel::clearAttrList()
@@ -212,13 +219,23 @@ void CSlicePanel::updateImgAttrList()
     setAttrListProvider(data);
 }
 
-void CSlicePanel::editeSlice()
+void CSlicePanel::editSliceWnd()
 {
-    //TODO:打开编辑窗口
-//    CSliceEdit::SShowParams params;
+    CSliceEdit::SShowParams params;
+    auto slicePanel = static_cast<CSlicePanel *>(this);
+    //填充结构体
+    params.filePath = slicePanel->getImgOriPath();
+    params.imgSize = slicePanel->getImageOriSize();
+    m_pSliceEditWnd->showWithParams(params);
+}
+void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &params)
+{
+    qDebug("回调:%f,%f",params.sliceSize.width(),params.sliceSize.height());
+    auto slicePanel = static_cast<CSlicePanel *>(this);
+    slicePanel->sliceImageBySize(params.sliceSize);
+}
 
-//    //填充结构体
-//    params.filePath = slicePanel->getImgOriPath();
-//    params.imgSize = slicePanel->getImageOriSize();
-    qDebug("!!!!");
+void CSlicePanel::sliceClicked(CGridItem *grid)
+{
+    qDebug("%d_%d",grid->getData().pos.x(),grid->getData().pos.y());
 }

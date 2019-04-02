@@ -39,18 +39,15 @@ private:
 private slots:
 
     void closeSlicePanel(int index);
-    void openSliceEditWnd();
     void openExportWnd();
     void openImportWnd();
     void openAboutWnd();
 
-    void sliceEditSliceCallback(const CSliceEdit::SSliceCallbackParams &params);
 private:
     Ui::CMainWindow *ui;
 
-    CSliceEdit *m_sliceEditWnd;
-    CExportWnd *m_exportWnd;
-    CImportWnd *m_importWnd;
+    CExportWnd *m_pExportWnd;
+    CImportWnd *m_pImportWnd;
 };
 
 #endif // CMAINWINDOW_H

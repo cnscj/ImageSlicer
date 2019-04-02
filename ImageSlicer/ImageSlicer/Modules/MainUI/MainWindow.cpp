@@ -19,31 +19,28 @@ CMainWindow::CMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_sliceEditWnd = new CSliceEdit();
-    m_sliceEditWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
+    m_pExportWnd = new CExportWnd();
+    m_pExportWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
 
-    m_exportWnd = new CExportWnd();
-    m_exportWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
-
-    m_importWnd = new CImportWnd();
-    m_importWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
+    m_pImportWnd = new CImportWnd();
+    m_pImportWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
 
     ///////
     this->setAcceptDrops(true);//设置窗口启用拖动
-    ui->actionEditSlice->setEnabled(false);
 
-    connect(ui->actionEditSlice,SIGNAL(triggered()),this,SLOT(openSliceEditWnd()));
     connect(ui->actionExport,SIGNAL(triggered()),this,SLOT(openExportWnd()));
     connect(ui->actionImport,SIGNAL(triggered()),this,SLOT(openImportWnd()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(openAboutWnd()));
     connect(ui->mainTabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(closeSlicePanel(int)));
 
-    connect(m_sliceEditWnd,&CSliceEdit::sliceCallback,this,&CMainWindow::sliceEditSliceCallback);
+
 }
 
 CMainWindow::~CMainWindow()
 {
     delete ui;
+    delete m_pExportWnd;
+    delete m_pImportWnd;
 }
 
 
@@ -56,7 +53,7 @@ void CMainWindow::addNewSlicePanel(const CSlicePanel::SNewTabParams &params)
     bool ret = widget->loadImageFromFile(params.filePath);
     if (ret)
     {
-        ui->actionEditSlice->setEnabled(true);
+
     }
     int index = tabWidget->insertTab(tabWidget->count(),widget,params.title);
     tabWidget->setCurrentIndex(index);
@@ -114,42 +111,26 @@ EnumType::EDropFileType CMainWindow::getFileType(const QString &filePath)
     return EnumType::EDropFileType::Unknow;
 }
 
-void CMainWindow::openSliceEditWnd()
-{
-    CSliceEdit::SShowParams params;
-    auto slicePanel = static_cast<CSlicePanel *>(ui->mainTabWidget->currentWidget());
-    //填充结构体
-    params.filePath = slicePanel->getImgOriPath();
-    params.imgSize = slicePanel->getImageOriSize();
-    m_sliceEditWnd->showWithParams(params); //XXX:和下面不对称
-}
-
-void CMainWindow::sliceEditSliceCallback(const CSliceEdit::SSliceCallbackParams &args)
-{
-    qDebug("回调:%f,%f",args.sliceSize.width(),args.sliceSize.height());
-    auto slicePanel = static_cast<CSlicePanel *>(ui->mainTabWidget->currentWidget());
-    slicePanel->sliceImageBySize(args.sliceSize);
-}
 
 void CMainWindow::closeSlicePanel(int index)
 {
     ui->mainTabWidget->removeTab(index);
     if (ui->mainTabWidget->count() <= 0)
     {
-        ui->actionEditSlice->setEnabled(false);
+
     }
 }
 
 void CMainWindow::openExportWnd()
 {
 
-    m_exportWnd->show();
+    m_pExportWnd->show();
 
 }
 
 void CMainWindow::openImportWnd()
 {
-    m_importWnd->show();
+    m_pImportWnd->show();
 }
 
 

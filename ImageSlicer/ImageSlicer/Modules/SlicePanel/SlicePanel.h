@@ -7,11 +7,12 @@
 
 #include "Component/UI/CPictureBox.h"
 #include "Modules/SlicePanel/Component/ImgAttrListItem.h"
+#include "Modules/SliceEdit/SliceEdit.h"
 
 class QKeyEvent;
 class QWheelEvent;
 class QMouseEvent;
-
+class CGridItem;
 
 namespace Ui {
 class CSlicePanel;
@@ -43,7 +44,9 @@ public slots:
     void sliceImageBySize(const QSizeF &size);
 private slots:
     void updateImgAttrList();
-    void editeSlice();
+    void editSliceWnd();
+    void editSliceCallback(const CSliceEdit::SSliceCallbackParams &);
+    void sliceClicked(CGridItem *);
 protected:
     virtual void keyPressEvent(QKeyEvent *e);
     virtual void keyReleaseEvent(QKeyEvent *e);
@@ -60,7 +63,8 @@ private:
     QString m_imageFilePath;
     QMap<EActionMode,bool>  m_flagsMap;
 
-    QMenu m_sliceMenu;
+    QMenu *m_pSliceMenu;
+    CSliceEdit *m_pSliceEditWnd;
 };
 
 #endif // SLICEPANLE_H
