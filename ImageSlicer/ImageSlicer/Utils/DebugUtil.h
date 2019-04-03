@@ -21,7 +21,7 @@ public:
     ~CDrawNode();
 protected:
     void paintEvent(QPaintEvent * event);
-
+    bool eventFilter(QObject *target, QEvent *event);
 };
 
 #endif // DEBUGUTIL_H

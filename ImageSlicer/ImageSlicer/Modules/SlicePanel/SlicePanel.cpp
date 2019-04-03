@@ -17,6 +17,7 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
     //右键菜单
     m_pSliceMenu = new QMenu(this);
     QList<QAction*> actionList;
@@ -66,6 +67,7 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
     connect(m_pSliceEditWnd,&CSliceEdit::sliceCallback,this,&CSlicePanel::editSliceCallback);
 
     connect(ui->gridArea,&CGridArea::gridClicked,this,&CSlicePanel::sliceClicked);
+
 }
 
 CSlicePanel::~CSlicePanel()
@@ -147,6 +149,7 @@ void CSlicePanel::wheelEvent(QWheelEvent *e)
            finalScale = ((finalScale <= MIN_SCALE_VALUE) ? (MIN_SCALE_VALUE) : (finalScale / STEP_SCALE_VALUE));
         }
         ui->imageWidget->setScale(finalScale);
+        ui->scrollArea->update();
         emit imageDataUpdate();
     }
 }
@@ -157,6 +160,7 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
     if (e->buttons() & Qt::MiddleButton)
     {
         ui->imageWidget->setScale(1.0);
+        ui->scrollArea->update();
         emit imageDataUpdate();
     }
 }

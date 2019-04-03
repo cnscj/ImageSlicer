@@ -192,7 +192,7 @@ void CGridItem::paintEvent(QPaintEvent *e)
     painter.setPen(QPen(Qt::blue,PEN_SIZE,Qt::DashLine));//设置画笔形式
     painter.setBrush(QBrush(QColor(0,0,0,0)));//设置画刷形式
 
-    QRect rt(QRect(0,0,this->width() - PEN_SIZE,this->height() - PEN_SIZE));
+    QRect rt(QRect(0,0,this->width(),this->height()));
 
     painter.drawRect(rt);
 }
@@ -203,18 +203,32 @@ void CGridItem::changeSize(const QPointF &rate)
              static_cast<int>(this->getData().pos.y() * rate.y()),
              static_cast<int>(this->getData().size.width() * rate.x()),
              static_cast<int>(this->getData().size.height() * rate.y()));
-    this->setGeometry(rt);
+    this->setGeometry(rt);  //TODO:会卡爆!!!!
     this->update();
 }
 
 
 void CGridItem::mousePressEvent(QMouseEvent *e)
 {
-    m_mouserPos = QPoint(e->x(), e->y());
+    if (e->button() == Qt::LeftButton)
+    {
+         m_mouserPos = QPoint(e->x(), e->y());
+    }
+    else
+    {
+        QWidget::mousePressEvent(e);
+    }
 }
 
 void CGridItem::mouseReleaseEvent(QMouseEvent *e)
 {
-    Q_UNUSED(e);
-    emit clicked(this);
+    if (e->button() ==Qt::LeftButton)
+    {
+        emit clicked(this);
+    }
+    else
+    {
+        QWidget::mouseReleaseEvent(e);
+    }
 }
+
