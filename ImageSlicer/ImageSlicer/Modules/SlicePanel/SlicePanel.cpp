@@ -31,38 +31,58 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
 
     //TODO:属性表
     ui->propsWidget->clear();
-    QtVariantPropertyManager *m_pVarManager;
-    QtVariantEditorFactory *m_pVarFactory;
-    m_pVarManager = new QtVariantPropertyManager();
-    m_pVarFactory = new QtVariantEditorFactory();
+    QtVariantPropertyManager *m_pEditManager;
+    QtVariantPropertyManager *m_pReadManager;
+    QtVariantEditorFactory *m_pEditFactory;
+    m_pEditManager = new QtVariantPropertyManager();
+    m_pReadManager = new QtVariantPropertyManager();
+    m_pEditFactory = new QtVariantEditorFactory();
 
-    QtProperty *groupItem = m_pVarManager->addProperty(QtVariantPropertyManager::groupTypeId(),QStringLiteral("Group1"));
+    QtProperty *groupItem1 = m_pEditManager->addProperty(QtVariantPropertyManager::groupTypeId(),QStringLiteral("Group1"));
+    QtProperty *groupItem2 = m_pReadManager->addProperty(QtVariantPropertyManager::groupTypeId(),QStringLiteral("Group2"));
 
-    QtVariantProperty *item = m_pVarManager->addProperty(QVariant::Int, QStringLiteral("Int: "));
-    item->setValue(100);
-    groupItem->addSubProperty(item);
+    QtVariantProperty *item = nullptr;
+    item = m_pEditManager->addProperty(QVariant::String, QStringLiteral("name"));
+    item->setValue("slice_1");
+    groupItem1->addSubProperty(item);
 
-    item = m_pVarManager->addProperty(QVariant::Bool,QStringLiteral("Bool: "));
+    item = m_pEditManager->addProperty(QVariant::Bool,QStringLiteral("enabled"));
     item->setValue(true);
-    groupItem->addSubProperty(item);
+    groupItem1->addSubProperty(item);
 
-    item = m_pVarManager->addProperty(QVariant::Double,QStringLiteral("Double: "));
-    item->setValue(3.14);
-    groupItem->addSubProperty(item);
+    item = m_pEditManager->addProperty(QVariant::String,QStringLiteral("remark"));
+    item->setValue(QStringLiteral("FuckYou"));
+    groupItem1->addSubProperty(item);
 
-    item = m_pVarManager->addProperty(QVariant::String,QStringLiteral("String: "));
-    item->setValue(QStringLiteral("hello world"));
-    groupItem->addSubProperty(item);
 
-    ui->propsWidget->addProperty(groupItem);
-    ui->propsWidget->setFactoryForManager(m_pVarManager,m_pVarFactory);
-    connect(m_pVarManager, &QtVariantPropertyManager::valueChanged, this,[](QtProperty *property, const QVariant &value)
+
+    item = m_pReadManager->addProperty(QVariant::Int, QStringLiteral("x"));
+    item->setValue(100);
+    groupItem2->addSubProperty(item);
+
+    item = m_pReadManager->addProperty(QVariant::Int,QStringLiteral("y"));
+    item->setValue(1);
+    groupItem2->addSubProperty(item);
+
+    item = m_pReadManager->addProperty(QVariant::Int,QStringLiteral("width"));
+    item->setValue(3);
+    groupItem2->addSubProperty(item);
+
+    item = m_pReadManager->addProperty(QVariant::Int,QStringLiteral("height"));
+    item->setValue(4);
+    groupItem2->addSubProperty(item);
+    ui->propsWidget->addProperty(groupItem1);
+    ui->propsWidget->addProperty(groupItem2);
+
+    ui->propsWidget->setFactoryForManager(m_pEditManager,m_pEditFactory);
+
+    connect(m_pEditManager, &QtVariantPropertyManager::valueChanged, this,[](QtProperty *property, const QVariant &value)
     {
         qDebug("%s",value.toString().toStdString().c_str());
     });
     /////////////////////
     ui->imageAttrList->setStyleSheet("background-color:transparent");
-    connect(this,SIGNAL(imageDataUpdate()),this,SLOT(updateImgAttrList()));
+    connect(this,&CSlicePanel::imageDataUpdate,this,&CSlicePanel::updateImgAttrList);
 
     connect(m_pSliceEditWnd,&CSliceEdit::sliceCallback,this,&CSlicePanel::editSliceCallback);
 
@@ -167,6 +187,7 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
 
 void CSlicePanel::contextMenuEvent(QContextMenuEvent *e)
 {
+    //TODO:滚动到最左侧时,最右侧非窗口区能够被点到
     if (WidgetUtil::isCursorInWidget(ui->gridArea))
     {
         m_pSliceMenu->exec(QCursor::pos());

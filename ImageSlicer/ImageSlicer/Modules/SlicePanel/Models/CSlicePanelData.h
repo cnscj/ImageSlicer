@@ -11,8 +11,6 @@ uint qHash(const CSliceGridData *&pData)
 class CSlicePanelData
 {
 public:
-    int sliceRow;       //横向数
-    int sliceCol;       //纵向数
 
     QLinkedList<CSliceGridData *> m_gridList;//格子数组
 public:

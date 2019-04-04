@@ -9,6 +9,7 @@ class CGridArea;
 class CGridItem;
 class CGridItemData;
 
+//这里没有必要记录原始值,而且也没有意义
 class CGridItemData
 {
 public:
