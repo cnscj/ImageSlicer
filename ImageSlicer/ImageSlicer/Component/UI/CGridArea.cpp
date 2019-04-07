@@ -185,6 +185,15 @@ const CGridItemData &CGridItem::getData() const
     return m_data;
 }
 
+void CGridItem::setUserData(void *pUserData)
+{
+    m_pUserData = pUserData;
+}
+void *CGridItem::getUserData() const
+{
+    return m_pUserData;
+}
+
 void CGridItem::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);

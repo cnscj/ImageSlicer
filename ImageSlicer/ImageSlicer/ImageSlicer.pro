@@ -48,11 +48,12 @@ SOURCES += \
     Component/UI/CGridArea.cpp \
     Utils/StringUtil.cpp \
     Modules/SlicePanel/Component/CScrollArea.cpp \
-    Modules/SlicePanel/Component/CSliceItem.cpp \
     Modules/SlicePanel/Component/ImgAttrListItem.cpp \
     Utils/MathUtil.cpp \
     Utils/WidgetUtil.cpp \
-    Utils/DebugUtil.cpp
+    Utils/DebugUtil.cpp \
+    Modules/SlicePanel/Models/CSliceGridProperty.cpp \
+    Modules/SlicePanel/Component/CSliceGridItem.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -78,11 +79,12 @@ HEADERS += \
     Component/UI/CGridArea.h \
     Utils/StringUtil.h \
     Modules/SlicePanel/Component/CScrollArea.h \
-    Modules/SlicePanel/Component/CSliceItem.h \
     Modules/SlicePanel/Component/ImgAttrListItem.h \
     Utils/MathUtil.h \
     Utils/WidgetUtil.h \
-    Utils/DebugUtil.h
+    Utils/DebugUtil.h \
+    Modules/SlicePanel/Models/CSliceGridProperty.h \
+    Modules/SlicePanel/Component/CSliceGridItem.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \

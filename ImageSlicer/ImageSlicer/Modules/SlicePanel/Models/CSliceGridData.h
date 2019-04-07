@@ -3,13 +3,17 @@
 #include <QPoint>
 #include <QSize>
 #include <QRect>
+#include <QString>
 
 class CSliceGridData
 {
 public:
+    QString name;
+    QString remark;
+    bool enable;
+
     QPoint pos;
     QSize size;
-    bool enable;
 public:
     uint getUID() const;
     QRect getRect() const;

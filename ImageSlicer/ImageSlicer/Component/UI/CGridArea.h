@@ -42,6 +42,8 @@ public:
     void removeAllGrids();
 
     int getSliceCount() const;
+public:
+
 signals:
     void sizeChanged(const QPointF &);
     void gridClicked(CGridItem *);
@@ -63,6 +65,9 @@ public:
 public:
     void setData(const CGridItemData &);
     const CGridItemData &getData()const;
+
+    void setUserData(void *pUserData);
+    void *getUserData() const;
 signals:
     void clicked(CGridItem *);
 public slots:
@@ -75,6 +80,7 @@ protected:
 private:
     QPoint m_mouserPos;
     CGridItemData m_data;
+    void *m_pUserData;
 };
 
 #endif // CGRIDAREA_H

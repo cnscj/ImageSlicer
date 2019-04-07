@@ -35,6 +35,7 @@ bool DebugUtil::CDrawNode::eventFilter(QObject *target, QEvent *event)
             this->setGeometry(QRect(QPoint(0,0),resizeEvent->size()));
         }
     }
+    return QWidget::eventFilter(target,event);
 }
 
 void DebugUtil::drawWidget(QWidget *widget)

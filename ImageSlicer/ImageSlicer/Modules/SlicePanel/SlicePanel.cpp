@@ -78,7 +78,7 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
 
     connect(m_pEditManager, &QtVariantPropertyManager::valueChanged, this,[](QtProperty *property, const QVariant &value)
     {
-        qDebug("%s",value.toString().toStdString().c_str());
+        qDebug("%s:%s",property->propertyName().toStdString().c_str(),value.toString().toStdString().c_str());
     });
     /////////////////////
     ui->imageAttrList->setStyleSheet("background-color:transparent");
@@ -187,10 +187,13 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
 
 void CSlicePanel::contextMenuEvent(QContextMenuEvent *e)
 {
-    //TODO:滚动到最左侧时,最右侧非窗口区能够被点到
-    if (WidgetUtil::isCursorInWidget(ui->gridArea))
+    //滚动到最左侧时,最右侧非窗口区能够被点到
+    if (WidgetUtil::isCursorInWidget(ui->scrollArea))
     {
-        m_pSliceMenu->exec(QCursor::pos());
+        if (WidgetUtil::isCursorInWidget(ui->gridArea))
+        {
+            m_pSliceMenu->exec(QCursor::pos());
+        }
     }
     else
     {
@@ -236,10 +239,10 @@ void CSlicePanel::updateImgAttrList()
     double texScale = ui->imageWidget->getScale();
     int sliceCount = ui->gridArea->getSliceCount();
 
-    data << CImgAttrListItemData("纹理尺寸",QString("(%1,%2)").arg(texOriSize.width()).arg(texOriSize.height()),"");
-    data << CImgAttrListItemData("缩放尺寸",QString("(%1,%2)").arg(texCurSize.width()).arg(texCurSize.height()),"");
-    data << CImgAttrListItemData("缩放倍率",QString("%1").arg(texScale),"");
-    data << CImgAttrListItemData("总切片数",QString("%1").arg(sliceCount),"");
+    data << CImgAttrListItemData(QStringLiteral("纹理尺寸"),QString("%1,%2").arg(texOriSize.width()).arg(texOriSize.height()),"");
+    data << CImgAttrListItemData(QStringLiteral("缩放尺寸"),QString("%1,%2").arg(texCurSize.width()).arg(texCurSize.height()),"");
+    data << CImgAttrListItemData(QStringLiteral("缩放倍率"),QString("%1").arg(texScale),"");
+    data << CImgAttrListItemData(QStringLiteral("总切片数"),QString("%1").arg(sliceCount),"");
 
     setAttrListProvider(data);
 }
@@ -262,5 +265,8 @@ void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &para
 
 void CSlicePanel::sliceClicked(CGridItem *grid)
 {
+    //TODO:
+
+
     qDebug("%d_%d",grid->getData().pos.x(),grid->getData().pos.y());
 }
