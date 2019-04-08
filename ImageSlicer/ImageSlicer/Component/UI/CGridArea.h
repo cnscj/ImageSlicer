@@ -1,8 +1,10 @@
 #ifndef CGRIDAREA_H
 #define CGRIDAREA_H
 
+#include <functional>
 #include <QWidget>
 #include <QLinkedList>
+
 class QMouseEvent;
 
 class CGridArea;
@@ -25,6 +27,12 @@ class CGridArea : public QWidget
 {
     Q_OBJECT
 public:
+    typedef std::function<CGridItem *(QWidget *parent)> LItemCreator;
+    typedef std::function<void(CGridItem *)> LItemDestroyer;
+
+    static const LItemCreator defaultCreator;
+    static const LItemDestroyer defaultDestroyer;
+public:
     CGridArea(QWidget *parent = nullptr);
 public slots:
     void itemClick(CGridItem *);
@@ -33,17 +41,18 @@ public:
     void sliceGridsByPath(const QPoint &pt);
 
     void sliceGrids(CGridItem *item,const QSizeF &size);
-    void mergeGrids(const QLinkedList<CGridItem *> &list);
+    void mergeGrids(QLinkedList<CGridItem *> &list);
+    void deleteGrids(QLinkedList<CGridItem *> &list);
 
     CGridItem *addGridItem(const CGridItemData &data);
-
+    void removeGridItem(CGridItem *item);
+    void removeAllGridItems();
     const QLinkedList<CGridItem *> *getGirds() const;
-
-    void removeAllGrids();
 
     int getSliceCount() const;
 public:
-
+    void setItemCreator(LItemCreator);
+    void setItemDestroyer(LItemCreator);
 signals:
     void sizeChanged(const QPointF &);
     void gridClicked(CGridItem *);
@@ -53,6 +62,9 @@ protected:
 private:
     QLinkedList<CGridItem *> m_itesList;
     QPointF m_scale;
+    LItemCreator m_creator;
+    LItemDestroyer m_destroyer;
+
 };
 
 
@@ -74,6 +86,9 @@ public slots:
     void changeSize(const QPointF &);
 
 protected:
+    virtual void onState(const CGridItemData &data);
+    virtual void onClick();
+
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);

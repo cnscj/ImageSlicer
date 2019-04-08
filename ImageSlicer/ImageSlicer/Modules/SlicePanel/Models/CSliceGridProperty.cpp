@@ -12,6 +12,7 @@ CSliceGridProperty::CSliceGridProperty()
     m_pGroup2 = m_pReadManager->addProperty(QtVariantPropertyManager::groupTypeId(), QStringLiteral("Group2"));
 
     connect(m_pEditManager, &QtVariantPropertyManager::valueChanged, this, &CSliceGridProperty::propValueChanged);
+
 }
 
 CSliceGridProperty::~CSliceGridProperty()
@@ -56,18 +57,18 @@ void CSliceGridProperty::setupProperty(CSliceGridData *data)
     m_pData = data;
 //    QtVariantProperty *item = nullptr;
 
-    addProperty(m_pGroup1,m_pEditManager, QVariant::String, QStringLiteral("name"), "slice_1");
-    addProperty(m_pGroup1,m_pEditManager, QVariant::Bool, QStringLiteral("enabled"), true);
-    addProperty(m_pGroup1,m_pEditManager, QVariant::String, QStringLiteral("remark"), "FuckYou");
+    addProperty(m_pGroup1, m_pEditManager, QVariant::String, QStringLiteral("name"), data->name);
+    addProperty(m_pGroup1, m_pEditManager, QVariant::Bool, QStringLiteral("enabled"), data->enable);
+    addProperty(m_pGroup1, m_pEditManager, QVariant::String, QStringLiteral("remark"), data->remark);
 
-    addProperty(m_pGroup2,m_pEditManager, QVariant::Int, QStringLiteral("x"), 1000);
-    addProperty(m_pGroup2,m_pEditManager, QVariant::Int, QStringLiteral("y"), 1000);
-    addProperty(m_pGroup2,m_pEditManager, QVariant::Int ,QStringLiteral("width"), 1000);
-    addProperty(m_pGroup2,m_pEditManager, QVariant::Int, QStringLiteral("height"), 1000);
+    addProperty(m_pGroup2, m_pEditManager, QVariant::Int, QStringLiteral("x"), data->pos.x());
+    addProperty(m_pGroup2, m_pEditManager, QVariant::Int, QStringLiteral("y"), data->pos.y());
+    addProperty(m_pGroup2, m_pEditManager, QVariant::Int ,QStringLiteral("width"), data->size.width());
+    addProperty(m_pGroup2, m_pEditManager, QVariant::Int, QStringLiteral("height"), data->size.height());
 }
 
 
 void CSliceGridProperty::propValueChanged(QtProperty *property, const QVariant &value)
 {
-
+    qDebug("%s:%s",property->propertyName().toStdString().c_str(),value.toString().toStdString().c_str());
 }

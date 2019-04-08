@@ -12,10 +12,11 @@ public:
     ~CSliceGridProperty();
 public:
     void bindProperty(QtTreePropertyBrowser *treeProperty);
-protected:
-    QtVariantProperty *addProperty(QtProperty *property,QtVariantPropertyManager *manager,int propertyType,QString name,QVariant defaultValue);
     void setupProperty(CSliceGridData *data);
     void clearProperty();
+protected:
+    QtVariantProperty *addProperty(QtProperty *property,QtVariantPropertyManager *manager,int propertyType,QString name,QVariant defaultValue);
+
 private slots:
     void propValueChanged(QtProperty *property, const QVariant &value);
 private:

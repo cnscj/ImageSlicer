@@ -6,6 +6,7 @@
 #include <QMenu>
 #include <QtVariantPropertyManager>
 #include "Component/UI/CGridArea.h"
+#include "Component/CSliceGridItem.h"
 
 static const double MAX_SCALE_VALUE = 16.0;  //最大缩放值
 static const double MIN_SCALE_VALUE = 0.125;  //最小缩放值
@@ -16,7 +17,6 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
     ui(new Ui::CSlicePanel)
 {
     ui->setupUi(this);
-
 
     //右键菜单
     m_pSliceMenu = new QMenu(this);
@@ -29,64 +29,17 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
     m_pSliceEditWnd = new CSliceEdit();
     m_pSliceEditWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
 
-    //TODO:属性表
-    ui->propsWidget->clear();
-    QtVariantPropertyManager *m_pEditManager;
-    QtVariantPropertyManager *m_pReadManager;
-    QtVariantEditorFactory *m_pEditFactory;
-    m_pEditManager = new QtVariantPropertyManager();
-    m_pReadManager = new QtVariantPropertyManager();
-    m_pEditFactory = new QtVariantEditorFactory();
-
-    QtProperty *groupItem1 = m_pEditManager->addProperty(QtVariantPropertyManager::groupTypeId(),QStringLiteral("Group1"));
-    QtProperty *groupItem2 = m_pReadManager->addProperty(QtVariantPropertyManager::groupTypeId(),QStringLiteral("Group2"));
-
-    QtVariantProperty *item = nullptr;
-    item = m_pEditManager->addProperty(QVariant::String, QStringLiteral("name"));
-    item->setValue("slice_1");
-    groupItem1->addSubProperty(item);
-
-    item = m_pEditManager->addProperty(QVariant::Bool,QStringLiteral("enabled"));
-    item->setValue(true);
-    groupItem1->addSubProperty(item);
-
-    item = m_pEditManager->addProperty(QVariant::String,QStringLiteral("remark"));
-    item->setValue(QStringLiteral("FuckYou"));
-    groupItem1->addSubProperty(item);
-
-
-
-    item = m_pReadManager->addProperty(QVariant::Int, QStringLiteral("x"));
-    item->setValue(100);
-    groupItem2->addSubProperty(item);
-
-    item = m_pReadManager->addProperty(QVariant::Int,QStringLiteral("y"));
-    item->setValue(1);
-    groupItem2->addSubProperty(item);
-
-    item = m_pReadManager->addProperty(QVariant::Int,QStringLiteral("width"));
-    item->setValue(3);
-    groupItem2->addSubProperty(item);
-
-    item = m_pReadManager->addProperty(QVariant::Int,QStringLiteral("height"));
-    item->setValue(4);
-    groupItem2->addSubProperty(item);
-    ui->propsWidget->addProperty(groupItem1);
-    ui->propsWidget->addProperty(groupItem2);
-
-    ui->propsWidget->setFactoryForManager(m_pEditManager,m_pEditFactory);
-
-    connect(m_pEditManager, &QtVariantPropertyManager::valueChanged, this,[](QtProperty *property, const QVariant &value)
+    //切片构造函数
+    ui->gridArea->setItemCreator([](QWidget *parent)
     {
-        qDebug("%s:%s",property->propertyName().toStdString().c_str(),value.toString().toStdString().c_str());
+        auto item = new CSliceGridItem(parent);
+        return item;
     });
-    /////////////////////
-    ui->imageAttrList->setStyleSheet("background-color:transparent");
-    connect(this,&CSlicePanel::imageDataUpdate,this,&CSlicePanel::updateImgAttrList);
-
-    connect(m_pSliceEditWnd,&CSliceEdit::sliceCallback,this,&CSlicePanel::editSliceCallback);
-
     connect(ui->gridArea,&CGridArea::gridClicked,this,&CSlicePanel::sliceClicked);
+
+    /////////////////////
+    connect(this,&CSlicePanel::imageDataUpdate,this,&CSlicePanel::updateImgAttrList);
+    connect(m_pSliceEditWnd,&CSliceEdit::sliceCallback,this,&CSlicePanel::editSliceCallback);
 
 }
 
@@ -265,8 +218,8 @@ void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &para
 
 void CSlicePanel::sliceClicked(CGridItem *grid)
 {
-    //TODO:
+    auto item = static_cast<CSliceGridItem *>(grid);
+    item->showProperty(ui->propsWidget);
 
-
-    qDebug("%d_%d",grid->getData().pos.x(),grid->getData().pos.y());
+    qDebug("%d_%d",item->getData().pos.x(),item->getData().pos.y());
 }

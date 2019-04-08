@@ -20,16 +20,31 @@ CGridItemData::CGridItemData()
 {
 
 }
+
 CGridItemData::CGridItemData(const QRect &rt):pos(rt.x(),rt.y()),size(rt.width(),rt.height())
 {
 
 }
+
 CGridItemData::CGridItemData(int x,int y,int w,int h):pos(x,y),size(w,h)
 {
 
 }
 
-CGridArea::CGridArea(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0)
+////////
+
+const CGridArea::LItemCreator CGridArea::defaultCreator = [](QWidget *parent)
+{
+    return new CGridItem(parent);
+};
+
+const CGridArea::LItemDestroyer CGridArea::defaultDestroyer = [](CGridItem *widget)
+{
+    delete widget;
+};
+
+
+CGridArea::CGridArea(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0),m_creator(defaultCreator),m_destroyer(defaultDestroyer)
 {
 
 }
@@ -42,7 +57,7 @@ void CGridArea::sliceGridsBySize(const QSize &size)
 void CGridArea::sliceGridsByPath(const QPoint &rw)
 {
 //    //四舍五入,只能牺牲中间的
-//    removeAllGrids();
+//    removeAllGridItems();
 
 //    int finalRow = limitValue(rw.x(),1,width());
 //    int finalCol = limitValue(rw.y(),1,height());
@@ -82,10 +97,10 @@ void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
     else    //完全切割
     {
         //TODO:
-        removeAllGrids();
+        removeAllGridItems();
 
-        int finalWidth = limitValue( static_cast<int>(size.width()),1,width());
-        int finalHeight = limitValue( static_cast<int>(size.height()),1,height());
+        int finalWidth = limitValue(static_cast<int>(size.width()),1,width());
+        int finalHeight = limitValue(static_cast<int>(size.height()),1,height());
         for (int j = 0; j < height(); j+=finalHeight)
         {
     //        finalHeight = (j + finalHeight > height()) ? (height() - j) : finalHeight;
@@ -101,14 +116,19 @@ void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
     }
 }
 
-void CGridArea::mergeGrids(const QLinkedList<CGridItem *> &list)
+void CGridArea::mergeGrids(QLinkedList<CGridItem *> &list)
 {
+    //TODO:
+}
 
+void CGridArea::deleteGrids(QLinkedList<CGridItem *> &list)
+{
+    //TODO:
 }
 
 CGridItem *CGridArea::addGridItem(const CGridItemData &data)
 {
-    CGridItem *item = new CGridItem(this);
+    CGridItem *item = m_creator(this);
     item->setData(data);
 
     m_itesList.push_back(item);
@@ -118,14 +138,18 @@ CGridItem *CGridArea::addGridItem(const CGridItemData &data)
 
     return item;
 }
+void CGridArea::removeGridItem(CGridItem *item)
+{
+    //TODO:
+}
 
-void CGridArea::removeAllGrids()
+void CGridArea::removeAllGridItems()
 {
     for(auto it : m_itesList)
     {
         disconnect(it,&CGridItem::clicked,this,&CGridArea::itemClick);
         disconnect(this,&CGridArea::sizeChanged,it,&CGridItem::changeSize);
-        it->deleteLater();
+        m_destroyer(it);
     }
     m_itesList.clear();
 }
@@ -138,6 +162,16 @@ int CGridArea::getSliceCount() const
 {
     return getGirds()->count();
 }
+///
+void CGridArea::setItemCreator(LItemCreator func)
+{
+    m_creator = func;
+}
+void CGridArea::setItemDestroyer(LItemCreator func)
+{
+    m_destroyer = func;
+}
+
 
 ///
 void CGridArea::itemClick(CGridItem *item)
@@ -170,16 +204,19 @@ void CGridArea::resizeEvent(QResizeEvent *event)
 
 CGridItem::CGridItem(QWidget *parent) : QWidget(parent)
 {
-    show(); //为什么???
+    show(); //理论上有parent的不需要再show(),这里不知为何只有show()才行
 }
 
 void CGridItem::setData(const CGridItemData &data)
 {
     m_data = data;
+
     this->setGeometry(QRect(data.pos,data.size));
     this->update();
 
+    this->onState(m_data);
 }
+
 const CGridItemData &CGridItem::getData() const
 {
     return m_data;
@@ -189,16 +226,29 @@ void CGridItem::setUserData(void *pUserData)
 {
     m_pUserData = pUserData;
 }
+
 void *CGridItem::getUserData() const
 {
     return m_pUserData;
+}
+
+
+///
+void CGridItem::onState(const CGridItemData &data)
+{
+
+}
+
+void CGridItem::onClick()
+{
+
 }
 
 void CGridItem::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
     QPainter painter(this);
-    painter.setPen(QPen(Qt::blue,PEN_SIZE,Qt::DashLine));//设置画笔形式
+    painter.setPen(QPen(Qt::blue,PEN_SIZE,Qt::SolidLine));//设置画笔形式
     painter.setBrush(QBrush(QColor(0,0,0,0)));//设置画刷形式
 
     QRect rt(QRect(0,0,this->width(),this->height()));
@@ -212,7 +262,7 @@ void CGridItem::changeSize(const QPointF &rate)
              static_cast<int>(this->getData().pos.y() * rate.y()),
              static_cast<int>(this->getData().size.width() * rate.x()),
              static_cast<int>(this->getData().size.height() * rate.y()));
-    this->setGeometry(rt);  //TODO:会卡爆!!!!
+    this->setGeometry(rt);
     this->update();
 }
 
@@ -233,6 +283,7 @@ void CGridItem::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() ==Qt::LeftButton)
     {
+        this->onClick();
         emit clicked(this);
     }
     else
