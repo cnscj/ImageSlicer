@@ -2,7 +2,7 @@
 #define CSLICEGRIDPROPERTY_H
 #include <QtTreePropertyBrowser>
 #include <QtVariantPropertyManager>
-#include "CSliceGridData.h"
+#include "../Models/CSliceGridData.h"
 
 class CSliceGridProperty : public QObject
 {
@@ -11,12 +11,16 @@ public:
     CSliceGridProperty();
     ~CSliceGridProperty();
 public:
+    CSliceGridData &getData();
+    void setData(const CSliceGridData &data);
+public:
     void bindProperty(QtTreePropertyBrowser *treeProperty);
-    void setupProperty(CSliceGridData *data);
     void clearProperty();
 protected:
     QtVariantProperty *addProperty(QtProperty *property,QtVariantPropertyManager *manager,int propertyType,QString name,QVariant defaultValue);
-
+    void setupProperty();
+signals:
+    void dataChanged(const QString &propName,const CSliceGridData &data);
 private slots:
     void propValueChanged(QtProperty *property, const QVariant &value);
 private:
@@ -24,12 +28,13 @@ private:
     QtVariantPropertyManager *m_pReadManager;
     QtVariantEditorFactory *m_pEditFactory;
 
-    QMap<QtProperty *, void *> *m_pPropertyToBindValue;
+    QMap<QtVariantProperty *, QString> *m_pPropertyToString;
+    QMap<QString, QtVariantProperty *> *m_pStringToProperty;
 
     QtProperty *m_pGroup1;
     QtProperty *m_pGroup2;
 
-    CSliceGridData *m_pData;
+    CSliceGridData m_data;
 };
 
 #endif // CSLICEGRIDPROPERTY_H

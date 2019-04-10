@@ -52,8 +52,8 @@ SOURCES += \
     Utils/MathUtil.cpp \
     Utils/WidgetUtil.cpp \
     Utils/DebugUtil.cpp \
-    Modules/SlicePanel/Models/CSliceGridProperty.cpp \
-    Modules/SlicePanel/Component/CSliceGridItem.cpp
+    Modules/SlicePanel/Component/CSliceGridItem.cpp \
+    Modules/SlicePanel/Component/CSliceGridProperty.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -83,8 +83,8 @@ HEADERS += \
     Utils/MathUtil.h \
     Utils/WidgetUtil.h \
     Utils/DebugUtil.h \
-    Modules/SlicePanel/Models/CSliceGridProperty.h \
-    Modules/SlicePanel/Component/CSliceGridItem.h
+    Modules/SlicePanel/Component/CSliceGridItem.h \
+    Modules/SlicePanel/Component/CSliceGridProperty.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \

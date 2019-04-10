@@ -8,6 +8,11 @@
 #include "Component/UI/CGridArea.h"
 #include "Component/CSliceGridItem.h"
 
+static const QString KEY_TEXTURE_SIZE = QStringLiteral("纹理尺寸");
+static const QString KEY_SCALE_SIZE = QStringLiteral("缩放尺寸");
+static const QString KEY_SCALE_RATE = QStringLiteral("缩放倍率");
+static const QString KEY_SLICE_COUNT = QStringLiteral("总切片数");
+
 static const double MAX_SCALE_VALUE = 16.0;  //最大缩放值
 static const double MIN_SCALE_VALUE = 0.125;  //最小缩放值
 static const double STEP_SCALE_VALUE = 1.125; //每次缩放值
@@ -192,10 +197,10 @@ void CSlicePanel::updateImgAttrList()
     double texScale = ui->imageWidget->getScale();
     int sliceCount = ui->gridArea->getSliceCount();
 
-    data << CImgAttrListItemData(QStringLiteral("纹理尺寸"),QString("%1,%2").arg(texOriSize.width()).arg(texOriSize.height()),"");
-    data << CImgAttrListItemData(QStringLiteral("缩放尺寸"),QString("%1,%2").arg(texCurSize.width()).arg(texCurSize.height()),"");
-    data << CImgAttrListItemData(QStringLiteral("缩放倍率"),QString("%1").arg(texScale),"");
-    data << CImgAttrListItemData(QStringLiteral("总切片数"),QString("%1").arg(sliceCount),"");
+    data << CImgAttrListItemData(KEY_TEXTURE_SIZE, QString("%1,%2").arg(texOriSize.width()).arg(texOriSize.height()), "");
+    data << CImgAttrListItemData(KEY_SCALE_SIZE, QString("%1,%2").arg(texCurSize.width()).arg(texCurSize.height()), "");
+    data << CImgAttrListItemData(KEY_SCALE_RATE, QString("%1").arg(texScale), "");
+    data << CImgAttrListItemData(KEY_SLICE_COUNT, QString("%1").arg(sliceCount), "");
 
     setAttrListProvider(data);
 }
@@ -212,6 +217,7 @@ void CSlicePanel::editSliceWnd()
 void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &params)
 {
     qDebug("回调:%f,%f",params.sliceSize.width(),params.sliceSize.height());
+
     auto slicePanel = static_cast<CSlicePanel *>(this);
     slicePanel->sliceImageBySize(params.sliceSize);
 }
@@ -221,5 +227,5 @@ void CSlicePanel::sliceClicked(CGridItem *grid)
     auto item = static_cast<CSliceGridItem *>(grid);
     item->showProperty(ui->propsWidget);
 
-    qDebug("%d_%d",item->getData().pos.x(),item->getData().pos.y());
+    qDebug("点击:%d_%d",item->getData().pos.x(),item->getData().pos.y());
 }

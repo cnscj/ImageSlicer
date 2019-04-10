@@ -148,6 +148,16 @@
     <string>划分切片</string>
    </property>
   </action>
+  <action name="actionMerge">
+   <property name="text">
+    <string>组合切片</string>
+   </property>
+  </action>
+  <action name="actionRemove">
+   <property name="text">
+    <string>删除切片</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

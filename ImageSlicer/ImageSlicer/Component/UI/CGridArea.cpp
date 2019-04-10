@@ -171,7 +171,15 @@ void CGridArea::setItemDestroyer(LItemCreator func)
 {
     m_destroyer = func;
 }
+///
+void CGridArea::resetIds()
+{
+    //左上角开始编号
+    for(auto it : m_itesList)
+    {
 
+    }
+}
 
 ///
 void CGridArea::itemClick(CGridItem *item)
@@ -232,7 +240,14 @@ void *CGridItem::getUserData() const
     return m_pUserData;
 }
 
-
+int CGridItem::getID()
+{
+    return m_id;
+}
+void CGridItem::setID(int id)
+{
+    m_id = id;
+}
 ///
 void CGridItem::onState(const CGridItemData &data)
 {

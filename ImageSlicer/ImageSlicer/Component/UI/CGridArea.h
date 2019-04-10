@@ -57,6 +57,9 @@ signals:
     void sizeChanged(const QPointF &);
     void gridClicked(CGridItem *);
 protected:
+    void resetIds();
+
+protected:
     void paintEvent(QPaintEvent * event);
     void resizeEvent(QResizeEvent *event);
 private:
@@ -73,6 +76,8 @@ class CGridItem : public QWidget
 {
     Q_OBJECT
 public:
+    friend class CGridArea;
+public:
     CGridItem(QWidget *parent = nullptr);
 public:
     void setData(const CGridItemData &);
@@ -80,6 +85,8 @@ public:
 
     void setUserData(void *pUserData);
     void *getUserData() const;
+
+    int getID();
 signals:
     void clicked(CGridItem *);
 public slots:
@@ -92,10 +99,14 @@ protected:
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
+
+    void setID(int id);
 private:
     QPoint m_mouserPos;
     CGridItemData m_data;
     void *m_pUserData;
+
+    int m_id = -1;
 };
 
 #endif // CGRIDAREA_H
