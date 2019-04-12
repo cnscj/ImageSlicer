@@ -110,6 +110,13 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>导入</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
@@ -122,20 +129,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>导入</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="text">
-         <string>取消</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>

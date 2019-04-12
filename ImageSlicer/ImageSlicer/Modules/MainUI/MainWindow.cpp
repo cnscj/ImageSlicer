@@ -25,6 +25,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
     m_pImportWnd = new CImportWnd();
     m_pImportWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
 
+    ui->actionExport->setEnabled(false);
     ///////
     this->setAcceptDrops(true);//设置窗口启用拖动
 
@@ -53,7 +54,7 @@ void CMainWindow::addNewSlicePanel(const CSlicePanel::SNewTabParams &params)
     bool ret = widget->loadImageFromFile(params.filePath);
     if (ret)
     {
-
+        ui->actionExport->setEnabled(true);
     }
     int index = tabWidget->insertTab(tabWidget->count(),widget,params.title);
     tabWidget->setCurrentIndex(index);
@@ -80,7 +81,7 @@ void CMainWindow::dropEvent(QDropEvent* event)
     const QMimeData *qm=event->mimeData();//获取MIMEData
     QString filePath = qm->urls()[0].toLocalFile();
     qDebug("文件拽入:%s",filePath.toStdString().c_str());
-    QString fieName = FileUtil::getFileName(filePath);
+    QString fieName = StringUtil::getFileName(filePath);
 
     EnumType::EDropFileType fileType = getFileType(qm->urls()[0].toLocalFile());
     if (fileType == EnumType::EDropFileType::Image)
@@ -95,16 +96,18 @@ void CMainWindow::dropEvent(QDropEvent* event)
     {
 
     }
+
+
 }
 
 bool CMainWindow::isCanDragEnterFile(const QString &filePath)
 {
-  return FileUtil::isImageFile(filePath);
+  return StringUtil::isImageFile(filePath);
 
 }
 EnumType::EDropFileType CMainWindow::getFileType(const QString &filePath)
 {
-    if (FileUtil::isImageFile(filePath))
+    if (StringUtil::isImageFile(filePath))
     {
         return EnumType::EDropFileType::Image;
     }
@@ -117,15 +120,21 @@ void CMainWindow::closeSlicePanel(int index)
     ui->mainTabWidget->removeTab(index);
     if (ui->mainTabWidget->count() <= 0)
     {
-
+        ui->actionExport->setEnabled(false);
     }
 }
 
 void CMainWindow::openExportWnd()
 {
+    CExportWnd::SShowParams params;
+    auto tabWidget = ui->mainTabWidget->currentWidget();
+    if (tabWidget)
+    {
+        auto widget = static_cast<CSlicePanel *>(tabWidget);
+        params.resultData = widget->getResultData();
 
-    m_pExportWnd->show();
-
+        m_pExportWnd->showWithParams(params);
+    }
 }
 
 void CMainWindow::openImportWnd()

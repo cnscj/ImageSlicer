@@ -10,7 +10,11 @@ class CImportWnd;
 class CImportWnd : public QWidget
 {
     Q_OBJECT
+public:
+    struct SShowParams
+    {
 
+    };
 public:
     explicit CImportWnd(QWidget *parent = 0);
     ~CImportWnd();

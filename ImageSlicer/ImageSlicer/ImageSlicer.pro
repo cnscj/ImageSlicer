@@ -44,7 +44,6 @@ SOURCES += \
     Modules/Import/ImportWnd.cpp \
     Modules/SlicePanel/SlicePanel.cpp \
     Modules/SlicePanel/Models/CSliceGridData.cpp \
-    Modules/SlicePanel/Models/CSlicePanelData.cpp \
     Component/UI/CGridArea.cpp \
     Utils/StringUtil.cpp \
     Modules/SlicePanel/Component/CScrollArea.cpp \
@@ -53,7 +52,11 @@ SOURCES += \
     Utils/WidgetUtil.cpp \
     Utils/DebugUtil.cpp \
     Modules/SlicePanel/Component/CSliceGridItem.cpp \
-    Modules/SlicePanel/Component/CSliceGridProperty.cpp
+    Modules/SlicePanel/Component/CSliceGridProperty.cpp \
+    Modules/SlicePanel/Component/Parser/CBaseParser.cpp \
+    Modules/SlicePanel/Component/Parser/CDBDataParser.cpp \
+    Modules/SlicePanel/Models/CSlicePanelData.cpp \
+    Modules/SlicePanel/Models/CSliceResultData.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -75,7 +78,6 @@ HEADERS += \
     Modules/Import/ImportWnd.h \
     Modules/SlicePanel/SlicePanel.h \
     Modules/SlicePanel/Models/CSliceGridData.h \
-    Modules/SlicePanel/Models/CSlicePanelData.h \
     Component/UI/CGridArea.h \
     Utils/StringUtil.h \
     Modules/SlicePanel/Component/CScrollArea.h \
@@ -84,7 +86,11 @@ HEADERS += \
     Utils/WidgetUtil.h \
     Utils/DebugUtil.h \
     Modules/SlicePanel/Component/CSliceGridItem.h \
-    Modules/SlicePanel/Component/CSliceGridProperty.h
+    Modules/SlicePanel/Component/CSliceGridProperty.h \
+    Modules/SlicePanel/Component/Parser/CBaseParser.h \
+    Modules/SlicePanel/Component/Parser/CDBDataParser.h \
+    Modules/SlicePanel/Models/CSlicePanelData.h \
+    Modules/SlicePanel/Models/CSliceResultData.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \

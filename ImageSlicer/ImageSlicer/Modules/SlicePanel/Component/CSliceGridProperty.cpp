@@ -50,6 +50,7 @@ CSliceGridData &CSliceGridProperty::getData()
 {
     return m_data;
 }
+
 void CSliceGridProperty::setData(const CSliceGridData &data)
 {
     m_data = data;

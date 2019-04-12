@@ -8,6 +8,7 @@
 #include "Component/UI/CPictureBox.h"
 #include "Modules/SlicePanel/Component/ImgAttrListItem.h"
 #include "Modules/SliceEdit/SliceEdit.h"
+#include "Models/CSliceResultData.h"
 
 class QKeyEvent;
 class QWheelEvent;
@@ -37,14 +38,19 @@ public:
     QSize getImageOriSize() const;
 
     void setPicBoxMode(CPictureBox::EZoomMode);
+
+    const CSlicePanelData &getPanelData();
+
 signals:
-    void imageDataUpdate();
+    void panelDataUpdate();
 public slots:
     bool loadImageFromFile(const QString &filePath);
-    void sliceImageBySize(const QSizeF &size);
+    CSliceResultData getResultData();
 private slots:
     void updateImgAttrList();
     void editSliceWnd();
+    void editMergeGrids();
+    void editRemoveGrids();
     void editSliceCallback(const CSliceEdit::SSliceCallbackParams &);
     void sliceClicked(CGridItem *);
 protected:
@@ -60,7 +66,7 @@ private:
 private:
     Ui::CSlicePanel *ui;
 
-    QString m_imageFilePath;
+    CSlicePanelData m_panelData;
     QMap<EActionMode,bool>  m_flagsMap;
 
     QMenu *m_pSliceMenu;

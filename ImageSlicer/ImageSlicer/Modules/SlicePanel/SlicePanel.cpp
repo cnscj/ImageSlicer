@@ -22,28 +22,36 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
     ui(new Ui::CSlicePanel)
 {
     ui->setupUi(this);
+    ui->gridArea->setSelectMode(CGridArea::ESelectMode::Single);
 
     //右键菜单
     m_pSliceMenu = new QMenu(this);
     QList<QAction*> actionList;
     actionList << ui->actionSlice;
+    actionList << ui->actionMerge;
+    actionList << ui->actionRemove;
+    ui->actionMerge->setEnabled(false);
+    ui->actionRemove->setEnabled(false);
     m_pSliceMenu->addActions(actionList);//添加子项到主菜单
     connect(ui->actionSlice,SIGNAL(triggered()),this,SLOT(editSliceWnd()));
+    connect(ui->actionMerge,SIGNAL(triggered()),this,SLOT(editMergeGrids()));
+    connect(ui->actionRemove,SIGNAL(triggered()),this,SLOT(editRemoveGrids()));
 
     //划分切片窗口
     m_pSliceEditWnd = new CSliceEdit();
     m_pSliceEditWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
 
     //切片构造函数
-    ui->gridArea->setItemCreator([](QWidget *parent)
+    ui->gridArea->setItemCreator([=](const CGridItemData &data)
     {
-        auto item = new CSliceGridItem(parent);
+        auto item = new CSliceGridItem();
+        item->setFileName(StringUtil::getFileName(this->getImgOriPath(),true));
         return item;
     });
     connect(ui->gridArea,&CGridArea::gridClicked,this,&CSlicePanel::sliceClicked);
 
     /////////////////////
-    connect(this,&CSlicePanel::imageDataUpdate,this,&CSlicePanel::updateImgAttrList);
+    connect(this,&CSlicePanel::panelDataUpdate,this,&CSlicePanel::updateImgAttrList);
     connect(m_pSliceEditWnd,&CSliceEdit::sliceCallback,this,&CSlicePanel::editSliceCallback);
 
 }
@@ -63,28 +71,24 @@ bool CSlicePanel::loadImageFromFile(const QString &filePath)
     if (ret)
     {
         ui->imageWidget->setImage(temImg);
-        m_imageFilePath = filePath;
+        m_panelData.filePath = filePath;
+        m_panelData.size = temImg.size();
 
-        emit imageDataUpdate();
+        emit panelDataUpdate();
     }
 
     return ret;
 }
 
-void CSlicePanel::sliceImageBySize(const QSizeF &size)
-{
-    ui->gridArea->sliceGrids(nullptr,size);
-    emit imageDataUpdate();
-}
 
 const QString &CSlicePanel::getImgOriPath() const
 {
-    return m_imageFilePath;
+    return m_panelData.filePath;
 }
 
 QSize CSlicePanel::getImageOriSize() const
 {
-    return ui->imageWidget->getOriSize();
+    return m_panelData.size;
 }
 
 
@@ -92,7 +96,28 @@ void CSlicePanel::setPicBoxMode(CPictureBox::EZoomMode mode)
 {
     ui->imageWidget->setMode(mode);
 }
+const CSlicePanelData &CSlicePanel::getPanelData()
+{
+    return m_panelData;
+}
 
+CSliceResultData CSlicePanel::getResultData()
+{
+    CSliceResultData data;
+    data.panelData = &m_panelData;
+
+    auto pItemList = ui->gridArea->getGirds();
+    QList<CSliceGridData *> gridsList;
+    for(auto it : *pItemList)
+    {
+        auto item = static_cast<CSliceGridItem *>(it);
+        gridsList.push_back(item->getPropertyData());
+    }
+    data.gridsList = gridsList;
+
+    return data;
+}
+//
 void CSlicePanel::keyPressEvent(QKeyEvent *e)
 {
     //是否按住Alt键或Option键
@@ -100,6 +125,9 @@ void CSlicePanel::keyPressEvent(QKeyEvent *e)
     {
        m_flagsMap[EActionMode::WantScale] = true;
        ui->scrollArea->setWheelScrollEnable(false);
+    }else if(e->key() == Qt::Key_Comma || e->key() == Qt::Key_Control)
+    {
+        ui->gridArea->setSelectMode(CGridArea::ESelectMode::Multiple);
     }
 }
 void CSlicePanel::keyReleaseEvent(QKeyEvent *e)
@@ -108,6 +136,9 @@ void CSlicePanel::keyReleaseEvent(QKeyEvent *e)
     {
        m_flagsMap[EActionMode::WantScale] = false;
        ui->scrollArea->setWheelScrollEnable(true);
+    }else if(e->key() == Qt::Key_Comma || e->key() == Qt::Key_Control)
+    {
+        ui->gridArea->setSelectMode(CGridArea::ESelectMode::Single);
     }
 }
 
@@ -128,7 +159,7 @@ void CSlicePanel::wheelEvent(QWheelEvent *e)
         }
         ui->imageWidget->setScale(finalScale);
         ui->scrollArea->update();
-        emit imageDataUpdate();
+        emit panelDataUpdate();
     }
 }
 
@@ -139,7 +170,7 @@ void CSlicePanel::mousePressEvent(QMouseEvent *e)
     {
         ui->imageWidget->setScale(1.0);
         ui->scrollArea->update();
-        emit imageDataUpdate();
+        emit panelDataUpdate();
     }
 }
 
@@ -210,22 +241,58 @@ void CSlicePanel::editSliceWnd()
     CSliceEdit::SShowParams params;
     auto slicePanel = static_cast<CSlicePanel *>(this);
     //填充结构体
-    params.filePath = slicePanel->getImgOriPath();
-    params.imgSize = slicePanel->getImageOriSize();
+
+    if (ui->gridArea->getSelectList().count() > 0)
+    {
+        auto item = ui->gridArea->getSelectList().at(0);
+        params.imgSize = item->getData().size;
+    }else
+    {
+        params.filePath = slicePanel->getImgOriPath();
+        params.imgSize = slicePanel->getImageOriSize();
+    }
+
     m_pSliceEditWnd->showWithParams(params);
 }
 void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &params)
 {
     qDebug("回调:%f,%f",params.sliceSize.width(),params.sliceSize.height());
 
-    auto slicePanel = static_cast<CSlicePanel *>(this);
-    slicePanel->sliceImageBySize(params.sliceSize);
-}
+    if (ui->gridArea->getSelectList().count() > 0)
+    {
+        auto item = ui->gridArea->getSelectList().at(0);
+        ui->gridArea->sliceGrids(item,params.sliceSize);
+    }
+    else
+    {
+        ui->gridArea->sliceGrids(nullptr,params.sliceSize);
+    }
 
+    emit panelDataUpdate();
+}
+void CSlicePanel::editMergeGrids()
+{
+    ui->gridArea->mergeGrids(ui->gridArea->getSelectList());
+    emit panelDataUpdate();
+}
+void CSlicePanel::editRemoveGrids()
+{
+    ui->gridArea->removeGrids(ui->gridArea->getSelectList());
+    emit panelDataUpdate();
+}
 void CSlicePanel::sliceClicked(CGridItem *grid)
 {
     auto item = static_cast<CSliceGridItem *>(grid);
     item->showProperty(ui->propsWidget);
+    if (ui->gridArea->getSelectList().count() > 0)
+    {
+        ui->actionMerge->setEnabled(true);
+        ui->actionRemove->setEnabled(true);
+    }else
+    {
+        ui->actionMerge->setEnabled(false);
+        ui->actionRemove->setEnabled(false);
+    }
 
     qDebug("点击:%d_%d",item->getData().pos.x(),item->getData().pos.y());
 }

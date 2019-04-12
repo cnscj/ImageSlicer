@@ -18,6 +18,9 @@ public:
     QPoint pos;
     QSize size;
 public:
+    QRect rect() const;
+    void setRect(const QRect &);
+public:
     CGridItemData();
     CGridItemData(const QRect &);
     CGridItemData(int x,int y,int w,int h);
@@ -27,11 +30,13 @@ class CGridArea : public QWidget
 {
     Q_OBJECT
 public:
-    typedef std::function<CGridItem *(QWidget *parent)> LItemCreator;
+    typedef std::function<CGridItem *(const CGridItemData &data)> LItemCreator;
     typedef std::function<void(CGridItem *)> LItemDestroyer;
 
     static const LItemCreator defaultCreator;
     static const LItemDestroyer defaultDestroyer;
+
+    enum class ESelectMode{None,Single,Multiple};
 public:
     CGridArea(QWidget *parent = nullptr);
 public slots:
@@ -41,18 +46,26 @@ public:
     void sliceGridsByPath(const QPoint &pt);
 
     void sliceGrids(CGridItem *item,const QSizeF &size);
-    void mergeGrids(QLinkedList<CGridItem *> &list);
-    void deleteGrids(QLinkedList<CGridItem *> &list);
+    void mergeGrids(const QList<CGridItem *> &list);
+    void removeGrids(const QList<CGridItem *> &list);
 
     CGridItem *addGridItem(const CGridItemData &data);
     void removeGridItem(CGridItem *item);
     void removeAllGridItems();
-    const QLinkedList<CGridItem *> *getGirds() const;
+    const QList<CGridItem *> *getGirds() const;
 
     int getSliceCount() const;
+
+    void addSelectList(CGridItem *item, bool isCheck = true);
+    void removeSelectList(CGridItem *item);
+    const QList<CGridItem *> &getSelectList();
+    void clearSelectList();
+
+    void setSelectMode(ESelectMode mode);
+    ESelectMode getSelectMode();
 public:
     void setItemCreator(LItemCreator);
-    void setItemDestroyer(LItemCreator);
+    void setItemDestroyer(LItemDestroyer);
 signals:
     void sizeChanged(const QPointF &);
     void gridClicked(CGridItem *);
@@ -63,14 +76,14 @@ protected:
     void paintEvent(QPaintEvent * event);
     void resizeEvent(QResizeEvent *event);
 private:
-    QLinkedList<CGridItem *> m_itesList;
+    QList<CGridItem *> m_itemsList;
     QPointF m_scale;
     LItemCreator m_creator;
     LItemDestroyer m_destroyer;
 
+    ESelectMode m_selectMode;
+    QList<CGridItem *> m_selectList;
 };
-
-
 
 class CGridItem : public QWidget
 {
@@ -86,7 +99,8 @@ public:
     void setUserData(void *pUserData);
     void *getUserData() const;
 
-    int getID();
+    int getIndex();
+    bool isSelected();
 signals:
     void clicked(CGridItem *);
 public slots:
@@ -95,18 +109,22 @@ public slots:
 protected:
     virtual void onState(const CGridItemData &data);
     virtual void onClick();
+    virtual void onSelected(bool isSelected);
+    virtual void onIndex(int index);
 
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
 
-    void setID(int id);
+    void setIndex(int id);
+    void setSelected(bool isSelected);
 private:
     QPoint m_mouserPos;
     CGridItemData m_data;
     void *m_pUserData;
+    bool m_isSelected;
 
-    int m_id = -1;
+    int m_index = -1;
 };
 
 #endif // CGRIDAREA_H

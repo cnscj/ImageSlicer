@@ -1,20 +1,14 @@
 #ifndef CSLICEPANELDATA_H
 #define CSLICEPANELDATA_H
-#include <QLinkedList>
-#include "CSliceGridData.h"
 
-uint qHash(const CSliceGridData *&pData)
-{
-    return pData->getUID();
-}
-
+#include <QString>
+#include <QSize>
 class CSlicePanelData
 {
 public:
+    QString filePath;
+    QSize size;
 
-    QLinkedList<CSliceGridData *> m_gridList;//格子数组
-public:
-    void mergeGrids(const QSet<CSliceGridData> &);
 public:
     CSlicePanelData();
 };

@@ -8,11 +8,20 @@
 static const int PEN_SIZE = 1;
 
 template<typename T>
-T limitValue(T src, T min, T max)
+static T limitValue(T src, T min, T max)
 {
     src = (src > max) ? max : src;
     src = (src < min) ? min : src;
     return src;
+}
+
+static bool sortItemByPos(const CGridItem *a,const CGridItem *b)
+{
+    if (a->getData().pos.y() == b->getData().pos.y())
+    {
+        return (a->getData().pos.x() < b->getData().pos.x());
+    }
+    return (a->getData().pos.y() < b->getData().pos.y());
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -31,11 +40,22 @@ CGridItemData::CGridItemData(int x,int y,int w,int h):pos(x,y),size(w,h)
 
 }
 
+QRect CGridItemData::rect() const
+{
+    return QRect(pos,size);
+}
+void CGridItemData::setRect(const QRect &rt)
+{
+    pos = QPoint(rt.x(),rt.y());
+    size = QSize(rt.width(),rt.height());
+}
 ////////
 
-const CGridArea::LItemCreator CGridArea::defaultCreator = [](QWidget *parent)
+const CGridArea::LItemCreator CGridArea::defaultCreator = [](const CGridItemData &data)
 {
-    return new CGridItem(parent);
+    Q_UNUSED(data);
+    auto item = new CGridItem();
+    return item;
 };
 
 const CGridArea::LItemDestroyer CGridArea::defaultDestroyer = [](CGridItem *widget)
@@ -44,7 +64,9 @@ const CGridArea::LItemDestroyer CGridArea::defaultDestroyer = [](CGridItem *widg
 };
 
 
-CGridArea::CGridArea(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0),m_creator(defaultCreator),m_destroyer(defaultDestroyer)
+CGridArea::CGridArea(QWidget *parent) : QWidget(parent),
+    m_scale(1.0,1.0),m_creator(defaultCreator),
+    m_destroyer(defaultDestroyer),m_selectMode(ESelectMode::None)
 {
 
 }
@@ -92,7 +114,21 @@ void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
 {
     if (item != nullptr)    //嵌套切割
     {
+        auto startPos = item->getData().pos;
+        auto oriSize = item->getData().size;
+        int finalWidth = limitValue(static_cast<int>(size.width()),1,oriSize.width());
+        int finalHeight = limitValue(static_cast<int>(size.height()),1,oriSize.height());
 
+
+        for (int j = 0; j < oriSize.height(); j+=finalHeight)
+        {
+            for (int i = 0; i < oriSize.width(); i+=finalWidth)
+            {
+                CGridItemData itemData(startPos.x() + i,startPos.y() + j,finalWidth,finalHeight);
+                addGridItem(itemData);
+            }
+        }
+        removeGridItem(item);
     }
     else    //完全切割
     {
@@ -112,26 +148,80 @@ void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
 
             }
         }
+    }
+    resetIds();
+    update();
+}
+
+void CGridArea::mergeGrids(const QList<CGridItem *> &list)
+{
+    if (list.count() > 1)
+    {
+        QPoint minLTPos(INT_MAX,INT_MAX);        //找出最左上角的点
+        QPoint maxRBPos(INT_MIN,INT_MIN);       //找出最右下角的点
+        for(auto it : list)
+        {
+            if (it->getData().pos.x() < minLTPos.x())
+            {
+                minLTPos.setX(it->getData().pos.x());
+            }
+            if (it->getData().pos.y() < minLTPos.y())
+            {
+                minLTPos.setY(it->getData().pos.y());
+            }
+
+            QPoint widgetRBPos(it->getData().pos.x() + it->getData().size.width(),it->getData().pos.y() + it->getData().size.height());
+            if (widgetRBPos.x() > maxRBPos.x())
+            {
+                maxRBPos.setX(widgetRBPos.x());
+            }
+            if (widgetRBPos.y() > maxRBPos.y())
+            {
+                maxRBPos.setY(widgetRBPos.y());
+            }
+        }
+        QRect retRt = QRect(minLTPos.x(),minLTPos.y(),maxRBPos.x()-minLTPos.x(),maxRBPos.y()-minLTPos.y());
+        qDebug(QString("%1,%2,%3,%4").arg(retRt.x()).arg(retRt.y()).arg(retRt.width()).arg(retRt.height()).toStdString().c_str());
+
+        //移除在这个区域没得图形
+        removeGrids(list);
+        for (auto it : m_itemsList)
+        {
+           if (retRt.contains(it->getData().rect()))    //TODO:因为有极小的误差导致删不掉
+           {
+               removeGridItem(it);
+           }
+        }
+
+        //添加
+        CGridItemData data;
+        data.setRect(retRt);
+        addGridItem(data);
+
+        resetIds();
         update();
     }
 }
 
-void CGridArea::mergeGrids(QLinkedList<CGridItem *> &list)
+void CGridArea::removeGrids(const QList<CGridItem *> &list)
 {
-    //TODO:
-}
+    for(auto it : list)
+    {
+        removeGridItem(it);
+    }
 
-void CGridArea::deleteGrids(QLinkedList<CGridItem *> &list)
-{
-    //TODO:
+    resetIds();
+    update();
 }
 
 CGridItem *CGridArea::addGridItem(const CGridItemData &data)
 {
-    CGridItem *item = m_creator(this);
+    CGridItem *item = m_creator(data);
+    item->setParent(this);
+    item->setVisible(true);
     item->setData(data);
 
-    m_itesList.push_back(item);
+    m_itemsList.push_back(item);
 
     connect(item,&CGridItem::clicked,this,&CGridArea::itemClick);
     connect(this,&CGridArea::sizeChanged,item,&CGridItem::changeSize);
@@ -140,34 +230,89 @@ CGridItem *CGridArea::addGridItem(const CGridItemData &data)
 }
 void CGridArea::removeGridItem(CGridItem *item)
 {
-    //TODO:
+    if (item)
+    {
+        removeSelectList(item);
+
+        disconnect(item,&CGridItem::clicked,this,&CGridArea::itemClick);
+        disconnect(this,&CGridArea::sizeChanged,item,&CGridItem::changeSize);
+
+        m_itemsList.removeOne(item);
+        m_destroyer(item);
+    }
 }
 
 void CGridArea::removeAllGridItems()
 {
-    for(auto it : m_itesList)
+    for(auto it : m_itemsList)
     {
-        disconnect(it,&CGridItem::clicked,this,&CGridArea::itemClick);
-        disconnect(this,&CGridArea::sizeChanged,it,&CGridItem::changeSize);
-        m_destroyer(it);
+        removeGridItem(it);
     }
-    m_itesList.clear();
+    m_itemsList.clear();
 }
-const QLinkedList<CGridItem *> *CGridArea::getGirds() const
+const QList<CGridItem *> *CGridArea::getGirds() const
 {
-    return &m_itesList;
+    return &m_itemsList;
 }
 
 int CGridArea::getSliceCount() const
 {
     return getGirds()->count();
 }
+void CGridArea::addSelectList(CGridItem *item, bool isCheck)
+{
+    if (isCheck)
+    {
+        if (item->isSelected())
+        {
+            removeSelectList(item);
+        }else
+        {
+            m_selectList.push_back(item);
+            item->onSelected(true);
+        }
+    }else{
+        if (!item->isSelected())
+        {
+            m_selectList.push_back(item);
+            item->onSelected(true);
+        }
+    }
+}
+const QList<CGridItem *> &CGridArea::getSelectList()
+{
+    return m_selectList;
+}
+
+void CGridArea::removeSelectList(CGridItem *item)
+{
+    item->onSelected(false);
+    m_selectList.removeOne(item);
+}
+void CGridArea::clearSelectList()
+{
+    for (auto it : m_selectList)
+    {
+        removeSelectList(it);
+    }
+    m_selectList.clear();
+}
+
+void CGridArea::setSelectMode(ESelectMode mode)
+{
+    m_selectMode = mode;
+}
+CGridArea::ESelectMode CGridArea::getSelectMode()
+{
+    return m_selectMode;
+}
 ///
 void CGridArea::setItemCreator(LItemCreator func)
 {
     m_creator = func;
 }
-void CGridArea::setItemDestroyer(LItemCreator func)
+
+void CGridArea::setItemDestroyer(LItemDestroyer func)
 {
     m_destroyer = func;
 }
@@ -175,16 +320,31 @@ void CGridArea::setItemDestroyer(LItemCreator func)
 void CGridArea::resetIds()
 {
     //左上角开始编号
-    for(auto it : m_itesList)
-    {
+    QList<CGridItem *> itemsList = m_itemsList;
+    std::sort(itemsList.begin(),itemsList.end(),sortItemByPos);
 
+    int id = 0;
+    for(auto it : itemsList)
+    {
+        it->setIndex(++id);
     }
 }
 
 ///
 void CGridArea::itemClick(CGridItem *item)
 {
-    //处理代码
+    if (m_selectMode == ESelectMode::Single)
+    {
+        //取消掉之前所有选择,再选
+        clearSelectList();
+        addSelectList(item);
+    }
+    else if(m_selectMode == ESelectMode::Multiple)
+    {
+        //直接加入选择列表
+        addSelectList(item);
+    }
+
     emit gridClicked(item);
 }
 
@@ -240,23 +400,42 @@ void *CGridItem::getUserData() const
     return m_pUserData;
 }
 
-int CGridItem::getID()
+int CGridItem::getIndex()
 {
-    return m_id;
+    return m_index;
 }
-void CGridItem::setID(int id)
+void CGridItem::setIndex(int index)
 {
-    m_id = id;
+    m_index = index;
+    onIndex(index);
+}
+bool CGridItem::isSelected()
+{
+    return m_isSelected;
+}
+void CGridItem::setSelected(bool isSelected)
+{
+    m_isSelected = isSelected;
+    onSelected(m_isSelected);
 }
 ///
 void CGridItem::onState(const CGridItemData &data)
 {
-
+    Q_UNUSED(data);
 }
 
 void CGridItem::onClick()
 {
 
+}
+
+void CGridItem::onSelected(bool isSelected)
+{
+    Q_UNUSED(isSelected);
+}
+void CGridItem::onIndex(int index)
+{
+    Q_UNUSED(index);
 }
 
 void CGridItem::paintEvent(QPaintEvent *e)

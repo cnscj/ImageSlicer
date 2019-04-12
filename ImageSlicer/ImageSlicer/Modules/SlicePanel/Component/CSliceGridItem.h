@@ -15,13 +15,20 @@ public:
     ~CSliceGridItem();
 public:
     void showProperty(QtTreePropertyBrowser *treeProperty);
+    CSliceGridData *getPropertyData();
+
+    void setFileName(const QString &name);
+    const QString &getFileName();
 protected:
-    void onSelected(bool isSelected);
     void onState(const CGridItemData &data);
+    void onSelected(bool isSelected);
+    void onIndex(int index);
+
     void paintEvent(QPaintEvent *e);
 protected slots:
     void propValueChanged(const QString &propName,const CSliceGridData &data);
 private:
+    QString m_fileName;
     CSliceGridProperty m_property;
     QPen m_pen;
     bool m_isSelected;
