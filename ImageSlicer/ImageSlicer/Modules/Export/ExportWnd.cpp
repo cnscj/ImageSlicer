@@ -44,7 +44,7 @@ void CExportWnd::previewFileHandle()
         QString fileName = QFileDialog::getSaveFileName(this,
                 QString::fromLocal8Bit("文件另存为"),
                 outName,
-                tr("DragonBones5.5 Files (*.josn)"));
+                tr("DragonBones5.5 Files (*.json)"));
         ui->savePathLe->setText(fileName);
     }
 }
