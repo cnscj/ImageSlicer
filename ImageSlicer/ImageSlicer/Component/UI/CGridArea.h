@@ -118,9 +118,14 @@ protected:
 
     void setIndex(int id);
     void setSelected(bool isSelected);
+
+    void updateScale();
+protected:
+    CGridItemData m_data;
 private:
     QPoint m_mouserPos;
-    CGridItemData m_data;
+    QPointF m_scale;
+
     void *m_pUserData;
     bool m_isSelected;
 

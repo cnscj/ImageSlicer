@@ -32,19 +32,18 @@ void CExportWnd::showWithParams(const SShowParams &params)
 
 void CExportWnd::previewFileHandle()
 {
-    QString outName = "";
+    QString filePath = "";
+    QString fileName = "";
+    QString outPath = "";
     if (m_params.resultData.panelData)
     {
-        QString filePath = StringUtil::getFileDir(m_params.resultData.panelData->filePath);
-        QString fileName = StringUtil::getBaseName(m_params.resultData.panelData->filePath);
-        outName = QString("%1/%2").arg(filePath).arg(fileName);
+        filePath = StringUtil::getFileDir(m_params.resultData.panelData->filePath);
+        fileName = StringUtil::getBaseName(m_params.resultData.panelData->filePath);
+        outPath = QString("%1/%2").arg(filePath).arg(fileName);
     }
     if (ui->dbRb->isChecked())
     {
-        QString fileName = QFileDialog::getSaveFileName(this,
-                QString::fromLocal8Bit("文件另存为"),
-                outName,
-                tr("DragonBones5.5 Files (*.json)"));
+        QString fileName = QFileDialog::getExistingDirectory(this,"File Save as ...",filePath);
         ui->savePathLe->setText(fileName);
     }
 }

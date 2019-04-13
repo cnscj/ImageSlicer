@@ -51,7 +51,6 @@ void CSliceGridItem::onState(const CGridItemData &data)
 
 void CSliceGridItem::onSelected(bool isSelected)
 {
-    m_isSelected = isSelected;
     if (isSelected)
     {
         if (m_property.getData().enable)
@@ -127,5 +126,11 @@ void CSliceGridItem::propValueChanged(const QString &propName,const CSliceGridDa
 
         }
         this->update();
+    }
+    else if (propName == "x" || propName == "y" || propName == "width" || propName == "height")
+    {
+        m_data.pos = data.pos;
+        m_data.size = data.size;
+        this->updateScale();
     }
 }

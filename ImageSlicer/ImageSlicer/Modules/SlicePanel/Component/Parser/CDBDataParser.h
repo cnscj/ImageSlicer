@@ -6,6 +6,10 @@ class CDBDataParser : public CBaseParser
 {
 public:
     CDBDataParser();
+protected:
+    bool processTex(const SOutputParams &params);
+    bool processSke(const SOutputParams &params);
+
 public:
     bool output(const SOutputParams &params);
     bool input(const SInputParams &params);

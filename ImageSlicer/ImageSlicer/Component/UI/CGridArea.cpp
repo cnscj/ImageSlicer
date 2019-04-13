@@ -150,7 +150,8 @@ void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
         }
     }
     resetIds();
-    update();
+
+    emit sizeChanged(m_scale);
 }
 
 void CGridArea::mergeGrids(const QList<CGridItem *> &list)
@@ -199,7 +200,8 @@ void CGridArea::mergeGrids(const QList<CGridItem *> &list)
         addGridItem(data);
 
         resetIds();
-        update();
+
+        emit sizeChanged(m_scale);
     }
 }
 
@@ -211,15 +213,17 @@ void CGridArea::removeGrids(const QList<CGridItem *> &list)
     }
 
     resetIds();
-    update();
+
+    emit sizeChanged(m_scale);
 }
 
 CGridItem *CGridArea::addGridItem(const CGridItemData &data)
 {
     CGridItem *item = m_creator(data);
     item->setParent(this);
-    item->setVisible(true);
     item->setData(data);
+    item->setVisible(true);
+    item->show();
 
     m_itemsList.push_back(item);
 
@@ -266,16 +270,19 @@ void CGridArea::addSelectList(CGridItem *item, bool isCheck)
         if (item->isSelected())
         {
             removeSelectList(item);
-        }else
+        }
+        else
         {
             m_selectList.push_back(item);
-            item->onSelected(true);
+            item->setSelected(true);
         }
-    }else{
+    }
+    else
+    {
         if (!item->isSelected())
         {
             m_selectList.push_back(item);
-            item->onSelected(true);
+            item->setSelected(true);
         }
     }
 }
@@ -286,7 +293,7 @@ const QList<CGridItem *> &CGridArea::getSelectList()
 
 void CGridArea::removeSelectList(CGridItem *item)
 {
-    item->onSelected(false);
+    item->setSelected(false);
     m_selectList.removeOne(item);
 }
 void CGridArea::clearSelectList()
@@ -370,9 +377,9 @@ void CGridArea::resizeEvent(QResizeEvent *event)
 /////////////////////
 /////////////////////
 
-CGridItem::CGridItem(QWidget *parent) : QWidget(parent)
+CGridItem::CGridItem(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0),m_pUserData(nullptr),m_isSelected(false)
 {
-    show(); //理论上有parent的不需要再show(),这里不知为何只有show()才行
+    //不能再这里show(),会疯狂闪
 }
 
 void CGridItem::setData(const CGridItemData &data)
@@ -418,6 +425,12 @@ void CGridItem::setSelected(bool isSelected)
     m_isSelected = isSelected;
     onSelected(m_isSelected);
 }
+
+void CGridItem::updateScale()
+{
+    changeSize(m_scale);
+}
+
 ///
 void CGridItem::onState(const CGridItemData &data)
 {
@@ -456,6 +469,7 @@ void CGridItem::changeSize(const QPointF &rate)
              static_cast<int>(this->getData().pos.y() * rate.y()),
              static_cast<int>(this->getData().size.width() * rate.x()),
              static_cast<int>(this->getData().size.height() * rate.y()));
+    m_scale = rate;
     this->setGeometry(rt);
     this->update();
 }

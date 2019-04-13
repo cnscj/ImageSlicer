@@ -8,10 +8,10 @@
 #include "Component/UI/CGridArea.h"
 #include "Component/CSliceGridItem.h"
 
-static const QString KEY_TEXTURE_SIZE = QStringLiteral("纹理尺寸");
-static const QString KEY_SCALE_SIZE = QStringLiteral("缩放尺寸");
-static const QString KEY_SCALE_RATE = QStringLiteral("缩放倍率");
-static const QString KEY_SLICE_COUNT = QStringLiteral("总切片数");
+static const QString KEY_TEXTURE_SIZE = ("纹理尺寸");
+static const QString KEY_SCALE_SIZE = ("缩放尺寸");
+static const QString KEY_SCALE_RATE = ("缩放倍率");
+static const QString KEY_SLICE_COUNT = ("总切片数");
 
 static const double MAX_SCALE_VALUE = 16.0;  //最大缩放值
 static const double MIN_SCALE_VALUE = 0.125;  //最小缩放值
@@ -42,7 +42,7 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
     m_pSliceEditWnd->setAttribute(Qt::WA_ShowModal, true);   //改为模态窗口
 
     //切片构造函数
-    ui->gridArea->setItemCreator([=](const CGridItemData &data)
+    ui->gridArea->setItemCreator([=](const CGridItemData &)
     {
         auto item = new CSliceGridItem();
         item->setFileName(StringUtil::getFileName(this->getImgOriPath(),true));
@@ -125,7 +125,8 @@ void CSlicePanel::keyPressEvent(QKeyEvent *e)
     {
        m_flagsMap[EActionMode::WantScale] = true;
        ui->scrollArea->setWheelScrollEnable(false);
-    }else if(e->key() == Qt::Key_Comma || e->key() == Qt::Key_Control)
+    }
+    else if(e->key() == Qt::Key_Comma || e->key() == Qt::Key_Control)
     {
         ui->gridArea->setSelectMode(CGridArea::ESelectMode::Multiple);
     }
@@ -136,7 +137,8 @@ void CSlicePanel::keyReleaseEvent(QKeyEvent *e)
     {
        m_flagsMap[EActionMode::WantScale] = false;
        ui->scrollArea->setWheelScrollEnable(true);
-    }else if(e->key() == Qt::Key_Comma || e->key() == Qt::Key_Control)
+    }
+    else if(e->key() == Qt::Key_Comma || e->key() == Qt::Key_Control)
     {
         ui->gridArea->setSelectMode(CGridArea::ESelectMode::Single);
     }

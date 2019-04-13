@@ -1,15 +1,15 @@
 #include "CSliceGridProperty.h"
 
-static const QString GROUP1_NAME = QStringLiteral("Group1");
-static const QString GROUP2_NAME = QStringLiteral("Group2");
+static const QString GROUP1_NAME = ("Group1");
+static const QString GROUP2_NAME = ("Group2");
 
-static const QString KEY_NAME = QStringLiteral("name");
-static const QString KEY_ENABLE = QStringLiteral("enable");
-static const QString KEY_REMARK = QStringLiteral("remark");
-static const QString KEY_X = QStringLiteral("x");
-static const QString KEY_Y = QStringLiteral("y");
-static const QString KEY_WIDTH = QStringLiteral("width");
-static const QString KEY_HEIGHT = QStringLiteral("height");
+static const QString KEY_NAME = ("name");
+static const QString KEY_ENABLE = ("enable");
+static const QString KEY_REMARK = ("remark");
+static const QString KEY_X = ("x");
+static const QString KEY_Y = ("y");
+static const QString KEY_WIDTH = ("width");
+static const QString KEY_HEIGHT = ("height");
 
 
 CSliceGridProperty::CSliceGridProperty()
