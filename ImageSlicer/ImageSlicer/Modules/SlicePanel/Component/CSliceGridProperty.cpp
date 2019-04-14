@@ -1,7 +1,7 @@
 #include "CSliceGridProperty.h"
 
-static const QString GROUP1_NAME = ("Group1");
-static const QString GROUP2_NAME = ("Group2");
+static const QString GROUP1_NAME = ("frame");
+static const QString GROUP2_NAME = ("geometry");
 
 static const QString KEY_NAME = ("name");
 static const QString KEY_ENABLE = ("enable");

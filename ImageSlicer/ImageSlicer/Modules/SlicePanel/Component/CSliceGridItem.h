@@ -16,6 +16,7 @@ public:
 public:
     void showProperty(QtTreePropertyBrowser *treeProperty);
     CSliceGridData *getPropertyData();
+    void setPropertyData(CSliceGridData *data);
 
     void setFileName(const QString &name);
     const QString &getFileName();

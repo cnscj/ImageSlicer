@@ -25,7 +25,10 @@ CSliceGridData *CSliceGridItem::getPropertyData()
 {
     return &m_property.getData();
 }
-
+void CSliceGridItem::setPropertyData(CSliceGridData *data)
+{
+    m_property.setData(*data);
+}
 void CSliceGridItem::setFileName(const QString &name)
 {
     m_fileName = name;

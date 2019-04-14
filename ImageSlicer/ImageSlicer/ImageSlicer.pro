@@ -3,7 +3,7 @@
 # Project created by QtCreator 2019-03-11T08:52:24
 #
 #-------------------------------------------------
-
+QT       += xml
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -56,7 +56,10 @@ SOURCES += \
     Modules/SlicePanel/Component/Parser/CBaseParser.cpp \
     Modules/SlicePanel/Component/Parser/CDBDataParser.cpp \
     Modules/SlicePanel/Models/CSlicePanelData.cpp \
-    Modules/SlicePanel/Models/CSliceResultData.cpp
+    Modules/SlicePanel/Models/CSliceResultData.cpp \
+    Modules/SlicePanel/Component/Parser/CPlistDataParser.cpp \
+    Modules/SlicePanel/Component/CSliceGridsProperty.cpp \
+    Modules/SlicePanel/Models/CSliceGridsData.cpp
 
 HEADERS += \
     ImageSlicer.h \
@@ -90,7 +93,10 @@ HEADERS += \
     Modules/SlicePanel/Component/Parser/CBaseParser.h \
     Modules/SlicePanel/Component/Parser/CDBDataParser.h \
     Modules/SlicePanel/Models/CSlicePanelData.h \
-    Modules/SlicePanel/Models/CSliceResultData.h
+    Modules/SlicePanel/Models/CSliceResultData.h \
+    Modules/SlicePanel/Component/Parser/CPlistDataParser.h \
+    Modules/SlicePanel/Component/CSliceGridsProperty.h \
+    Modules/SlicePanel/Models/CSliceGridsData.h
 
 FORMS += \
     Modules/MainUI/MainWindow.ui \

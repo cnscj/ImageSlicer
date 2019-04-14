@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include "ImageSlicer.h"
 #include "Modules/SlicePanel/Component/Parser/CDBDataParser.h"
-
+#include "Modules/SlicePanel/Component/Parser/CPlistDataParser.h"
 CExportWnd::CExportWnd(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CExportWnd)
@@ -43,28 +43,46 @@ void CExportWnd::previewFileHandle()
     }
     if (ui->dbRb->isChecked())
     {
-        QString fileName = QFileDialog::getExistingDirectory(this,"File Save as ...",filePath);
+        QString fileName = QFileDialog::getExistingDirectory(this,"Select export floder ...",filePath);
+        ui->savePathLe->setText(fileName);
+    }else if (ui->plistRb->isChecked())
+    {
+        QString fileName = QFileDialog::getSaveFileName(this,
+                        ("File Save as ..."),
+                        outPath,
+                        ("Plist1.0 Files (*.xml)"));
         ui->savePathLe->setText(fileName);
     }
 }
 void CExportWnd::outPutHandle()
 {
     QString savePath = ui->savePathLe->text();
+    CBaseParser *parser = nullptr;
+    CBaseParser::SOutputParams params;
+    params.savePath = savePath;
+    params.resultData.panelData = m_params.resultData.panelData;
+    params.resultData.gridsList = m_params.resultData.gridsList;
+
     if (ui->dbRb->isChecked())
     {
-        CDBDataParser parser;
-        CDBDataParser::SOutputParams params;
-        params.savePath = savePath;
-        params.resultData.panelData = m_params.resultData.panelData;
-        params.resultData.gridsList = m_params.resultData.gridsList;
+        parser = new CDBDataParser();
+    }
+    else if(ui->plistRb->isChecked())
+    {
+        parser = new CPlistDataParser();
+    }
 
-        if (parser.output(params))
-        {
-            QMessageBox::about(this, "Information", "Export is Success!!");
-        }
-        else
-        {
-            QMessageBox::critical(this, "Error", "Export is Failed!!");
-        }
+    if (parser->output(params))
+    {
+        QMessageBox::about(this, "Information", "Export is Success!!");
+    }
+    else
+    {
+        QMessageBox::critical(this, "Error", "Export is Failed!!");
+    }
+
+    if (parser)
+    {
+        delete parser;
     }
 }

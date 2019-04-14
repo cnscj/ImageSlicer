@@ -6,6 +6,7 @@
 #include <QMenu>
 
 #include "Component/UI/CPictureBox.h"
+#include "Component/CSliceGridsProperty.h"
 #include "Modules/SlicePanel/Component/ImgAttrListItem.h"
 #include "Modules/SliceEdit/SliceEdit.h"
 #include "Models/CSliceResultData.h"
@@ -53,6 +54,8 @@ private slots:
     void editRemoveGrids();
     void editSliceCallback(const CSliceEdit::SSliceCallbackParams &);
     void sliceClicked(CGridItem *);
+protected slots:
+    void propValueChanged(const QString &propName,const CSliceGridsData &data);
 protected:
     virtual void keyPressEvent(QKeyEvent *e);
     virtual void keyReleaseEvent(QKeyEvent *e);
@@ -71,6 +74,9 @@ private:
 
     QMenu *m_pSliceMenu;
     CSliceEdit *m_pSliceEditWnd;
+
+    CSliceGridsProperty m_gridsProperty;
+    bool m_isShowedGridsProperty;
 };
 
 #endif // SLICEPANLE_H

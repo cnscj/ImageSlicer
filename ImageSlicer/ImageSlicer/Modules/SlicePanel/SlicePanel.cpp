@@ -19,7 +19,7 @@ static const double STEP_SCALE_VALUE = 1.125; //每次缩放值
 
 CSlicePanel::CSlicePanel(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::CSlicePanel)
+    ui(new Ui::CSlicePanel),m_isShowedGridsProperty(false)
 {
     ui->setupUi(this);
     ui->gridArea->setSelectMode(CGridArea::ESelectMode::Single);
@@ -53,7 +53,7 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
     /////////////////////
     connect(this,&CSlicePanel::panelDataUpdate,this,&CSlicePanel::updateImgAttrList);
     connect(m_pSliceEditWnd,&CSliceEdit::sliceCallback,this,&CSlicePanel::editSliceCallback);
-
+    connect(&m_gridsProperty,&CSliceGridsProperty::dataChanged,this,&CSlicePanel::propValueChanged);
 }
 
 CSlicePanel::~CSlicePanel()
@@ -275,26 +275,68 @@ void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &para
 void CSlicePanel::editMergeGrids()
 {
     ui->gridArea->mergeGrids(ui->gridArea->getSelectList());
+    ui->actionMerge->setEnabled(false);
+    ui->actionRemove->setEnabled(false);
+    ui->propsWidget->clear();
+
     emit panelDataUpdate();
 }
 void CSlicePanel::editRemoveGrids()
 {
     ui->gridArea->removeGrids(ui->gridArea->getSelectList());
+    ui->actionMerge->setEnabled(false);
+    ui->actionRemove->setEnabled(false);
+    ui->propsWidget->clear();
+
     emit panelDataUpdate();
 }
 void CSlicePanel::sliceClicked(CGridItem *grid)
 {
     auto item = static_cast<CSliceGridItem *>(grid);
-    item->showProperty(ui->propsWidget);
+
     if (ui->gridArea->getSelectList().count() > 0)
     {
+        if (ui->gridArea->getSelectList().count() == 1)
+        {
+            item->showProperty(ui->propsWidget);
+            m_isShowedGridsProperty = false;
+        }
+        else
+        {
+            if (!m_isShowedGridsProperty)
+            {
+                CSliceGridsProperty::SShowParams params;
+                params.name = item->getPropertyData()->name;
+                params.enable = item->getPropertyData()->enable;
+
+                m_gridsProperty.showProperty(ui->propsWidget,params);
+                m_isShowedGridsProperty = true;
+            }
+        }
         ui->actionMerge->setEnabled(true);
         ui->actionRemove->setEnabled(true);
-    }else
-    {
-        ui->actionMerge->setEnabled(false);
-        ui->actionRemove->setEnabled(false);
     }
 
     qDebug("点击:%d_%d",item->getData().pos.x(),item->getData().pos.y());
+}
+void CSlicePanel::propValueChanged(const QString &propName,const CSliceGridsData &data)
+{
+    auto list = ui->gridArea->getSelectList();
+    int i = 1;
+    for(auto it : list)
+    {
+        auto item = static_cast<CSliceGridItem *>(it);
+        if (propName == "names")
+        {
+            item->getPropertyData()->name = QString("%1_%2").arg(data.names).arg(i,2,10,QLatin1Char('0'));
+            item->setPropertyData(item->getPropertyData());
+
+            i++;
+        }
+        else if(propName == "enables")
+        {
+            item->getPropertyData()->enable = data.enables;
+            item->setPropertyData(item->getPropertyData());
+        }
+    }
 }
