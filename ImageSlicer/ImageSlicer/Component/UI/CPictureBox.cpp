@@ -10,7 +10,7 @@ CPictureBox::CPictureBox(QWidget *parent) : QWidget(parent)
     m_pixmap = QPixmap(IMAGE_SIZE);
     m_pixmap.fill();
     m_scale = 1.0;
-    m_brush = QBrush(Qt::white);
+    m_brush = QBrush(Qt::Dense7Pattern);
     m_mode = EZoomMode::FixedSize;
     m_anchorPoint = QPointF(0.5,0.5);
 
