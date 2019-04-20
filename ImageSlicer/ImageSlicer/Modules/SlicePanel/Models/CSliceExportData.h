@@ -1,15 +1,16 @@
-#ifndef CSLICERESULTDATA_H
-#define CSLICERESULTDATA_H
+#ifndef CSLICEEXPORTDATA_H
+#define CSLICEEXPORTDATA_H
+
 #include <QList>
 #include "CSlicePanelData.h"
 #include "CSliceGridData.h"
-class CSliceResultData
+class CSliceExportData
 {
 public:
     CSlicePanelData *panelData;
     QList<CSliceGridData *> gridsList;
 public:
-    CSliceResultData();
+    CSliceExportData();
 };
 
-#endif // CSLICERESULTDATA_H
+#endif // CSLICEEXPORTDATA_H

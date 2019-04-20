@@ -101,9 +101,9 @@ const CSlicePanelData &CSlicePanel::getPanelData()
     return m_panelData;
 }
 
-CSliceResultData CSlicePanel::getResultData()
+CSliceExportData CSlicePanel::getExportData()
 {
-    CSliceResultData data;
+    CSliceExportData data;
     data.panelData = &m_panelData;
 
     auto pItemList = ui->gridArea->getGirds();
@@ -117,6 +117,23 @@ CSliceResultData CSlicePanel::getResultData()
 
     return data;
 }
+
+bool CSlicePanel::setImportData(CSliceImportData &data)
+{
+    if (loadImageFromFile(data.imagePath))
+    {
+        for(auto it : data.gridsList)
+        {
+            auto data = it->getOriData();
+            auto item = static_cast<CSliceGridItem *>(ui->gridArea->addGridItem(data));
+            item->setPropertyData(it);
+        }
+        ui->gridArea->resetIds();
+        ui->gridArea->adjust();
+    }
+    return true;
+}
+
 //
 void CSlicePanel::keyPressEvent(QKeyEvent *e)
 {

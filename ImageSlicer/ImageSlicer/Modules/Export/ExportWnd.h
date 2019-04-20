@@ -1,6 +1,6 @@
 #ifndef EXPORTWND_H
 #define EXPORTWND_H
-#include "Modules/SlicePanel/Models/CSliceResultData.h"
+#include "Modules/SlicePanel/Models/CSliceExportData.h"
 #include <QWidget>
 
 namespace Ui {
@@ -13,7 +13,7 @@ class CExportWnd : public QWidget
 public:
     struct SShowParams
     {
-        CSliceResultData resultData;
+        CSliceExportData resultData;
     };
 public:
     explicit CExportWnd(QWidget *parent = 0);

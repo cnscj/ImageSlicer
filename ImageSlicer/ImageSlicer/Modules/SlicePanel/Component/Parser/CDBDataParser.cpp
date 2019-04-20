@@ -1,19 +1,20 @@
 #include "CDBDataParser.h"
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QFile>
 #include <QJsonDocument>
+#include <QFile>
 #include "ImageSlicer.h"
+#include "Modules/MainUI/MainWindow.h"
 static const QString TEX_FILE_SUFFIX = "";
 static const QString SKE_FILE_SUFFIX = "_ske";
-static const QString CFG_FILE_SUFFIX = ".json";
+const QString CDBDataParser::CFG_FILE_SUFFIX = ".json";
 
 CDBDataParser::CDBDataParser()
 {
 
 }
 
-bool CDBDataParser::processTex(const SOutputParams &params)
+bool CDBDataParser::processOutTex(const SOutputParams &params)
 {
     QJsonObject root;
     QJsonArray subTexture;
@@ -52,7 +53,7 @@ bool CDBDataParser::processTex(const SOutputParams &params)
 
     return true;
 }
-bool CDBDataParser::processSke(const SOutputParams &params)
+bool CDBDataParser::processOutSke(const SOutputParams &params)
 {
     QJsonObject root;
     QJsonArray armature;
@@ -143,10 +144,68 @@ bool CDBDataParser::processSke(const SOutputParams &params)
 
 bool CDBDataParser::output(const SOutputParams &params)
 {
-    return (processTex(params) && processSke(params));
+    return (processOutTex(params) && processOutSke(params));
 }
 bool CDBDataParser::input(const SInputParams &params)
 {
-    Q_UNUSED(params);
-    return false;
+    CSliceImportData importData;
+    auto &gridsList = importData.gridsList;
+
+    //////
+    //解析
+    QFile loadFile(params.openPath);
+
+    if(!loadFile.open(QIODevice::ReadOnly))
+    {
+        return false;
+    }
+
+    QByteArray allData = loadFile.readAll();
+    loadFile.close();
+
+    QJsonParseError json_error;
+    QJsonDocument jsonDoc(QJsonDocument::fromJson(allData, &json_error));
+
+    if(json_error.error != QJsonParseError::NoError)
+    {
+        return false;
+    }
+
+    QJsonObject rootObj = jsonDoc.object();
+    QString imgName = rootObj.value("imagePath").toString();
+    importData.imagePath = QString("%1/%2").arg(StringUtil::getFileDir(params.openPath)).arg(imgName);
+
+    if(rootObj.contains("SubTexture"))
+    {
+       QJsonArray subArray = rootObj.value("SubTexture").toArray();
+       for(int i = 0; i< subArray.size(); i++)
+       {
+            QJsonObject nodeObj = subArray.at(i).toObject();
+
+            CSliceGridData *pData = new CSliceGridData();
+            pData->name = nodeObj.value("name").toString();
+            pData->pos.setX(nodeObj.value("x").toInt());
+            pData->pos.setY(nodeObj.value("y").toInt());
+            pData->size.setWidth(nodeObj.value("width").toInt());
+            pData->size.setHeight(nodeObj.value("height").toInt());
+            pData->enable = true;
+
+            gridsList.push_back(pData);
+       }
+    }
+
+    ///////
+    auto mainWin = static_cast<CMainWindow *>(params.widget);
+    CMainWindow::SNewTabParams tabParams;
+    tabParams.title = StringUtil::getFileName(importData.imagePath);
+
+    auto tab = mainWin->addNewSlicePanel(tabParams);
+    bool ret =  tab->setImportData(importData);
+
+    for (auto it: gridsList)
+    {
+        delete it;
+    }
+
+    return ret;
 }

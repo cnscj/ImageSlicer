@@ -45,20 +45,25 @@ CMainWindow::~CMainWindow()
 }
 
 
-void CMainWindow::addNewSlicePanel(const CSlicePanel::SNewTabParams &params)
+CSlicePanel *CMainWindow::addNewSlicePanel(const CMainWindow::SNewTabParams &params)
 {
     auto tabWidget = ui->mainTabWidget;
     auto widget = new CSlicePanel(tabWidget);
     widget->setPicBoxMode(CPictureBox::EZoomMode::AutoSize);//居中显示
 
-    bool ret = widget->loadImageFromFile(params.filePath);
-    if (ret)
+    if ( params.filePath != "")
     {
-        ui->actionExport->setEnabled(true);
+        bool ret = widget->loadImageFromFile(params.filePath);
+        if (ret)
+        {
+            ui->actionExport->setEnabled(true);
+        }
     }
+
     int index = tabWidget->insertTab(tabWidget->count(),widget,params.title);
     tabWidget->setCurrentIndex(index);
 
+    return widget;
 }
 
 void CMainWindow::dragEnterEvent(QDragEnterEvent* event)
@@ -86,7 +91,7 @@ void CMainWindow::dropEvent(QDropEvent* event)
     EnumType::EDropFileType fileType = getFileType(qm->urls()[0].toLocalFile());
     if (fileType == EnumType::EDropFileType::Image)
     {
-        CSlicePanel::SNewTabParams params;
+        CMainWindow::SNewTabParams params;
         params.title = fieName;
         params.filePath = filePath;
 
@@ -131,7 +136,7 @@ void CMainWindow::openExportWnd()
     if (tabWidget)
     {
         auto widget = static_cast<CSlicePanel *>(tabWidget);
-        params.resultData = widget->getResultData();
+        params.resultData = widget->getExportData();
 
         m_pExportWnd->showWithParams(params);
     }
@@ -139,7 +144,9 @@ void CMainWindow::openExportWnd()
 
 void CMainWindow::openImportWnd()
 {
-    m_pImportWnd->show();
+    CImportWnd::SShowParams params;
+    params.win = this;
+    m_pImportWnd->showWithParams(params);
 }
 
 

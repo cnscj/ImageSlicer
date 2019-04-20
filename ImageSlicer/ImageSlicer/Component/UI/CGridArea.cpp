@@ -71,45 +71,6 @@ CGridArea::CGridArea(QWidget *parent) : QWidget(parent),
 
 }
 
-void CGridArea::sliceGridsBySize(const QSize &size)
-{
-   sliceGrids(nullptr,size);
-}
-
-void CGridArea::sliceGridsByPath(const QPoint &rw)
-{
-//    //四舍五入,只能牺牲中间的
-//    removeAllGridItems();
-
-//    int finalRow = limitValue(rw.x(),1,width());
-//    int finalCol = limitValue(rw.y(),1,height());
-
-//    int middleRow = (finalRow % 2 == 1) ? (finalRow/2 + 1) : (finalRow);
-//    int middleCol = (finalCol % 2 == 1) ? (finalCol/2 + 1) : (finalCol);
-
-//    int itemHeight = static_cast<int>(::round(height()/finalCol));
-//    int itemWidth = static_cast<int>(::round(width()/finalRow));
-
-//    int middleHeight = itemHeight + height() - finalCol * itemHeight;
-//    int middleWidth = itemWidth + width() - finalRow * itemWidth;
-
-//    int finalWidth = itemWidth;
-//    int finalHeight = itemHeight;
-//    for (int i = 0; i < width(); i+=finalWidth)
-//    {
-//        finalWidth = ((i + 1) == middleRow) ? middleWidth : itemWidth;
-//        for (int j = 0; j < height(); j+=finalHeight)
-//        {
-//            finalHeight = ((j + 1) == middleCol) ? middleHeight : itemHeight;
-//            CGridItemData itemData(i,j,finalWidth,finalHeight);
-//            addGridItem(itemData);
-//        }
-//    }
-//    update();
-
-    sliceGrids(nullptr,QSizeF(width()/rw.x(),height()/rw.y()));
-}
-
 void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
 {
     if (item != nullptr)    //嵌套切割
@@ -118,7 +79,6 @@ void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
         auto oriSize = item->getData().size;
         int finalWidth = limitValue(static_cast<int>(size.width()),1,oriSize.width());
         int finalHeight = limitValue(static_cast<int>(size.height()),1,oriSize.height());
-
 
         for (int j = 0; j < oriSize.height(); j+=finalHeight)
         {
@@ -323,6 +283,15 @@ void CGridArea::setItemDestroyer(LItemDestroyer func)
 {
     m_destroyer = func;
 }
+
+const CGridArea::LItemCreator &CGridArea::getItemCreator()
+{
+    return m_creator;
+}
+const CGridArea::LItemDestroyer &CGridArea::getItemDestroyer()
+{
+    return m_destroyer;
+}
 ///
 void CGridArea::resetIds()
 {
@@ -335,6 +304,10 @@ void CGridArea::resetIds()
     {
         it->setIndex(++id);
     }
+}
+void CGridArea::adjust()
+{
+    emit sizeChanged(m_scale);
 }
 
 ///
@@ -395,6 +368,11 @@ void CGridItem::setData(const CGridItemData &data)
 const CGridItemData &CGridItem::getData() const
 {
     return m_data;
+}
+
+CGridItemData *CGridItem::getDataPtr()
+{
+     return &m_data;
 }
 
 void CGridItem::setUserData(void *pUserData)

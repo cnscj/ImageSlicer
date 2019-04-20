@@ -5,6 +5,7 @@
 #include <QRect>
 #include <QString>
 
+#include "Component/UI/CGridArea.h"
 class CSliceGridData
 {
 public:
@@ -17,6 +18,7 @@ public:
 public:
     uint getUID() const;
     QRect getRect() const;
+    CGridItemData getOriData();
 public:
     bool operator <(const CSliceGridData &) const;
     bool operator ==(const CSliceGridData &) const;

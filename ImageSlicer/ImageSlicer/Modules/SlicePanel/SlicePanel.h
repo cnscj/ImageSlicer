@@ -9,7 +9,8 @@
 #include "Component/CSliceGridsProperty.h"
 #include "Modules/SlicePanel/Component/ImgAttrListItem.h"
 #include "Modules/SliceEdit/SliceEdit.h"
-#include "Models/CSliceResultData.h"
+#include "Models/CSliceExportData.h"
+#include "Models/CSliceImportData.h"
 
 class QKeyEvent;
 class QWheelEvent;
@@ -24,11 +25,7 @@ class CSlicePanel : public QWidget
 {
     Q_OBJECT
 public:
-    struct SNewTabParams
-    {
-        QString title;
-        QString filePath;
-    };
+
 public:
     explicit CSlicePanel(QWidget *parent = nullptr);
     ~CSlicePanel();
@@ -46,7 +43,9 @@ signals:
     void panelDataUpdate();
 public slots:
     bool loadImageFromFile(const QString &filePath);
-    CSliceResultData getResultData();
+    CSliceExportData getExportData();
+
+    bool setImportData(CSliceImportData &data);
 private slots:
     void updateImgAttrList();
     void editSliceWnd();

@@ -1,14 +1,16 @@
 #include "CPlistDataParser.h"
 #include <QtXml>
+#include <QFile>
 #include "ImageSlicer.h"
+#include "Modules/MainUI/MainWindow.h"
 
-static const QString CFG_FILE_SUFFIX = ".xml";
+const QString CPlistDataParser::CFG_FILE_SUFFIX = ".plist";
 
 CPlistDataParser::CPlistDataParser()
 {
 
 }
-void CPlistDataParser::processNode(QDomDocument &doc,QDomElement &element,QString nameTitle,QString name,QString valueTitle,QString value)
+void CPlistDataParser::processOutNode(QDomDocument &doc,QDomElement &element,QString nameTitle,QString name,QString valueTitle,QString value)
 {
     QDomElement keyTitle = doc.createElement(nameTitle);
     QDomText keyName = doc.createTextNode(name);
@@ -66,14 +68,14 @@ bool CPlistDataParser::output(const SOutputParams &params)
                             QDomElement frameDict = doc.createElement("dict");
                             framesDict.appendChild(frameDict);
                             {
-                                processNode(doc,frameDict,"key","width","integer",QString("%1").arg(it->size.width()));
-                                processNode(doc,frameDict,"key","height","integer",QString("%1").arg(it->size.height()));
-                                processNode(doc,frameDict,"key","offsetX","real","0");
-                                processNode(doc,frameDict,"key","offsetY","real","0");
-                                processNode(doc,frameDict,"key","originalWidth","integer",QString("%1").arg(it->size.width()));
-                                processNode(doc,frameDict,"key","originalHeight","integer",QString("%1").arg(it->size.height()));
-                                processNode(doc,frameDict,"key","x","real",QString("%1").arg(it->pos.x()));
-                                processNode(doc,frameDict,"key","y","real",QString("%1").arg(it->pos.y()));
+                                processOutNode(doc,frameDict,"key","width","integer",QString("%1").arg(it->size.width()));
+                                processOutNode(doc,frameDict,"key","height","integer",QString("%1").arg(it->size.height()));
+                                processOutNode(doc,frameDict,"key","offsetX","real","0");
+                                processOutNode(doc,frameDict,"key","offsetY","real","0");
+                                processOutNode(doc,frameDict,"key","originalWidth","integer",QString("%1").arg(it->size.width()));
+                                processOutNode(doc,frameDict,"key","originalHeight","integer",QString("%1").arg(it->size.height()));
+                                processOutNode(doc,frameDict,"key","x","real",QString("%1").arg(it->pos.x()));
+                                processOutNode(doc,frameDict,"key","y","real",QString("%1").arg(it->pos.y()));
                             }
                         }
                     }
@@ -89,11 +91,11 @@ bool CPlistDataParser::output(const SOutputParams &params)
                 QDomElement metadataDict = doc.createElement("dict");
                 rootDict.appendChild(metadataDict);
                 {
-                    processNode(doc,metadataDict,"key","format","integer","0");
-                    processNode(doc,metadataDict,"key","realTextureFileName","string",StringUtil::getFileName(params.resultData.panelData->filePath));
-                    processNode(doc,metadataDict,"key","size","string",QString("{%1,%2}").arg(params.resultData.panelData->size.width()).arg(params.resultData.panelData->size.height()));
-//                    processNode(doc,metadataDict,"key","smartupdate","string","");
-                    processNode(doc,metadataDict,"key","textureFileName","string",StringUtil::getFileName(params.resultData.panelData->filePath));
+                    processOutNode(doc,metadataDict,"key","format","integer","0");
+                    processOutNode(doc,metadataDict,"key","realTextureFileName","string",StringUtil::getFileName(params.resultData.panelData->filePath));
+                    processOutNode(doc,metadataDict,"key","size","string",QString("{%1,%2}").arg(params.resultData.panelData->size.width()).arg(params.resultData.panelData->size.height()));
+//                    processOutNode(doc,metadataDict,"key","smartupdate","string","");
+                    processOutNode(doc,metadataDict,"key","textureFileName","string",StringUtil::getFileName(params.resultData.panelData->filePath));
                 }
             }
 
@@ -107,8 +109,8 @@ bool CPlistDataParser::output(const SOutputParams &params)
                 QDomElement texDict = doc.createElement("dict");
                 rootDict.appendChild(texDict);
                 {
-                    processNode(doc,texDict,"key","width","integer",QString("%1").arg(params.resultData.panelData->size.width()));
-                    processNode(doc,texDict,"key","height","integer",QString("%1").arg(params.resultData.panelData->size.height()));
+                    processOutNode(doc,texDict,"key","width","integer",QString("%1").arg(params.resultData.panelData->size.width()));
+                    processOutNode(doc,texDict,"key","height","integer",QString("%1").arg(params.resultData.panelData->size.height()));
                 }
             }
 
@@ -123,6 +125,109 @@ bool CPlistDataParser::output(const SOutputParams &params)
 }
 bool CPlistDataParser::input(const SInputParams &params)
 {
-    Q_UNUSED(params);
-    return false;
+    CSliceImportData importData;
+    auto &gridsList = importData.gridsList;
+    ///////
+    //打开或创建文件
+    QFile file(params.openPath);
+    if(!file.open(QFile::ReadOnly))
+    {
+      return false;
+    }
+
+    QDomDocument doc;
+    if(!doc.setContent(&file))
+    {
+      file.close();
+      return false;
+    }
+    file.close();
+    //
+    QDomElement root = doc.documentElement(); //返回根节点
+    QDomNode dictNode = root.namedItem("dict");
+
+    QDomNode nodeKey = dictNode.namedItem("key");
+    while (!nodeKey.isNull())
+    {
+        QDomElement nodeKeyEle = nodeKey.toElement();
+        QString nodeKeyVal = nodeKeyEle.text();
+        if (nodeKeyVal == "frames")
+        {
+            QDomNode frameDict = nodeKeyEle.nextSiblingElement("dict");
+            QDomNode frameDictKey = frameDict.namedItem("key");
+            while (!frameDictKey.isNull())
+            {
+                CSliceGridData *pData = new CSliceGridData();
+                pData->name = frameDictKey.toElement().text();
+                pData->enable = true;
+
+                QDomNode frameNode = frameDictKey.nextSibling();
+                QDomNode frameNodeKey = frameNode.namedItem("key");
+                while (!frameNodeKey.isNull())
+                {
+                    QString frameDictKeyVal = frameNodeKey.toElement().text();
+
+                    if (frameDictKeyVal == "width")
+                    {
+                        QDomNode valueNode = frameNodeKey.nextSibling();
+                        pData->size.setWidth(valueNode.toElement().text().toInt());
+                    }
+                    else if (frameDictKeyVal == "height")
+                    {
+                        QDomNode valueNode = frameNodeKey.nextSibling();
+                        pData->size.setHeight(valueNode.toElement().text().toInt());
+                    }
+                    else if (frameDictKeyVal == "x")
+                    {
+                        QDomNode valueNode = frameNodeKey.nextSibling();
+                        pData->pos.setX(valueNode.toElement().text().toInt());
+                    }
+                    else if (frameDictKeyVal == "y")
+                    {
+                        QDomNode valueNode = frameNodeKey.nextSibling();
+                        pData->pos.setY(valueNode.toElement().text().toInt());
+                    }
+
+                    frameNodeKey = frameNodeKey.nextSiblingElement("key");
+                }
+
+                gridsList.push_back(pData);
+                frameDictKey = frameDictKey.nextSiblingElement("key");
+            }
+        }
+        else if(nodeKeyVal == "metadata")
+        {
+            QDomNode metadataDict = nodeKey.nextSiblingElement("dict");
+            QDomNode metadataDictKey = metadataDict.namedItem("key");
+            while (!metadataDictKey.isNull())
+            {
+                QDomElement metadataDictKeyEle = metadataDictKey.toElement();
+                QString metadataDictKeyVal = metadataDictKeyEle.text();
+                if (metadataDictKeyVal == "textureFileName")
+                {
+                    QDomNode valueNode = metadataDictKeyEle.nextSibling();
+                    importData.imagePath = QString("%1/%2").arg(StringUtil::getFileDir(params.openPath)).arg(valueNode.toElement().text());
+                }
+
+                metadataDictKey = metadataDictKey.nextSiblingElement("key");
+            }
+        }
+
+        nodeKey = nodeKey.nextSiblingElement("key");
+    }
+
+    ///////
+    auto mainWin = static_cast<CMainWindow *>(params.widget);
+    CMainWindow::SNewTabParams tabParams;
+    tabParams.title = StringUtil::getFileName(importData.imagePath);
+
+    auto tab = mainWin->addNewSlicePanel(tabParams);
+    bool ret =  tab->setImportData(importData);
+
+    for (auto it: gridsList)
+    {
+        delete it;
+    }
+
+    return ret;
 }

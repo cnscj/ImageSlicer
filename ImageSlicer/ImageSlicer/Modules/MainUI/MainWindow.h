@@ -22,12 +22,17 @@ class CMainWindow;
 class CMainWindow : public QMainWindow
 {
     Q_OBJECT
-
+public:
+    struct SNewTabParams
+    {
+        QString title;
+        QString filePath;
+    };
 public:
     explicit CMainWindow(QWidget *parent = nullptr);
     ~CMainWindow();
 public:
-    void addNewSlicePanel(const CSlicePanel::SNewTabParams &params);
+    CSlicePanel *addNewSlicePanel(const CMainWindow::SNewTabParams &params);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);//拖动进入事件

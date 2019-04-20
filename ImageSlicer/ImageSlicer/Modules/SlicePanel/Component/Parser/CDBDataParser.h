@@ -5,10 +5,12 @@
 class CDBDataParser : public CBaseParser
 {
 public:
+    static const QString CFG_FILE_SUFFIX;
+public:
     CDBDataParser();
 protected:
-    bool processTex(const SOutputParams &params);
-    bool processSke(const SOutputParams &params);
+    bool processOutTex(const SOutputParams &params);
+    bool processOutSke(const SOutputParams &params);
 
 public:
     bool output(const SOutputParams &params);

@@ -20,6 +20,11 @@ QRect CSliceGridData::getRect() const
     return QRect(this->pos,this->size);
 }
 
+CGridItemData CSliceGridData::getOriData()
+{
+    return CGridItemData(getRect());
+}
+
 bool CSliceGridData::operator <(const CSliceGridData &data) const
 {
     //x位置靠左,y位置靠上的最大

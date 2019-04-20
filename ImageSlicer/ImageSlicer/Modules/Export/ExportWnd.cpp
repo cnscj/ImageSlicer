@@ -50,7 +50,7 @@ void CExportWnd::previewFileHandle()
         QString fileName = QFileDialog::getSaveFileName(this,
                         ("File Save as ..."),
                         outPath,
-                        ("Plist1.0 Files (*.xml)"));
+                        (QString("Plist1.0 Files (*%1)").arg(CPlistDataParser::CFG_FILE_SUFFIX)));
         ui->savePathLe->setText(fileName);
     }
 }

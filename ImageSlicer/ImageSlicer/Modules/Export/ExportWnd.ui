@@ -87,6 +87,9 @@
          </item>
          <item row="2" column="0">
           <widget class="QRadioButton" name="spineRb">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Spine 3.3</string>
            </property>

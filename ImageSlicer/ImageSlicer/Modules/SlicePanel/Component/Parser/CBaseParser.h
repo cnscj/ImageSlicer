@@ -1,19 +1,21 @@
 #ifndef CBASEPARSER_H
 #define CBASEPARSER_H
 
-#include "../../Models/CSliceResultData.h"
+#include "../../Models/CSliceExportData.h"
+#include "../../Models/CSliceImportData.h"
 class CBaseParser
 {
 public:
     struct SOutputParams
     {
         QString savePath;
-        CSliceResultData resultData;
+        CSliceExportData resultData;
 
     };
     struct SInputParams
     {
-
+        QString openPath;
+        QWidget *widget;
     };
 public:
     CBaseParser();

@@ -42,9 +42,6 @@ public:
 public slots:
     void itemClick(CGridItem *);
 public:
-    void sliceGridsBySize(const QSize &size);
-    void sliceGridsByPath(const QPoint &pt);
-
     void sliceGrids(CGridItem *item,const QSizeF &size);
     void mergeGrids(const QList<CGridItem *> &list);
     void removeGrids(const QList<CGridItem *> &list);
@@ -66,12 +63,15 @@ public:
 public:
     void setItemCreator(LItemCreator);
     void setItemDestroyer(LItemDestroyer);
+
+    const LItemCreator &getItemCreator();
+    const LItemDestroyer &getItemDestroyer();
 signals:
     void sizeChanged(const QPointF &);
     void gridClicked(CGridItem *);
-protected:
+public:
     void resetIds();
-
+    void adjust();
 protected:
     void paintEvent(QPaintEvent * event);
     void resizeEvent(QResizeEvent *event);
@@ -95,6 +95,7 @@ public:
 public:
     void setData(const CGridItemData &);
     const CGridItemData &getData()const;
+    CGridItemData *getDataPtr();
 
     void setUserData(void *pUserData);
     void *getUserData() const;
