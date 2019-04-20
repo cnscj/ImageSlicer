@@ -47,6 +47,7 @@ private slots:
     void openExportWnd();
     void openImportWnd();
     void openAboutWnd();
+    void closeMainWnd();
 
 private:
     Ui::CMainWindow *ui;

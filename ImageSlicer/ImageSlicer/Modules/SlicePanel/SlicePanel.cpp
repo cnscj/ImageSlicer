@@ -128,6 +128,7 @@ bool CSlicePanel::setImportData(CSliceImportData &data)
             auto item = static_cast<CSliceGridItem *>(ui->gridArea->addGridItem(data));
             item->setPropertyData(it);
         }
+        ui->gridArea->reset();
         ui->gridArea->resetIds();
         ui->gridArea->adjust();
     }

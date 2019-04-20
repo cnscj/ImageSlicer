@@ -7,10 +7,15 @@ CAboutWnd::CAboutWnd(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setFixedSize(this->width (),this->height ());
+    this->setFixedSize(this->width(),this->height());
+    connect(ui->pushButton,&QPushButton::click,this,&CAboutWnd::clickOk);
 }
 
 CAboutWnd::~CAboutWnd()
 {
     delete ui;
+}
+void CAboutWnd::clickOk()
+{
+    hide();
 }

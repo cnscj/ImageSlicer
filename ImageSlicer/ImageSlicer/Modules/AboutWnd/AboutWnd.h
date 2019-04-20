@@ -14,6 +14,8 @@ class CAboutWnd : public QDialog
 public:
     explicit CAboutWnd(QWidget *parent = 0);
     ~CAboutWnd();
+protected slots:
+    void clickOk();
 
 private:
     Ui::CAboutWnd *ui;

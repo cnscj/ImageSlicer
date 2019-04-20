@@ -70,6 +70,7 @@ signals:
     void sizeChanged(const QPointF &);
     void gridClicked(CGridItem *);
 public:
+    void reset();
     void resetIds();
     void adjust();
 protected:
@@ -102,6 +103,9 @@ public:
 
     int getIndex();
     bool isSelected();
+
+
+    void updateScale();
 signals:
     void clicked(CGridItem *);
 public slots:
@@ -120,7 +124,6 @@ protected:
     void setIndex(int id);
     void setSelected(bool isSelected);
 
-    void updateScale();
 protected:
     CGridItemData m_data;
 private:

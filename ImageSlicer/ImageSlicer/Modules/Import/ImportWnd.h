@@ -2,7 +2,7 @@
 #define IMPORTWND_H
 
 #include <QWidget>
-
+class QDragEnterEvent;
 class CMainWindow;
 namespace Ui {
 class CImportWnd;
@@ -17,7 +17,7 @@ public:
         CMainWindow *win;
     };
 public:
-    explicit CImportWnd(QWidget *parent = 0);
+    explicit CImportWnd(QWidget *parent = nullptr);
     ~CImportWnd();
 
 public:
@@ -25,6 +25,9 @@ public:
 protected slots:
     void previewFileHandle();
     void inPutHandle();
+protected:
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 private:
     Ui::CImportWnd *ui;
     SShowParams m_params;

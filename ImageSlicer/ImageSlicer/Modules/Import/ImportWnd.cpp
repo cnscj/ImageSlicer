@@ -2,6 +2,9 @@
 #include "ui_ImportWnd.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QMimeData>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include "Modules/MainUI/MainWindow.h"
 #include "Modules/SlicePanel/Component/Parser/CDBDataParser.h"
 #include "Modules/SlicePanel/Component/Parser/CPlistDataParser.h"
@@ -81,5 +84,33 @@ void CImportWnd::inPutHandle()
 
         delete parser;
     }
+}
 
+void CImportWnd::dragEnterEvent(QDragEnterEvent *event)
+{
+    //只接受Xml文件
+    QString filePath = event->mimeData()->urls()[0].toLocalFile();
+    QString suffix = "";
+    if (ui->dbRb->isChecked())
+    {
+       suffix = CDBDataParser::CFG_FILE_SUFFIX;
+    }
+    else if (ui->plistRb->isChecked())
+    {
+       suffix = CPlistDataParser::CFG_FILE_SUFFIX;
+    }
+
+    if(suffix != "" && !StringUtil::getFileSuffix(filePath).compare(suffix.mid(1),Qt::CaseInsensitive))
+    {
+        event->acceptProposedAction();//接受鼠标拖入事件
+    }
+    else
+    {
+       event->ignore();//否则不接受鼠标事件
+    }
+}
+void CImportWnd::dropEvent(QDropEvent *event)
+{
+    QString filPath = event->mimeData()->urls()[0].toLocalFile();
+    ui->openPathLe->setText(filPath);
 }

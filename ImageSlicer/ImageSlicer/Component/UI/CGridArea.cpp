@@ -293,6 +293,10 @@ const CGridArea::LItemDestroyer &CGridArea::getItemDestroyer()
     return m_destroyer;
 }
 ///
+void CGridArea::reset()
+{
+    m_scale = QPointF(1.0,1.0);
+}
 void CGridArea::resetIds()
 {
     //左上角开始编号
@@ -341,7 +345,6 @@ void CGridArea::resizeEvent(QResizeEvent *event)
     double oldSizeHeight = event->oldSize().height() > 0 ? event->oldSize().height() : newSizeHeight;
     m_scale.setX((newSizeWidth/oldSizeWidth) * m_scale.x());
     m_scale.setY((newSizeHeight/oldSizeHeight) * m_scale.y());
-
     emit sizeChanged(m_scale);
     QWidget::resizeEvent(event);
 }

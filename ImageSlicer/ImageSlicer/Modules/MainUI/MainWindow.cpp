@@ -33,6 +33,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
     connect(ui->actionImport,SIGNAL(triggered()),this,SLOT(openImportWnd()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(openAboutWnd()));
     connect(ui->mainTabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(closeSlicePanel(int)));
+    connect(ui->actionClose,SIGNAL(triggered()),this,SLOT(closeMainWnd()));
 
 
 }
@@ -101,8 +102,6 @@ void CMainWindow::dropEvent(QDropEvent* event)
     {
 
     }
-
-
 }
 
 bool CMainWindow::isCanDragEnterFile(const QString &filePath)
@@ -156,4 +155,9 @@ void CMainWindow::openAboutWnd()
     CAboutWnd aboutWnd;
     aboutWnd.setModal(true);
     aboutWnd.exec();
+}
+
+void CMainWindow::closeMainWnd()
+{
+    qApp->exit(0);
 }
