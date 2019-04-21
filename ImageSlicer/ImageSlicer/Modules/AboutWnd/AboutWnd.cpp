@@ -8,7 +8,7 @@ CAboutWnd::CAboutWnd(QWidget *parent) :
     ui->setupUi(this);
 
     this->setFixedSize(this->width(),this->height());
-    connect(ui->pushButton,&QPushButton::click,this,&CAboutWnd::clickOk);
+    connect(ui->pushButton,&QPushButton::clicked,this,&CAboutWnd::clickOk);
 }
 
 CAboutWnd::~CAboutWnd()

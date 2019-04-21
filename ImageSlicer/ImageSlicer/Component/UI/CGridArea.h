@@ -42,7 +42,7 @@ public:
 public slots:
     void itemClick(CGridItem *);
 public:
-    void sliceGrids(CGridItem *item,const QSizeF &size);
+    void sliceGrids(const QList<CGridItem *> &list,const QSizeF &size);
     void mergeGrids(const QList<CGridItem *> &list);
     void removeGrids(const QList<CGridItem *> &list);
 

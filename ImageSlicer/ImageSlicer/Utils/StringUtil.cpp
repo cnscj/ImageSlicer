@@ -1,17 +1,6 @@
 #include "StringUtil.h"
 #include <QFileInfo>
 
-
-bool StringUtil::isImageFile(const QString &filePath)
-{
-    return (
-             !filePath.right(3).compare("jpg",Qt::CaseInsensitive)
-             || !filePath.right(3).compare("png",Qt::CaseInsensitive)
-             || !filePath.right(3).compare("bmp",Qt::CaseInsensitive)
-             || !filePath.right(4).compare("jpeg",Qt::CaseInsensitive)
-           );
-}
-
 QString StringUtil::getFileName(const QString &fullPath,bool isExceptSuffix)
 {
     QFileInfo info = QFileInfo(fullPath);

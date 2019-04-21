@@ -39,6 +39,7 @@ public:
 
     const CSlicePanelData &getPanelData();
 
+    void updateInfos();
 signals:
     void panelDataUpdate();
 public slots:

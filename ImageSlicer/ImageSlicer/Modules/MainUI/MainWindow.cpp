@@ -52,15 +52,16 @@ CSlicePanel *CMainWindow::addNewSlicePanel(const CMainWindow::SNewTabParams &par
     auto widget = new CSlicePanel(tabWidget);
     widget->setPicBoxMode(CPictureBox::EZoomMode::AutoSize);//居中显示
 
-    if ( params.filePath != "")
-    {
-        bool ret = widget->loadImageFromFile(params.filePath);
-        if (ret)
-        {
-            ui->actionExport->setEnabled(true);
-        }
-    }
+//    if ( params.filePath != "")
+//    {
+//        bool ret = widget->loadImageFromFile(params.filePath);
+//        if (ret)
+//        {
 
+//        }
+//    }
+
+    ui->actionExport->setEnabled(true);
     int index = tabWidget->insertTab(tabWidget->count(),widget,params.title);
     tabWidget->setCurrentIndex(index);
 
@@ -106,18 +107,35 @@ void CMainWindow::dropEvent(QDropEvent* event)
 
 bool CMainWindow::isCanDragEnterFile(const QString &filePath)
 {
-  return StringUtil::isImageFile(filePath);
-
+    if (!filePath.right(3).compare("jpg",Qt::CaseInsensitive)
+         || !filePath.right(3).compare("png",Qt::CaseInsensitive)
+         || !filePath.right(3).compare("bmp",Qt::CaseInsensitive)
+         || !filePath.right(4).compare("jpeg",Qt::CaseInsensitive))
+    {
+        return true;
+    }
+    else if (!filePath.right(7).compare("islproj",Qt::CaseInsensitive))
+    {
+         return true;
+    }
+    return false;
 }
 EnumType::EDropFileType CMainWindow::getFileType(const QString &filePath)
 {
-    if (StringUtil::isImageFile(filePath))
+
+if (!filePath.right(3).compare("jpg",Qt::CaseInsensitive)
+     || !filePath.right(3).compare("png",Qt::CaseInsensitive)
+     || !filePath.right(3).compare("bmp",Qt::CaseInsensitive)
+     || !filePath.right(4).compare("jpeg",Qt::CaseInsensitive))
     {
         return EnumType::EDropFileType::Image;
     }
+    else if (!filePath.right(7).compare("islproj",Qt::CaseInsensitive))
+    {
+        return EnumType::EDropFileType::Project;
+    }
     return EnumType::EDropFileType::Unknow;
 }
-
 
 void CMainWindow::closeSlicePanel(int index)
 {

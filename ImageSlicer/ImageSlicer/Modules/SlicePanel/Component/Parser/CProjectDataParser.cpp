@@ -1,5 +1,7 @@
 #include "CProjectDataParser.h"
 
+const QString CProjectDataParser::CFG_FILE_SUFFIX = ".islproj";
+
 CProjectDataParser::CProjectDataParser()
 {
 

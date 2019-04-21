@@ -101,6 +101,11 @@ const CSlicePanelData &CSlicePanel::getPanelData()
     return m_panelData;
 }
 
+void CSlicePanel::updateInfos()
+{
+    emit panelDataUpdate();
+}
+
 CSliceExportData CSlicePanel::getExportData()
 {
     CSliceExportData data;
@@ -131,6 +136,7 @@ bool CSlicePanel::setImportData(CSliceImportData &data)
         ui->gridArea->reset();
         ui->gridArea->resetIds();
         ui->gridArea->adjust();
+        updateInfos();
     }
     return true;
 }
@@ -278,16 +284,7 @@ void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &para
 {
     qDebug("回调:%f,%f",params.sliceSize.width(),params.sliceSize.height());
 
-    if (ui->gridArea->getSelectList().count() > 0)
-    {
-        auto item = ui->gridArea->getSelectList().at(0);
-        ui->gridArea->sliceGrids(item,params.sliceSize);
-    }
-    else
-    {
-        ui->gridArea->sliceGrids(nullptr,params.sliceSize);
-    }
-
+    ui->gridArea->sliceGrids(ui->gridArea->getSelectList(),params.sliceSize);
     emit panelDataUpdate();
 }
 void CSlicePanel::editMergeGrids()

@@ -71,24 +71,27 @@ CGridArea::CGridArea(QWidget *parent) : QWidget(parent),
 
 }
 
-void CGridArea::sliceGrids(CGridItem *item,const QSizeF &size)
+void CGridArea::sliceGrids(const QList<CGridItem *> &list,const QSizeF &size)
 {
-    if (item != nullptr)    //嵌套切割
+    if (list.count() > 0)    //嵌套切割
     {
-        auto startPos = item->getData().pos;
-        auto oriSize = item->getData().size;
-        int finalWidth = limitValue(static_cast<int>(size.width()),1,oriSize.width());
-        int finalHeight = limitValue(static_cast<int>(size.height()),1,oriSize.height());
-
-        for (int j = 0; j < oriSize.height(); j+=finalHeight)
+        for (auto item : list)
         {
-            for (int i = 0; i < oriSize.width(); i+=finalWidth)
+            auto startPos = item->getData().pos;
+            auto oriSize = item->getData().size;
+            int finalWidth = limitValue(static_cast<int>(size.width()),1,oriSize.width());
+            int finalHeight = limitValue(static_cast<int>(size.height()),1,oriSize.height());
+
+            for (int j = 0; j < oriSize.height(); j+=finalHeight)
             {
-                CGridItemData itemData(startPos.x() + i,startPos.y() + j,finalWidth,finalHeight);
-                addGridItem(itemData);
+                for (int i = 0; i < oriSize.width(); i+=finalWidth)
+                {
+                    CGridItemData itemData(startPos.x() + i,startPos.y() + j,finalWidth,finalHeight);
+                    addGridItem(itemData);
+                }
             }
+            removeGridItem(item);
         }
-        removeGridItem(item);
     }
     else    //完全切割
     {

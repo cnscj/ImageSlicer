@@ -55,6 +55,13 @@ bool CDBDataParser::processOutTex(const SOutputParams &params)
 }
 bool CDBDataParser::processOutSke(const SOutputParams &params)
 {
+    QString texName = StringUtil::getBaseName(params.resultData.panelData->filePath);
+    QString saveFilePath = QString("%1/%2%3%4").arg(params.savePath).arg(texName).arg(SKE_FILE_SUFFIX).arg(CFG_FILE_SUFFIX);
+    if (FileUtil::isExists(saveFilePath))
+    {
+        return true;
+    }
+    ////
     QJsonObject root;
     QJsonArray armature;
     {
@@ -128,8 +135,7 @@ bool CDBDataParser::processOutSke(const SOutputParams &params)
     root.insert("defaultActions",defaultActions);
 
     ///
-    QString texName = StringUtil::getBaseName(params.resultData.panelData->filePath);
-    QString saveFilePath = QString("%1/%2%3%4").arg(params.savePath).arg(texName).arg(SKE_FILE_SUFFIX).arg(CFG_FILE_SUFFIX);
+
     QJsonDocument jsonDoc(root);
     QByteArray ba = jsonDoc.toJson();
     QFile file(saveFilePath);
