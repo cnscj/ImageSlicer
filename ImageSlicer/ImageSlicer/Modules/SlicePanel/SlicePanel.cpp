@@ -7,6 +7,7 @@
 #include <QtVariantPropertyManager>
 #include "Component/UI/CGridArea.h"
 #include "Component/CSliceGridItem.h"
+#include "Component/Parser/CProjectDataParser.h"
 
 static const QString KEY_TEXTURE_SIZE = ("纹理尺寸");
 static const QString KEY_SCALE_SIZE = ("缩放尺寸");
@@ -62,16 +63,15 @@ CSlicePanel::~CSlicePanel()
     delete m_pSliceMenu;
     delete m_pSliceEditWnd;
 }
-
-
-bool CSlicePanel::loadImageFromFile(const QString &filePath)
+bool CSlicePanel::loadImageFromMemory(const QByteArray &data)
 {
     QImage temImg;
-    bool ret = temImg.load(filePath);
+    bool ret = temImg.loadFromData(data);
     if (ret)
     {
         ui->imageWidget->setImage(temImg);
-        m_panelData.filePath = filePath;
+        m_panelData.pPixmap = ui->imageWidget->getImage();
+        m_panelData.imagePath = "";
         m_panelData.size = temImg.size();
 
         emit panelDataUpdate();
@@ -80,17 +80,58 @@ bool CSlicePanel::loadImageFromFile(const QString &filePath)
     return ret;
 }
 
+bool CSlicePanel::loadImageFromFile(const QString &filePath)
+{
+    QImage temImg;
+    bool ret = temImg.load(filePath);
+    if (ret)
+    {
+        ui->imageWidget->setImage(temImg);
+        m_panelData.pPixmap = ui->imageWidget->getImage();
+        m_panelData.imagePath = filePath;
+        m_panelData.size = temImg.size();
+
+        emit panelDataUpdate();
+    }
+
+    return ret;
+}
+void CSlicePanel::setInitData(const SPanelInitParams &data)
+{
+    m_panelData.projectName = data.projectName;
+    m_panelData.openPath = data.projectFile;
+
+    if (data.projectType == EnumType::ESlicePanelType::Image)
+    {
+        if ( data.projectFile != "")
+        {
+            this->loadImageFromFile(data.projectFile);
+        }
+    }else if (data.projectType == EnumType::ESlicePanelType::Project)
+    {
+        if ( data.projectFile != "")
+        {
+            CProjectDataParser parser;
+            CProjectDataParser::SInputParams params;
+            params.widget = data.mainWnd;
+            params.openPath = data.projectFile;
+
+            parser.input(params);
+        }
+    }
+
+    this->setPicBoxMode(CPictureBox::EZoomMode::AutoSize);//居中显示
+}
 
 const QString &CSlicePanel::getImgOriPath() const
 {
-    return m_panelData.filePath;
+    return m_panelData.imagePath;
 }
 
 QSize CSlicePanel::getImageOriSize() const
 {
     return m_panelData.size;
 }
-
 
 void CSlicePanel::setPicBoxMode(CPictureBox::EZoomMode mode)
 {
@@ -125,20 +166,50 @@ CSliceExportData CSlicePanel::getExportData()
 
 bool CSlicePanel::setImportData(CSliceImportData &data)
 {
-    if (loadImageFromFile(data.imagePath))
+    //TODO:
+    if (data.panelData.imagePath != "")
     {
-        for(auto it : data.gridsList)
+        if (loadImageFromFile(data.panelData.imagePath))
         {
-            auto data = it->getOriData();
-            auto item = static_cast<CSliceGridItem *>(ui->gridArea->addGridItem(data));
-            item->setPropertyData(it);
+            for(auto it : data.gridsList)
+            {
+                auto data = it->getOriData();
+                auto item = static_cast<CSliceGridItem *>(ui->gridArea->addGridItem(data));
+                item->setPropertyData(it);
+            }
+            ui->gridArea->reset();
+            ui->gridArea->resetIds();
+            ui->gridArea->adjust();
+            updateInfos();
         }
-        ui->gridArea->reset();
-        ui->gridArea->resetIds();
-        ui->gridArea->adjust();
-        updateInfos();
+        return true;
     }
-    return true;
+    else if (data.panelData.pPixmap)
+    {
+        //TODO:
+        QByteArray dataArray;
+        QDataStream in(&dataArray, QIODevice::ReadWrite);
+        if (data.panelData.pPixmap)
+        {
+            in << *data.panelData.pPixmap;
+            if (loadImageFromMemory(dataArray))
+            {
+                for(auto it : data.gridsList)
+                {
+                    auto data = it->getOriData();
+                    auto item = static_cast<CSliceGridItem *>(ui->gridArea->addGridItem(data));
+                    item->setPropertyData(it);
+                }
+                ui->gridArea->reset();
+                ui->gridArea->resetIds();
+                ui->gridArea->adjust();
+                updateInfos();
+            }
+            return true;
+        }
+
+    }
+    return false;
 }
 
 //
@@ -280,6 +351,7 @@ void CSlicePanel::editSliceWnd()
 
     m_pSliceEditWnd->showWithParams(params);
 }
+
 void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &params)
 {
     qDebug("回调:%f,%f",params.sliceSize.width(),params.sliceSize.height());
@@ -287,6 +359,7 @@ void CSlicePanel::editSliceCallback(const CSliceEdit::SSliceCallbackParams &para
     ui->gridArea->sliceGrids(ui->gridArea->getSelectList(),params.sliceSize);
     emit panelDataUpdate();
 }
+
 void CSlicePanel::editMergeGrids()
 {
     ui->gridArea->mergeGrids(ui->gridArea->getSelectList());
@@ -296,6 +369,7 @@ void CSlicePanel::editMergeGrids()
 
     emit panelDataUpdate();
 }
+
 void CSlicePanel::editRemoveGrids()
 {
     ui->gridArea->removeGrids(ui->gridArea->getSelectList());
@@ -305,6 +379,7 @@ void CSlicePanel::editRemoveGrids()
 
     emit panelDataUpdate();
 }
+
 void CSlicePanel::sliceClicked(CGridItem *grid)
 {
     auto item = static_cast<CSliceGridItem *>(grid);
@@ -334,6 +409,7 @@ void CSlicePanel::sliceClicked(CGridItem *grid)
 
     qDebug("点击:%d_%d",item->getData().pos.x(),item->getData().pos.y());
 }
+
 void CSlicePanel::propValueChanged(const QString &propName,const CSliceGridsData &data)
 {
     auto list = ui->gridArea->getSelectList();

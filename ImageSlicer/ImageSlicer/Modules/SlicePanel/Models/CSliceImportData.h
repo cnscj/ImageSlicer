@@ -8,7 +8,7 @@
 class CSliceImportData
 {
 public:
-    QString imagePath;
+    CSlicePanelData panelData;
     QList<CSliceGridData *> gridsList;
 public:
     CSliceImportData();

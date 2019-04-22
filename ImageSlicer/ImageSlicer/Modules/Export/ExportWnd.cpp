@@ -37,8 +37,8 @@ void CExportWnd::previewFileHandle()
     QString outPath = "";
     if (m_params.resultData.panelData)
     {
-        filePath = StringUtil::getFileDir(m_params.resultData.panelData->filePath);
-        fileName = StringUtil::getBaseName(m_params.resultData.panelData->filePath);
+        filePath = StringUtil::getFileDir(m_params.resultData.panelData->imagePath);
+        fileName = StringUtil::getBaseName(m_params.resultData.panelData->imagePath);
         outPath = QString("%1/%2").arg(filePath).arg(fileName);
     }
     if (ui->dbRb->isChecked())

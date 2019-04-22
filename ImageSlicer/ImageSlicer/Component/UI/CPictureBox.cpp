@@ -56,6 +56,11 @@ const QPointF &CPictureBox::getAnchorPoint() const
     return m_anchorPoint;
 }
 
+QPixmap *CPictureBox::getImage()
+{
+    return &m_pixmap;
+}
+
 /////
 
 void CPictureBox::setBackground(QBrush brush)

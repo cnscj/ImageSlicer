@@ -16,6 +16,23 @@ CDBDataParser::CDBDataParser()
 
 bool CDBDataParser::processOutTex(const SOutputParams &params)
 {
+    //图像导出
+    QString imgPath = params.resultData.panelData->imagePath;
+    if (!FileUtil::isExists(imgPath))
+    {
+        QPixmap *pPixmap = params.resultData.panelData->pPixmap;
+        if (pPixmap)
+        {
+            //图像保存
+            QString imgSavePath = QString("%1/%2.png").arg(StringUtil::getFileDir(params.resultData.panelData->openPath)).arg(StringUtil::getBaseName(params.resultData.panelData->openPath));
+            pPixmap->save(imgSavePath);
+        }
+        else
+        {
+            return false;
+        }
+    }
+    //数据导出
     QJsonObject root;
     QJsonArray subTexture;
     for(auto it : params.resultData.gridsList)
@@ -33,13 +50,13 @@ bool CDBDataParser::processOutTex(const SOutputParams &params)
         }
     }
 
-    root.insert("imagePath",StringUtil::getFileName(params.resultData.panelData->filePath));
-    root.insert("name",StringUtil::getBaseName(params.resultData.panelData->filePath));
+    root.insert("imagePath",StringUtil::getFileName(imgPath));
+    root.insert("name",StringUtil::getBaseName(imgPath));
     root.insert("width",params.resultData.panelData->size.width());
     root.insert("height",params.resultData.panelData->size.height());
     root.insert("SubTexture",subTexture);
     ///
-    QString texName = StringUtil::getBaseName(params.resultData.panelData->filePath);
+    QString texName = StringUtil::getBaseName(imgPath);
     QString saveFilePath = QString("%1/%2%3%4").arg(params.savePath).arg(texName).arg(TEX_FILE_SUFFIX).arg(CFG_FILE_SUFFIX);
     QJsonDocument jsonDoc(root);
     QByteArray ba = jsonDoc.toJson();
@@ -49,13 +66,13 @@ bool CDBDataParser::processOutTex(const SOutputParams &params)
        return false;
     }
     file.write(ba);
-    file.close();
+    file.close();    
 
     return true;
 }
 bool CDBDataParser::processOutSke(const SOutputParams &params)
 {
-    QString texName = StringUtil::getBaseName(params.resultData.panelData->filePath);
+    QString texName = StringUtil::getBaseName(params.resultData.panelData->imagePath);
     QString saveFilePath = QString("%1/%2%3%4").arg(params.savePath).arg(texName).arg(SKE_FILE_SUFFIX).arg(CFG_FILE_SUFFIX);
     if (FileUtil::isExists(saveFilePath))
     {
@@ -179,7 +196,7 @@ bool CDBDataParser::input(const SInputParams &params)
 
     QJsonObject rootObj = jsonDoc.object();
     QString imgName = rootObj.value("imagePath").toString();
-    importData.imagePath = QString("%1/%2").arg(StringUtil::getFileDir(params.openPath)).arg(imgName);
+    importData.panelData.imagePath = QString("%1/%2").arg(StringUtil::getFileDir(params.openPath)).arg(imgName);
 
     if(rootObj.contains("SubTexture"))
     {
@@ -203,7 +220,7 @@ bool CDBDataParser::input(const SInputParams &params)
     ///////
     auto mainWin = static_cast<CMainWindow *>(params.widget);
     CMainWindow::SNewTabParams tabParams;
-    tabParams.title = StringUtil::getFileName(importData.imagePath);
+    tabParams.title = StringUtil::getFileName(importData.panelData.imagePath);
 
     auto tab = mainWin->addNewSlicePanel(tabParams);
     bool ret =  tab->setImportData(importData);

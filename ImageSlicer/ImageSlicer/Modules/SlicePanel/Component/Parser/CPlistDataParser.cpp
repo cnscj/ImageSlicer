@@ -24,6 +24,24 @@ void CPlistDataParser::processOutNode(QDomDocument &doc,QDomElement &element,QSt
 
 bool CPlistDataParser::output(const SOutputParams &params)
 {
+
+    //图像导出
+    QString imgPath = params.resultData.panelData->imagePath;
+    if (!FileUtil::isExists(imgPath))
+    {
+        QPixmap *pPixmap = params.resultData.panelData->pPixmap;
+        if (pPixmap)
+        {
+            //图像保存
+            QString imgSavePath = QString("%1/%2.png").arg(StringUtil::getFileDir(params.resultData.panelData->openPath)).arg(StringUtil::getBaseName(params.resultData.panelData->openPath));
+            pPixmap->save(imgSavePath);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     //打开或创建文件
     QString saveFilePath = QString("%1").arg(params.savePath);
     QFile file(saveFilePath); //相对路径、绝对路径、资源路径都可以
@@ -92,10 +110,10 @@ bool CPlistDataParser::output(const SOutputParams &params)
                 rootDict.appendChild(metadataDict);
                 {
                     processOutNode(doc,metadataDict,"key","format","integer","0");
-                    processOutNode(doc,metadataDict,"key","realTextureFileName","string",StringUtil::getFileName(params.resultData.panelData->filePath));
+                    processOutNode(doc,metadataDict,"key","realTextureFileName","string",StringUtil::getFileName(imgPath));
                     processOutNode(doc,metadataDict,"key","size","string",QString("{%1,%2}").arg(params.resultData.panelData->size.width()).arg(params.resultData.panelData->size.height()));
 //                    processOutNode(doc,metadataDict,"key","smartupdate","string","");
-                    processOutNode(doc,metadataDict,"key","textureFileName","string",StringUtil::getFileName(params.resultData.panelData->filePath));
+                    processOutNode(doc,metadataDict,"key","textureFileName","string",StringUtil::getFileName(imgPath));
                 }
             }
 
@@ -206,7 +224,7 @@ bool CPlistDataParser::input(const SInputParams &params)
                 if (metadataDictKeyVal == "textureFileName")
                 {
                     QDomNode valueNode = metadataDictKeyEle.nextSibling();
-                    importData.imagePath = QString("%1/%2").arg(StringUtil::getFileDir(params.openPath)).arg(valueNode.toElement().text());
+                    importData.panelData.imagePath = QString("%1/%2").arg(StringUtil::getFileDir(params.openPath)).arg(valueNode.toElement().text());
                 }
 
                 metadataDictKey = metadataDictKey.nextSiblingElement("key");
@@ -219,7 +237,7 @@ bool CPlistDataParser::input(const SInputParams &params)
     ///////
     auto mainWin = static_cast<CMainWindow *>(params.widget);
     CMainWindow::SNewTabParams tabParams;
-    tabParams.title = StringUtil::getFileName(importData.imagePath);
+    tabParams.title = StringUtil::getFileName(importData.panelData.imagePath);
 
     auto tab = mainWin->addNewSlicePanel(tabParams);
     bool ret =  tab->setImportData(importData);

@@ -1,6 +1,6 @@
 #include "CSlicePanelData.h"
 
-CSlicePanelData::CSlicePanelData()
+CSlicePanelData::CSlicePanelData():pPixmap(nullptr),imagePath("")
 {
 
 }

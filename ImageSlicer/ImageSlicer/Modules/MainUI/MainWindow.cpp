@@ -1,6 +1,7 @@
 #include <QMimeData>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QFileDialog>
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "ImageSlicer.h"
@@ -29,6 +30,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
     ///////
     this->setAcceptDrops(true);//设置窗口启用拖动
 
+    connect(ui->actionOpen,SIGNAL(triggered()),this,SLOT(openFileWnd()));
     connect(ui->actionExport,SIGNAL(triggered()),this,SLOT(openExportWnd()));
     connect(ui->actionImport,SIGNAL(triggered()),this,SLOT(openImportWnd()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(openAboutWnd()));
@@ -50,16 +52,13 @@ CSlicePanel *CMainWindow::addNewSlicePanel(const CMainWindow::SNewTabParams &par
 {
     auto tabWidget = ui->mainTabWidget;
     auto widget = new CSlicePanel(tabWidget);
-    widget->setPicBoxMode(CPictureBox::EZoomMode::AutoSize);//居中显示
+    CSlicePanel::SPanelInitParams panelParams;
+    panelParams.projectName = params.title;
+    panelParams.projectFile = params.filePath;
+    panelParams.projectType = params.type;
+    panelParams.mainWnd = this;
 
-//    if ( params.filePath != "")
-//    {
-//        bool ret = widget->loadImageFromFile(params.filePath);
-//        if (ret)
-//        {
-
-//        }
-//    }
+    widget->setInitData(panelParams);
 
     ui->actionExport->setEnabled(true);
     int index = tabWidget->insertTab(tabWidget->count(),widget,params.title);
@@ -88,21 +87,30 @@ void CMainWindow::dropEvent(QDropEvent* event)
     const QMimeData *qm=event->mimeData();//获取MIMEData
     QString filePath = qm->urls()[0].toLocalFile();
     qDebug("文件拽入:%s",filePath.toStdString().c_str());
-    QString fieName = StringUtil::getFileName(filePath);
 
-    EnumType::EDropFileType fileType = getFileType(qm->urls()[0].toLocalFile());
+    openFileByPath(filePath);
+
+}
+
+void CMainWindow::openFileByPath(const QString &filePath)
+{
+    EnumType::EDropFileType fileType = getFileType(filePath);
+    QString fieName = StringUtil::getFileName(filePath);
+    CMainWindow::SNewTabParams params;
+    params.title = fieName;
+    params.filePath = filePath;
+    params.type = EnumType::ESlicePanelType::Unknow;
+
     if (fileType == EnumType::EDropFileType::Image)
     {
-        CMainWindow::SNewTabParams params;
-        params.title = fieName;
-        params.filePath = filePath;
-
-        addNewSlicePanel(params);
+        params.type = EnumType::ESlicePanelType::Image;
     }
     else if (fileType == EnumType::EDropFileType::Project)
     {
-
+       params.type = EnumType::ESlicePanelType::Project;
     }
+
+    addNewSlicePanel(params);
 }
 
 bool CMainWindow::isCanDragEnterFile(const QString &filePath)
@@ -144,6 +152,17 @@ void CMainWindow::closeSlicePanel(int index)
     {
         ui->actionExport->setEnabled(false);
     }
+}
+
+void CMainWindow::openFileWnd()
+{
+    QString filePath = QFileDialog::getOpenFileName(
+              this,
+              "Open File ...",
+              "",
+             QString("Project File(.islproj);;Images File(*.png *.bmp *.jpg *.jpeg)"));
+
+    openFileByPath(filePath);
 }
 
 void CMainWindow::openExportWnd()

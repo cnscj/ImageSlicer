@@ -25,8 +25,10 @@ class CMainWindow : public QMainWindow
 public:
     struct SNewTabParams
     {
+        EnumType::ESlicePanelType type;
         QString title;
         QString filePath;
+
     };
 public:
     explicit CMainWindow(QWidget *parent = nullptr);
@@ -38,12 +40,14 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event);//拖动进入事件
     void dropEvent(QDropEvent *event);
 private:
+    void openFileByPath(const QString &filePath);
     bool isCanDragEnterFile(const QString &filePath);
     EnumType::EDropFileType getFileType(const QString &filePath);
 
 private slots:
 
     void closeSlicePanel(int index);
+    void openFileWnd();
     void openExportWnd();
     void openImportWnd();
     void openAboutWnd();

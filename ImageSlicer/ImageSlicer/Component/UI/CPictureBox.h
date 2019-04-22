@@ -26,6 +26,7 @@ public:
 
     QSize getOriSize() const;
     QSize getCurSize() const;
+    QPixmap *getImage();
 private:
     QPixmap m_pixmap;
     double m_scale;

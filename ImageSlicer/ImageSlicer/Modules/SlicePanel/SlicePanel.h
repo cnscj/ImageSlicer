@@ -25,6 +25,13 @@ class CSlicePanel : public QWidget
 {
     Q_OBJECT
 public:
+    struct SPanelInitParams
+    {
+        QWidget *mainWnd;
+        EnumType::ESlicePanelType projectType;
+        QString projectName;
+        QString projectFile;
+    };
 
 public:
     explicit CSlicePanel(QWidget *parent = nullptr);
@@ -32,6 +39,8 @@ public:
 protected:
     enum class EActionMode{WantScale,MultipleSelect,RegionSelect};
 public:
+    void setInitData(const SPanelInitParams &data);
+
     const QString &getImgOriPath() const;
     QSize getImageOriSize() const;
 
@@ -43,6 +52,7 @@ public:
 signals:
     void panelDataUpdate();
 public slots:
+    bool loadImageFromMemory(const QByteArray &data);
     bool loadImageFromFile(const QString &filePath);
     CSliceExportData getExportData();
 
