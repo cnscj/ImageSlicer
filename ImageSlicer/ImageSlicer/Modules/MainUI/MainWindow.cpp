@@ -147,7 +147,9 @@ if (!filePath.right(3).compare("jpg",Qt::CaseInsensitive)
 
 void CMainWindow::closeSlicePanel(int index)
 {
+    auto widget = ui->mainTabWidget->widget(index);
     ui->mainTabWidget->removeTab(index);
+    delete widget;
     if (ui->mainTabWidget->count() <= 0)
     {
         ui->actionExport->setEnabled(false);

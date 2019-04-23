@@ -39,6 +39,7 @@ public:
     enum class ESelectMode{None,Single,Multiple};
 public:
     CGridArea(QWidget *parent = nullptr);
+    ~CGridArea();
 public slots:
     void itemClick(CGridItem *);
 public:

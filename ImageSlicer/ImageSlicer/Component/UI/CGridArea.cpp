@@ -71,6 +71,11 @@ CGridArea::CGridArea(QWidget *parent) : QWidget(parent),
 
 }
 
+CGridArea::~CGridArea()
+{
+    removeAllGridItems();
+}
+
 void CGridArea::sliceGrids(const QList<CGridItem *> &list,const QSizeF &size)
 {
     if (list.count() > 0)    //嵌套切割
