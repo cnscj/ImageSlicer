@@ -38,6 +38,11 @@ CSliceGridProperty::~CSliceGridProperty()
     delete m_pGroup1;
     delete m_pGroup2;
 
+    for(auto it : *m_pStringToProperty)
+    {
+        delete it;
+    }
+
     delete m_pPropertyToString;
     delete m_pStringToProperty;
 

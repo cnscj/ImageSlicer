@@ -94,6 +94,7 @@ public:
     friend class CGridArea;
 public:
     CGridItem(QWidget *parent = nullptr);
+    virtual ~CGridItem();
 public:
     void setData(const CGridItemData &);
     const CGridItemData &getData()const;

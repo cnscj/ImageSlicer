@@ -25,6 +25,10 @@ CSliceGridsProperty::~CSliceGridsProperty()
     disconnect(m_pEditManager, &QtVariantPropertyManager::valueChanged, this, &CSliceGridsProperty::propValueChanged);
 
     delete m_pGroup1;
+    for(auto it : *m_pStringToProperty)
+    {
+        delete it;
+    }
 
     delete m_pPropertyToString;
     delete m_pStringToProperty;

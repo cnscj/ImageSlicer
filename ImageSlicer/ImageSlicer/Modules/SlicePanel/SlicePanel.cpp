@@ -293,6 +293,9 @@ void CSlicePanel::clearAttrList()
     for(int index = 0; index < count; index++)
     {
         QListWidgetItem *item = ui->imageAttrList->takeItem(0);
+        auto widget = item->listWidget();
+
+        delete widget;
         delete item;
     }
 }

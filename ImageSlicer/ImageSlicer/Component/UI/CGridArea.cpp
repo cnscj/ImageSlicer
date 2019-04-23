@@ -366,6 +366,11 @@ CGridItem::CGridItem(QWidget *parent) : QWidget(parent),m_scale(1.0,1.0),m_pUser
     //不能再这里show(),会疯狂闪
 }
 
+CGridItem::~CGridItem()
+{
+
+}
+
 void CGridItem::setData(const CGridItemData &data)
 {
     m_data = data;
