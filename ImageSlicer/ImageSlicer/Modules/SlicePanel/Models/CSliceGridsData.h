@@ -8,6 +8,10 @@ public:
     QString names;
     bool enables;
 
+    QString remarks;
+    int offsetX;
+    int offsetY;
+
 public:
     CSliceGridsData();
 };

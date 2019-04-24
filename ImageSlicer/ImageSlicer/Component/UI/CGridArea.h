@@ -36,7 +36,7 @@ public:
     static const LItemCreator defaultCreator;
     static const LItemDestroyer defaultDestroyer;
 
-    enum class ESelectMode{None,Single,Multiple};
+    enum class ESelectMode{None,Single,Multiple,Continuous};
 public:
     CGridArea(QWidget *parent = nullptr);
     ~CGridArea();
@@ -85,6 +85,7 @@ private:
 
     ESelectMode m_selectMode;
     QList<CGridItem *> m_selectList;
+
 };
 
 class CGridItem : public QWidget

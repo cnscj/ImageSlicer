@@ -336,6 +336,43 @@ void CGridArea::itemClick(CGridItem *item)
         //直接加入选择列表
         addSelectList(item);
     }
+    else if (m_selectMode == ESelectMode::Continuous)
+    {
+        auto list = getSelectList();
+        if (list.count() <= 0 )
+        {
+            //退化为单选
+            addSelectList(item);
+        }
+        else
+        {
+            //取最后一个作为开始
+            auto endItem = list.back();
+            int minId = endItem->getIndex() < item->getIndex() ? endItem->getIndex() : item->getIndex();
+            int maxId = endItem->getIndex() > item->getIndex() ? endItem->getIndex() : item->getIndex();
+//            clearSelectList();//清空之前所选的
+            int count = minId;
+            for (auto it : m_itemsList)
+            {
+                if (it->getIndex() == count)
+                {
+                    if (it == endItem)
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        addSelectList(it);
+                        count++;
+                    }
+                    if (count > maxId)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     emit gridClicked(item);
 }

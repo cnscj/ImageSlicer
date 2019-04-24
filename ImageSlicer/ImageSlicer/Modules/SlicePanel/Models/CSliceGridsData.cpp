@@ -1,6 +1,6 @@
 #include "CSliceGridsData.h"
 
-CSliceGridsData::CSliceGridsData()
+CSliceGridsData::CSliceGridsData():offsetX(0),offsetY(0)
 {
 
 }

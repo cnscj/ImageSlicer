@@ -225,6 +225,10 @@ void CSlicePanel::keyPressEvent(QKeyEvent *e)
     {
         ui->gridArea->setSelectMode(CGridArea::ESelectMode::Multiple);
     }
+    else if(e->key() == Qt::Key_Shift)
+    {
+        ui->gridArea->setSelectMode(CGridArea::ESelectMode::Continuous);
+    }
 }
 void CSlicePanel::keyReleaseEvent(QKeyEvent *e)
 {
@@ -233,7 +237,7 @@ void CSlicePanel::keyReleaseEvent(QKeyEvent *e)
        m_flagsMap[EActionMode::WantScale] = false;
        ui->scrollArea->setWheelScrollEnable(true);
     }
-    else if(e->key() == Qt::Key_Comma || e->key() == Qt::Key_Control)
+    else if(e->key() == Qt::Key_Comma || e->key() == Qt::Key_Control || e->key() == Qt::Key_Shift)
     {
         ui->gridArea->setSelectMode(CGridArea::ESelectMode::Single);
     }
@@ -422,7 +426,7 @@ void CSlicePanel::propValueChanged(const QString &propName,const CSliceGridsData
         auto item = static_cast<CSliceGridItem *>(it);
         if (propName == "names")
         {
-            item->getPropertyData()->name = QString("%1_%2").arg(data.names).arg(i,2,10,QLatin1Char('0'));
+            item->getPropertyData()->name = QString().sprintf(data.names.toStdString().c_str(), i);
             item->setPropertyData(item->getPropertyData());
 
             i++;
@@ -430,6 +434,21 @@ void CSlicePanel::propValueChanged(const QString &propName,const CSliceGridsData
         else if(propName == "enables")
         {
             item->getPropertyData()->enable = data.enables;
+            item->setPropertyData(item->getPropertyData());
+        }
+        else if(propName == "remarks")
+        {
+            item->getPropertyData()->remark = data.remarks;
+            item->setPropertyData(item->getPropertyData());
+        }
+        else if(propName == "offsetX")
+        {
+            item->getPropertyData()->pos.setX(item->getPropertyData()->pos.x() + data.offsetX );
+            item->setPropertyData(item->getPropertyData());
+        }
+        else if(propName == "offsetY")
+        {
+            item->getPropertyData()->pos.setY(item->getPropertyData()->pos.y() + data.offsetY );
             item->setPropertyData(item->getPropertyData());
         }
     }
