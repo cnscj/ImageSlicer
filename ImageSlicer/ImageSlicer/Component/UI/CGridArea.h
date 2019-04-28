@@ -104,7 +104,7 @@ public:
     void setUserData(void *pUserData);
     void *getUserData() const;
 
-    int getIndex();
+    int getIndex() const;
     bool isSelected();
 
 

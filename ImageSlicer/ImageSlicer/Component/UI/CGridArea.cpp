@@ -24,6 +24,10 @@ static bool sortItemByPos(const CGridItem *a,const CGridItem *b)
     return (a->getData().pos.y() < b->getData().pos.y());
 }
 
+static bool sortItemByIndex(const CGridItem *a,const CGridItem *b)
+{
+    return a->getIndex() < b->getIndex();
+}
 //////////////////////////////////////////////////////////////////////
 CGridItemData::CGridItemData()
 {
@@ -351,8 +355,11 @@ void CGridArea::itemClick(CGridItem *item)
             int minId = endItem->getIndex() < item->getIndex() ? endItem->getIndex() : item->getIndex();
             int maxId = endItem->getIndex() > item->getIndex() ? endItem->getIndex() : item->getIndex();
 //            clearSelectList();//清空之前所选的
+            QList<CGridItem *> itemsList = m_itemsList;
+            std::sort(itemsList.begin(),itemsList.end(),sortItemByIndex);
+
             int count = minId;
-            for (auto it : m_itemsList)
+            for (auto it : itemsList)
             {
                 if (it->getIndex() == count)
                 {
@@ -438,7 +445,7 @@ void *CGridItem::getUserData() const
     return m_pUserData;
 }
 
-int CGridItem::getIndex()
+int CGridItem::getIndex() const
 {
     return m_index;
 }
