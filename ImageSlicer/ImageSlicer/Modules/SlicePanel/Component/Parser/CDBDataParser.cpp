@@ -167,7 +167,7 @@ bool CDBDataParser::processOutSke(const SOutputParams &params)
 
 bool CDBDataParser::output(const SOutputParams &params)
 {
-    return (processOutTex(params) && processOutSke(params));
+    return (processOutTex(params));
 }
 bool CDBDataParser::input(const SInputParams &params)
 {

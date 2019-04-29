@@ -2,7 +2,7 @@
 #include <QCryptographicHash>
 #include <QByteArray>
 #include "ImageSlicer.h"
-CSliceGridData::CSliceGridData()
+CSliceGridData::CSliceGridData():center(0.5,0.5)
 {
 
 }

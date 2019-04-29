@@ -3,13 +3,14 @@
 static const QString GROUP1_NAME = ("frame");
 static const QString GROUP2_NAME = ("geometry");
 
-static const QString KEY_NAME = ("name");
 static const QString KEY_ENABLE = ("enable");
-static const QString KEY_REMARK = ("remark");
-static const QString KEY_X = ("x");
-static const QString KEY_Y = ("y");
-static const QString KEY_WIDTH = ("width");
-static const QString KEY_HEIGHT = ("height");
+static const QString KEY_NAME = ("name");
+static const QString KEY_EXTRA = ("extra");
+static const QString KEY_DESCRIPTION = ("description");
+
+static const QString KEY_POS = ("pos");
+static const QString KEY_SIZE = ("size");
+static const QString KEY_CENTER = ("center");
 
 
 CSliceGridProperty::CSliceGridProperty()
@@ -61,27 +62,26 @@ void CSliceGridProperty::setData(const CSliceGridData &data)
     m_data = data;
     QtVariantProperty *item = nullptr;
 
-    item = m_pStringToProperty->value(KEY_NAME);
-    item->setValue(m_data.name);
-
     item = m_pStringToProperty->value(KEY_ENABLE);
     item->setValue(m_data.enable);
 
-    item = m_pStringToProperty->value(KEY_REMARK);
-    item->setValue(m_data.remark);
+    item = m_pStringToProperty->value(KEY_NAME);
+    item->setValue(m_data.name);
 
-    item = m_pStringToProperty->value(KEY_X);
-    item->setValue(m_data.pos.x());
+    item = m_pStringToProperty->value(KEY_EXTRA);
+    item->setValue(m_data.extra);
 
-    item = m_pStringToProperty->value(KEY_Y);
-    item->setValue(m_data.pos.y());
+    item = m_pStringToProperty->value(KEY_DESCRIPTION);
+    item->setValue(m_data.description);
 
-    item = m_pStringToProperty->value(KEY_WIDTH);
-    item->setValue(m_data.size.width());
+    item = m_pStringToProperty->value(KEY_POS);
+    item->setValue(m_data.pos);
 
-    item = m_pStringToProperty->value(KEY_HEIGHT);
-    item->setValue(m_data.size.height());
+    item = m_pStringToProperty->value(KEY_SIZE);
+    item->setValue(m_data.size);
 
+    item = m_pStringToProperty->value(KEY_CENTER);
+    item->setValue(m_data.center);
 }
 ////
 void CSliceGridProperty::bindProperty(QtTreePropertyBrowser *treeProperty)
@@ -91,7 +91,7 @@ void CSliceGridProperty::bindProperty(QtTreePropertyBrowser *treeProperty)
     treeProperty->addProperty(m_pGroup1);
     treeProperty->addProperty(m_pGroup2);
 
-    treeProperty->setFactoryForManager(m_pEditManager,m_pEditFactory);
+    treeProperty->setFactoryForManager(m_pEditManager, m_pEditFactory);
 }
 
 ////
@@ -101,6 +101,7 @@ QtVariantProperty *CSliceGridProperty::addProperty(QtProperty *property, QtVaria
     item = manager->addProperty(propertyType, name);
     item->setValue(defaultValue);
     property->addSubProperty(item);
+
     m_pStringToProperty->insert(name,item);
     m_pPropertyToString->insert(item,name);
 
@@ -109,36 +110,41 @@ QtVariantProperty *CSliceGridProperty::addProperty(QtProperty *property, QtVaria
 
 void CSliceGridProperty::setupProperty()
 {
-    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_NAME, "");
     addProperty(m_pGroup1, m_pEditManager, QVariant::Bool, KEY_ENABLE, true);
-    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_REMARK, "");
+    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_NAME, "");
+    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_EXTRA, "");
+    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_DESCRIPTION, "");
 
-    addProperty(m_pGroup2, m_pEditManager, QVariant::Int, KEY_X, 0);
-    addProperty(m_pGroup2, m_pEditManager, QVariant::Int, KEY_Y, 0);
-    addProperty(m_pGroup2, m_pEditManager, QVariant::Int, KEY_WIDTH, 0);
-    addProperty(m_pGroup2, m_pEditManager, QVariant::Int, KEY_HEIGHT, 0);
+    addProperty(m_pGroup2, m_pEditManager, QVariant::Point, KEY_POS, QPoint(0,0));
+    addProperty(m_pGroup2, m_pEditManager, QVariant::Size, KEY_SIZE, QSize(0,0));
+    addProperty(m_pGroup2, m_pEditManager, QVariant::PointF, KEY_CENTER, QPointF(0.5,0.5));
 }
 
 
 void CSliceGridProperty::propValueChanged(QtProperty *property, const QVariant &value)
 {
     //值绑定
+    QtVariantProperty *item = nullptr;
     auto name = property->propertyName();
+    item = m_pStringToProperty->value(name);
 
     if (name == KEY_NAME){
         m_data.name = value.toString();
     }else if (name == KEY_ENABLE){
         m_data.enable = value.toBool();
-    }else if (name == KEY_REMARK){
-        m_data.remark = value.toString();
-    }else if (name == KEY_X){
-        m_data.pos.setX(value.toInt());
-    }else if (name == KEY_Y){
-        m_data.pos.setY(value.toInt());
-    }else if (name == KEY_WIDTH){
-        m_data.size.setWidth(value.toInt());
-    }else if (name == KEY_HEIGHT){
-        m_data.size.setHeight(value.toInt());
+    }else if (name == KEY_EXTRA){
+        m_data.extra = value.toString();
+    }else if (name == KEY_DESCRIPTION){
+        m_data.description = value.toString();
+    }else if (name == KEY_POS){
+        m_data.pos.setX(value.toPoint().x());
+        m_data.pos.setY(value.toPoint().y());
+    }else if (name == KEY_SIZE){
+        m_data.size.setWidth(value.toSize().width());
+        m_data.size.setHeight(value.toSize().height());
+    }else if (name == KEY_CENTER){
+        m_data.center.setX(value.toPoint().x());
+        m_data.center.setY(value.toPoint().y());
     }
 
     emit dataChanged(name,m_data);

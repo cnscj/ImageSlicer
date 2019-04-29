@@ -7,8 +7,9 @@ class CSliceGridsData
 public:
     QString names;
     bool enables;
+    QString extras;
+    QString descriptions;
 
-    QString remarks;
     int offsetX;
     int offsetY;
 

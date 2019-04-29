@@ -2,9 +2,10 @@
 
 static const QString GROUP1_NAME = ("attrs");
 
-static const QString KEY_NAMES = ("names");
 static const QString KEY_ENABLES = ("enables");
-static const QString KEY_REMARKS = ("remarks");
+static const QString KEY_NAMES = ("names");
+static const QString KEY_DESCRIPTIONS = ("descriptions");
+static const QString KEY_EXTRAS = ("extras");
 static const QString KEY_OFFSETX = ("offsetX");
 static const QString KEY_OFFSETY = ("offsetY");
 
@@ -51,14 +52,17 @@ void CSliceGridsProperty::setData(const CSliceGridsData &data)
     m_data = data;
     QtVariantProperty *item = nullptr;
 
-    item = m_pStringToProperty->value(KEY_NAMES);
-    item->setValue(m_data.names);
-
     item = m_pStringToProperty->value(KEY_ENABLES);
     item->setValue(m_data.enables);
 
-    item = m_pStringToProperty->value(KEY_REMARKS);
-    item->setValue(m_data.remarks);
+    item = m_pStringToProperty->value(KEY_NAMES);
+    item->setValue(m_data.names);
+
+    item = m_pStringToProperty->value(KEY_DESCRIPTIONS);
+    item->setValue(m_data.descriptions);
+
+    item = m_pStringToProperty->value(KEY_EXTRAS);
+    item->setValue(m_data.extras);
 
     item = m_pStringToProperty->value(KEY_OFFSETX);
     item->setValue(m_data.offsetX);
@@ -102,9 +106,10 @@ QtVariantProperty *CSliceGridsProperty::addProperty(QtProperty *property, QtVari
 
 void CSliceGridsProperty::setupProperty()
 {
-    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_NAMES, "");
     addProperty(m_pGroup1, m_pEditManager, QVariant::Bool, KEY_ENABLES, "");
-    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_REMARKS, "");
+    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_NAMES, "");
+    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_EXTRAS, "");
+    addProperty(m_pGroup1, m_pEditManager, QVariant::String, KEY_DESCRIPTIONS, "");
     addProperty(m_pGroup1, m_pEditManager, QVariant::Int, KEY_OFFSETX, 0);
     addProperty(m_pGroup1, m_pEditManager, QVariant::Int, KEY_OFFSETY, 0);
 
@@ -124,9 +129,13 @@ void CSliceGridsProperty::propValueChanged(QtProperty *property, const QVariant 
     {
         m_data.enables = value.toBool();
     }
-    else if(name == KEY_REMARKS)
+    else if(name == KEY_EXTRAS)
     {
-        m_data.remarks = value.toString();
+        m_data.extras = value.toString();
+    }
+    else if(name == KEY_DESCRIPTIONS)
+    {
+        m_data.descriptions = value.toString();
     }
     else if(name == KEY_OFFSETX)
     {

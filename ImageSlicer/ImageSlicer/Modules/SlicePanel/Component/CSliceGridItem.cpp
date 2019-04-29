@@ -43,10 +43,13 @@ void CSliceGridItem::onState(const CGridItemData &data)
     CSliceGridData itemData;
     itemData.enable = true;
     itemData.name = "";
-    itemData.remark = "";
+    itemData.extra = "";
+    itemData.description = "";
+
 
     itemData.pos = data.pos;
     itemData.size = data.size;
+    itemData.center = QPointF(0.5,0.5);
 
     m_property.setData(itemData);
     connect(&m_property,&CSliceGridProperty::dataChanged,this,&CSliceGridItem::propValueChanged);
@@ -98,6 +101,10 @@ void CSliceGridItem::paintEvent(QPaintEvent *e)
     QRect rt(QRect(0,0,this->width(),this->height()));
     painter.drawRect(rt);
 
+    painter.setBrush(QBrush(Qt::yellow));
+    painter.drawEllipse(this->width() * m_property.getData().center.x(), this->height() * m_property.getData().center.y(), 5, 5);
+
+    painter.setPen(m_pen);//设置画笔形式
     painter.drawText(rt,Qt::AlignCenter,QString("%1").arg(getIndex()));
 }
 
@@ -130,10 +137,14 @@ void CSliceGridItem::propValueChanged(const QString &propName,const CSliceGridDa
         }
         this->update();
     }
-    else if (propName == "x" || propName == "y" || propName == "width" || propName == "height")
+    else if (propName == "pos" || propName == "size")
     {
         m_data.pos = data.pos;
         m_data.size = data.size;
         this->updateScale();
+    }
+    else if (propName == "center")
+    {
+        this->update();
     }
 }

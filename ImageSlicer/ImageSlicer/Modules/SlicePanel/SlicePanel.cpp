@@ -436,9 +436,14 @@ void CSlicePanel::propValueChanged(const QString &propName,const CSliceGridsData
             item->getPropertyData()->enable = data.enables;
             item->setPropertyData(item->getPropertyData());
         }
-        else if(propName == "remarks")
+        else if(propName == "extras")
         {
-            item->getPropertyData()->remark = data.remarks;
+            item->getPropertyData()->extra = data.extras;
+            item->setPropertyData(item->getPropertyData());
+        }
+        else if(propName == "descriptions")
+        {
+            item->getPropertyData()->description = data.descriptions;
             item->setPropertyData(item->getPropertyData());
         }
         else if(propName == "offsetX")

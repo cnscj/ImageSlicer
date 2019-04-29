@@ -9,12 +9,14 @@
 class CSliceGridData
 {
 public:
-    QString name;
-    QString remark;
     bool enable;
+    QString name;
+    QString extra;
+    QString description;
 
     QPoint pos;
     QSize size;
+    QPointF center;
 public:
     uint getUID() const;
     QRect getRect() const;
