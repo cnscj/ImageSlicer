@@ -102,7 +102,7 @@ void CSliceGridItem::paintEvent(QPaintEvent *e)
     painter.drawRect(rt);
 
     painter.setBrush(QBrush(Qt::yellow));
-    painter.drawEllipse(this->width() * m_property.getData().center.x(), this->height() * m_property.getData().center.y(), 5, 5);
+    painter.drawEllipse(rt.width() * m_property.getData().center.x(), rt.height() * m_property.getData().center.y(), 4, 4);
 
     painter.setPen(m_pen);//设置画笔形式
     painter.drawText(rt,Qt::AlignCenter,QString("%1").arg(getIndex()));

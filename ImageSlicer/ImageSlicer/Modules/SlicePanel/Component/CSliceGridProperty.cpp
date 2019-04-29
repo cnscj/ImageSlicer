@@ -143,8 +143,8 @@ void CSliceGridProperty::propValueChanged(QtProperty *property, const QVariant &
         m_data.size.setWidth(value.toSize().width());
         m_data.size.setHeight(value.toSize().height());
     }else if (name == KEY_CENTER){
-        m_data.center.setX(value.toPoint().x());
-        m_data.center.setY(value.toPoint().y());
+        m_data.center.setX(value.toPointF().x());
+        m_data.center.setY(value.toPointF().y());
     }
 
     emit dataChanged(name,m_data);
