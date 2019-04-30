@@ -70,15 +70,16 @@ CSlicePanel *CMainWindow::addNewSlicePanel(const CMainWindow::SNewTabParams &par
 void CMainWindow::dragEnterEvent(QDragEnterEvent* event)
 {
     //只接受图片文件
-    QString filePath = event->mimeData()->urls()[0].toLocalFile();
-    if(isCanDragEnterFile(filePath))
+    if (event->mimeData()->urls().count() > 0)
     {
-        event->acceptProposedAction();//接受鼠标拖入事件
+        QString filePath = event->mimeData()->urls()[0].toLocalFile();
+        if(isCanDragEnterFile(filePath))
+        {
+            event->acceptProposedAction();//接受鼠标拖入事件
+            return;
+        }
     }
-    else
-    {
-        event->ignore();//否则不接受鼠标事件
-    }
+    event->ignore();//否则不接受鼠标事件
 }
 
 void CMainWindow::dropEvent(QDropEvent* event)

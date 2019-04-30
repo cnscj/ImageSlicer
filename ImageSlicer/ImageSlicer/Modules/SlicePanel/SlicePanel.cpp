@@ -107,7 +107,8 @@ void CSlicePanel::setInitData(const SPanelInitParams &data)
         {
             this->loadImageFromFile(data.projectFile);
         }
-    }else if (data.projectType == EnumType::ESlicePanelType::Project)
+    }
+    else if (data.projectType == EnumType::ESlicePanelType::Project)
     {
         if ( data.projectFile != "")
         {

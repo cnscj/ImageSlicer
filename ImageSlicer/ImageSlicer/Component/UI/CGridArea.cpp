@@ -393,7 +393,7 @@ void CGridArea::resizeEvent(QResizeEvent *event)
 {
     double newSizeWidth = event->size().width();
     double oldSizeWidth = event->oldSize().width() > 0 ? event->oldSize().width() : newSizeWidth;
-    double newSizeHeight = event->size().width();
+    double newSizeHeight = event->size().height();
     double oldSizeHeight = event->oldSize().height() > 0 ? event->oldSize().height() : newSizeHeight;
     m_scale.setX((newSizeWidth/oldSizeWidth) * m_scale.x());
     m_scale.setY((newSizeHeight/oldSizeHeight) * m_scale.y());

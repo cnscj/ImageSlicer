@@ -89,25 +89,27 @@ void CImportWnd::inPutHandle()
 void CImportWnd::dragEnterEvent(QDragEnterEvent *event)
 {
     //只接受Xml文件
-    QString filePath = event->mimeData()->urls()[0].toLocalFile();
-    QString suffix = "";
-    if (ui->dbRb->isChecked())
+    if (event->mimeData()->urls().count() > 0)
     {
-       suffix = CDBDataParser::CFG_FILE_SUFFIX;
-    }
-    else if (ui->plistRb->isChecked())
-    {
-       suffix = CPlistDataParser::CFG_FILE_SUFFIX;
-    }
+        QString filePath = event->mimeData()->urls()[0].toLocalFile();
+        QString suffix = "";
+        if (ui->dbRb->isChecked())
+        {
+           suffix = CDBDataParser::CFG_FILE_SUFFIX;
+        }
+        else if (ui->plistRb->isChecked())
+        {
+           suffix = CPlistDataParser::CFG_FILE_SUFFIX;
+        }
 
-    if(suffix != "" && !StringUtil::getFileSuffix(filePath).compare(suffix.mid(1),Qt::CaseInsensitive))
-    {
-        event->acceptProposedAction();//接受鼠标拖入事件
+        if(suffix != "" && !StringUtil::getFileSuffix(filePath).compare(suffix.mid(1),Qt::CaseInsensitive))
+        {
+            event->acceptProposedAction();//接受鼠标拖入事件
+            return ;
+        }
+
     }
-    else
-    {
-       event->ignore();//否则不接受鼠标事件
-    }
+    event->ignore();//否则不接受鼠标事件
 }
 void CImportWnd::dropEvent(QDropEvent *event)
 {
