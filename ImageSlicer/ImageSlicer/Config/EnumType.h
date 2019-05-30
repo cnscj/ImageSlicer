@@ -8,6 +8,8 @@ struct EnumType
     {
         Unknow,
         Image,
+        DBFile,
+        Plist,
         Project
     };
 
@@ -15,6 +17,8 @@ struct EnumType
     {
         Unknow,
         Image,
+        DBFile,
+        Plist,
         Project
     };
 };

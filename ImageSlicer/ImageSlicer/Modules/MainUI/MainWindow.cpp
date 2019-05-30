@@ -11,6 +11,9 @@
 #include "Modules/Import/ImportWnd.h"
 #include "Modules/AboutWnd/AboutWnd.h"
 
+#include "Modules/SlicePanel/Component/Parser/CDBDataParser.h"
+#include "Modules/SlicePanel/Component/Parser/CPlistDataParser.h"
+
 static const QString MAIN_WND_ADD_NEW_TB_DEFAULT_TITLE = "_Temp";
 
 
@@ -105,13 +108,29 @@ void CMainWindow::openFileByPath(const QString &filePath)
     if (fileType == EnumType::EDropFileType::Image)
     {
         params.type = EnumType::ESlicePanelType::Image;
+        addNewSlicePanel(params);
     }
+    else if (fileType == EnumType::EDropFileType::DBFile || fileType == EnumType::EDropFileType::Plist)
+    {
+       CBaseParser *parser = nullptr;
+       CBaseParser::SInputParams importParams;
+       if (fileType == EnumType::EDropFileType::DBFile) parser = new CDBDataParser();
+       else if (fileType == EnumType::EDropFileType::DBFile) parser = new CPlistDataParser();
+       if (parser)
+       {
+           importParams.widget = this;
+           importParams.openPath = params.filePath;
+
+           parser->input(importParams);
+           delete parser;
+       }
+    }
+
     else if (fileType == EnumType::EDropFileType::Project)
     {
        params.type = EnumType::ESlicePanelType::Project;
     }
 
-    addNewSlicePanel(params);
 }
 
 bool CMainWindow::isCanDragEnterFile(const QString &filePath)
@@ -122,6 +141,14 @@ bool CMainWindow::isCanDragEnterFile(const QString &filePath)
          || !filePath.right(4).compare("jpeg",Qt::CaseInsensitive))
     {
         return true;
+    }
+    else if (!filePath.right(4).compare("json",Qt::CaseInsensitive))
+    {
+         return true;
+    }
+    else if (!filePath.right(5).compare("plist",Qt::CaseInsensitive))
+    {
+         return true;
     }
     else if (!filePath.right(7).compare("islproj",Qt::CaseInsensitive))
     {
@@ -138,6 +165,14 @@ if (!filePath.right(3).compare("jpg",Qt::CaseInsensitive)
      || !filePath.right(4).compare("jpeg",Qt::CaseInsensitive))
     {
         return EnumType::EDropFileType::Image;
+    }
+    else if (!filePath.right(4).compare("json",Qt::CaseInsensitive))
+    {
+        return EnumType::EDropFileType::DBFile;
+    }
+    else if (!filePath.right(5).compare("plist",Qt::CaseInsensitive))
+    {
+        return EnumType::EDropFileType::Plist;
     }
     else if (!filePath.right(7).compare("islproj",Qt::CaseInsensitive))
     {

@@ -158,6 +158,11 @@
     <string>删除切片</string>
    </property>
   </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>切片另存为</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

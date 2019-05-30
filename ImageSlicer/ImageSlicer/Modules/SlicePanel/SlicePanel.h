@@ -62,6 +62,7 @@ private slots:
     void editSliceWnd();
     void editMergeGrids();
     void editRemoveGrids();
+    void editSaveAsGrids();
     void editSliceCallback(const CSliceEdit::SSliceCallbackParams &);
     void sliceClicked(CGridItem *);
 protected slots:

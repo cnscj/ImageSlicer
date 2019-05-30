@@ -5,6 +5,9 @@
 #include <QWheelEvent>
 #include <QMenu>
 #include <QtVariantPropertyManager>
+#include <QFileDialog>
+#include <QFile>
+#include <QMessageBox>
 #include "Component/UI/CGridArea.h"
 #include "Component/CSliceGridItem.h"
 #include "Component/Parser/CProjectDataParser.h"
@@ -31,12 +34,21 @@ CSlicePanel::CSlicePanel(QWidget *parent) :
     actionList << ui->actionSlice;
     actionList << ui->actionMerge;
     actionList << ui->actionRemove;
+
+    QAction *seqAction = new QAction(this);
+    seqAction->setSeparator(true);
+    actionList << seqAction;
+
+    actionList << ui->actionSaveAs;
+
     ui->actionMerge->setEnabled(false);
     ui->actionRemove->setEnabled(false);
+    ui->actionSaveAs->setEnabled(false);
     m_pSliceMenu->addActions(actionList);//添加子项到主菜单
     connect(ui->actionSlice,SIGNAL(triggered()),this,SLOT(editSliceWnd()));
     connect(ui->actionMerge,SIGNAL(triggered()),this,SLOT(editMergeGrids()));
     connect(ui->actionRemove,SIGNAL(triggered()),this,SLOT(editRemoveGrids()));
+    connect(ui->actionSaveAs,SIGNAL(triggered()),this,SLOT(editSaveAsGrids()));
 
     //划分切片窗口
     m_pSliceEditWnd = new CSliceEdit();
@@ -373,6 +385,7 @@ void CSlicePanel::editMergeGrids()
     ui->gridArea->mergeGrids(ui->gridArea->getSelectList());
     ui->actionMerge->setEnabled(false);
     ui->actionRemove->setEnabled(false);
+    ui->actionSaveAs->setEnabled(false);
     ui->propsWidget->clear();
 
     emit panelDataUpdate();
@@ -383,10 +396,57 @@ void CSlicePanel::editRemoveGrids()
     ui->gridArea->removeGrids(ui->gridArea->getSelectList());
     ui->actionMerge->setEnabled(false);
     ui->actionRemove->setEnabled(false);
+    ui->actionSaveAs->setEnabled(false);
     ui->propsWidget->clear();
 
     emit panelDataUpdate();
 }
+
+void CSlicePanel::editSaveAsGrids()
+{
+    //TODO:保存贴图
+    auto list = ui->gridArea->getSelectList();
+    if (list.length() > 0)
+    {
+        if (list.length() == 1)
+        {
+            auto item = static_cast<CSliceGridItem *>(list[0]);
+            QString suffix = StringUtil::getFileSuffix(m_panelData.imagePath);
+            QString outPath = QString("%1.%2").arg(item->getPropertyData()->name).arg(suffix);
+            QString fileName = QFileDialog::getSaveFileName(this,
+                            ("File Save as ..."),
+                            outPath,
+                            (QString("Image Files (*.%1)").arg(suffix)));
+            QPixmap tmpPix = m_panelData.pPixmap->copy(item->getData().rect());
+            if (!fileName.isEmpty())
+            {
+                if (tmpPix.save(fileName))
+                {
+                    QMessageBox::about(this, "Information", "Import is Success!!");
+                }
+            }
+        }
+        else
+        {
+            QString folderPath = QFileDialog::getExistingDirectory(this,"Select save floder ...");
+            if (!folderPath.isEmpty())
+            {
+                for (auto it : list)
+                {
+                    auto item = static_cast<CSliceGridItem *>(it);
+                    //截取QPixmap的某个区域
+                    QPixmap tmpPix = m_panelData.pPixmap->copy(item->getData().rect());
+                    //保存到文件
+                    QString suffix = StringUtil::getFileSuffix(m_panelData.imagePath);
+                    QString fileName = QString("%1/%2.%3").arg(folderPath).arg(item->getPropertyData()->name).arg(suffix);
+                    tmpPix.save(fileName);
+                }
+                QMessageBox::about(this, "Information", "Import is Success!!");
+            }
+        }
+    }
+}
+
 
 void CSlicePanel::sliceClicked(CGridItem *grid)
 {
@@ -413,6 +473,7 @@ void CSlicePanel::sliceClicked(CGridItem *grid)
         }
         ui->actionMerge->setEnabled(true);
         ui->actionRemove->setEnabled(true);
+        ui->actionSaveAs->setEnabled(true);
     }
 
     qDebug("点击:%d_%d",item->getData().pos.x(),item->getData().pos.y());
