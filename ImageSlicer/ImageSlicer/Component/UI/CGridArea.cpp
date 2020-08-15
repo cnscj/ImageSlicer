@@ -1,7 +1,7 @@
 #include "CGridArea.h"
 #include <QPainter>
 #include <QMouseEvent>
-
+#include <QDebug>
 #include <cmath>
 #include "Modules/SlicePanel/Component/ImgAttrListItem.h"
 
@@ -91,13 +91,28 @@ void CGridArea::sliceGrids(const QList<CGridItem *> &list,const QSizeF &size)
             int finalWidth = limitValue(static_cast<int>(size.width()),1,oriSize.width());
             int finalHeight = limitValue(static_cast<int>(size.height()),1,oriSize.height());
 
-            for (int j = 0; j < oriSize.height(); j+=finalHeight)
+            int adjWidth = finalWidth;
+            int adjHeight = finalHeight;
+            for (int j = 0; j < oriSize.height(); )
             {
-                for (int i = 0; i < oriSize.width(); i+=finalWidth)
+                for (int i = 0; i < oriSize.width();)
                 {
-                    CGridItemData itemData(startPos.x() + i,startPos.y() + j,finalWidth,finalHeight);
+                    if (oriSize.width() - i < 2*finalWidth)
+                        adjWidth = oriSize.width() - i;
+                    if (oriSize.height() - j < 2*finalHeight)
+                        adjHeight = oriSize.height() - j;
+
+                    CGridItemData itemData(startPos.x() + i,startPos.y() + j,adjWidth,adjHeight);
                     addGridItem(itemData);
+                    i+=finalWidth;
+
+                    int resi = oriSize.width() - i;
+                    if(resi < finalHeight) break;
                 }
+                j+=finalHeight;
+
+                int resi = oriSize.height() - j;
+                if(resi < finalHeight) break;
             }
             removeGridItem(item);
         }
@@ -109,16 +124,28 @@ void CGridArea::sliceGrids(const QList<CGridItem *> &list,const QSizeF &size)
 
         int finalWidth = limitValue(static_cast<int>(size.width()),1,width());
         int finalHeight = limitValue(static_cast<int>(size.height()),1,height());
-        for (int j = 0; j < height(); j+=finalHeight)
+
+        int adjWidth = finalWidth;
+        int adjHeight = finalHeight;
+        for (int j = 0; j < height();)
         {
-    //        finalHeight = (j + finalHeight > height()) ? (height() - j) : finalHeight;
-            for (int i = 0; i < width(); i+=finalWidth)
+            for (int i = 0; i < width();)
             {
-    //            finalWidth = (i + finalWidth > width()) ? (width() - i) : finalWidth;
-                CGridItemData itemData(i,j,finalWidth,finalHeight);
+                if (width() - i < 2*finalWidth)
+                    adjWidth = width() - i;
+                if (height() - j < 2*finalHeight)
+                    adjHeight = height() - j;
+
+                CGridItemData itemData(i,j,adjWidth,adjHeight);
                 addGridItem(itemData);
 
+                i+=finalWidth;
+                int resi = width() - i;
+                if(resi < finalHeight) break;
             }
+             j+=finalHeight;
+            int resi = height() - j;
+            if(resi < finalHeight) break;
         }
     }
     resetIds();
